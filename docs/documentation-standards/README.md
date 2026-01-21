@@ -2,9 +2,9 @@
 ---
 title: "Documentation Standards"
 description: "Templates and guidelines for project documentation"
-author: "CrainBramp"
-date: "2025-01-20"
-version: "1.0"
+author: "vintagedon"
+date: "2025-01-21"
+version: "1.1"
 status: "Active"
 tags:
   - type: directory-readme
@@ -30,6 +30,7 @@ documentation-standards/
 ├── script-header-python.md         # Python script header
 ├── script-header-shell.md          # Bash script header
 ├── script-header-powershell.md     # PowerShell script header
+├── script-header-javascript.md     # JavaScript/JSX/TypeScript header
 └── README.md                       # This file
 ```
 
@@ -53,6 +54,7 @@ documentation-standards/
 | [script-header-python.md](script-header-python.md) | All `.py` files |
 | [script-header-shell.md](script-header-shell.md) | All `.sh` files |
 | [script-header-powershell.md](script-header-powershell.md) | All `.ps1` files |
+| [script-header-javascript.md](script-header-javascript.md) | All `.js`, `.jsx`, `.ts`, `.tsx`, `.css` files |
 
 ### Guidelines
 
@@ -98,9 +100,11 @@ Is it the repository root README?
 
 ```
 What language?
-├─ Python (.py)     → script-header-python.md
-├─ Bash (.sh)       → script-header-shell.md
-└─ PowerShell (.ps1)→ script-header-powershell.md
+├─ Python (.py)          → script-header-python.md
+├─ Bash (.sh)            → script-header-shell.md
+├─ PowerShell (.ps1)     → script-header-powershell.md
+└─ JavaScript/TypeScript → script-header-javascript.md
+    (.js, .jsx, .ts, .tsx, .css)
 ```
 
 ---

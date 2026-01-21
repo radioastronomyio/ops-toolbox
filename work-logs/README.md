@@ -22,6 +22,7 @@ work-logs/
 | Milestone | Name | Status |
 |-----------|------|--------|
 | [01](01-ideation-and-setup/README.md) | Ideation and Setup | ✅ Complete |
+| [02](02-mermaid-renderer-implementation/README.md) | Mermaid Renderer Implementation | ✅ Complete |
 
 ---
 

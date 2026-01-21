@@ -2,9 +2,9 @@
 ---
 title: "Documentation"
 description: "Project documentation, standards, and reference materials"
-author: "CrainBramp"
-date: "2025-01-20"
-version: "1.0"
+author: "vintagedon"
+date: "2025-01-21"
+version: "1.1"
 status: "Active"
 tags:
   - type: directory-readme
@@ -14,7 +14,7 @@ tags:
 
 # Documentation
 
-Project documentation including templates, standards, and reference materials.
+Project documentation including app guides, templates, standards, and reference materials.
 
 ---
 
@@ -22,6 +22,9 @@ Project documentation including templates, standards, and reference materials.
 
 ```
 docs/
+├── apps/                           # Application documentation
+│   ├── mermaid-renderer.md
+│   └── README.md
 ├── documentation-standards/        # Template library and guidelines
 │   ├── primary-readme-template.md
 │   ├── interior-readme-template.md
@@ -39,6 +42,7 @@ docs/
 
 | Directory | Description |
 |-----------|-------------|
+| [apps/](apps/README.md) | Knowledge base articles for ops-toolbox applications |
 | [documentation-standards/](documentation-standards/README.md) | Template library for READMEs, KB articles, script headers, and guidelines |
 
 ---

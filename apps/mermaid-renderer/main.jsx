@@ -19,7 +19,7 @@ mermaid.registerLayoutLoaders(elkLayouts);
 mermaid.initialize({
   startOnLoad: false,
   theme: 'dark',
-  securityLevel: 'loose', // Needed for some advanced features if used
+  securityLevel: 'antiscript', // Allows HTML labels while blocking script execution
   layout: 'elk',
   flowchart: {
     useMaxWidth: true,

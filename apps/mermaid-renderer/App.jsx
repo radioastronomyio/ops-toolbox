@@ -17,7 +17,7 @@ import {
     Sun
 } from 'lucide-react';
 import mermaid from 'mermaid';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const DEFAULT_DIAGRAM = `flowchart TB
     subgraph WAN["WAN Zone"]
@@ -52,6 +52,14 @@ const DEFAULT_DIAGRAM = `flowchart TB
     SW2 --> WS1
     SW2 --> WS2`;
 
+/**
+ * Convert string to base64, handling unicode characters properly
+ * Replaces deprecated unescape(encodeURIComponent()) pattern
+ */
+const toBase64 = (str) => {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
+};
+
 function App() {
   const [code, setCode] = useState(DEFAULT_DIAGRAM);
   const [theme, setTheme] = useState('dark');
@@ -60,11 +68,28 @@ function App() {
   const containerRef = useRef(null);
   const renderTimeout = useRef(null);
 
+  // Memoized render function to satisfy useEffect dependencies
+  const reRender = useCallback(async () => {
+    if (!containerRef.current) return;
+    
+    try {
+      setError(null);
+      // Generate unique ID for each render to avoid conflicts
+      const id = 'mermaid-svg-' + Math.random().toString(36).slice(2, 11);
+      
+      const { svg } = await mermaid.render(id, code);
+      containerRef.current.innerHTML = svg;
+    } catch (err) {
+      console.error('Mermaid render error:', err);
+      setError(err.message || 'Syntax Error');
+    }
+  }, [code]);
+
   // Initialize theme
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
     reRender();
-  }, [theme]);
+  }, [theme, reRender]);
 
   // Debounced rendering
   useEffect(() => {
@@ -73,23 +98,7 @@ function App() {
       reRender();
     }, 300);
     return () => clearTimeout(renderTimeout.current);
-  }, [code]);
-
-  const reRender = async () => {
-    if (!containerRef.current) return;
-    
-    try {
-      setError(null);
-      // Generate unique ID for each render to avoid conflicts
-      const id = 'mermaid-svg-' + Math.random().toString(36).substr(2, 9);
-      
-      const { svg } = await mermaid.render(id, code);
-      containerRef.current.innerHTML = svg;
-    } catch (err) {
-      console.error('Mermaid render error:', err);
-      setError(err.message || 'Syntax Error');
-    }
-  };
+  }, [code, reRender]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
@@ -98,14 +107,21 @@ function App() {
   };
 
   const copySVG = () => {
+    if (!containerRef.current) return;
     const svg = containerRef.current.innerHTML;
-    navigator.clipboard.writeText(svg).then(() => {
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    });
+    navigator.clipboard.writeText(svg)
+      .then(() => {
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      })
+      .catch((err) => {
+        console.error('Clipboard copy error:', err);
+        setError(err?.message || 'Failed to copy to clipboard');
+      });
   };
 
   const downloadSVG = () => {
+    if (!containerRef.current) return;
     const svg = containerRef.current.innerHTML;
     const blob = new Blob([svg], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
@@ -119,6 +135,7 @@ function App() {
   };
 
   const downloadPNG = () => {
+    if (!containerRef.current) return;
     const svgElement = containerRef.current.querySelector('svg');
     if (!svgElement) return;
 
@@ -151,7 +168,7 @@ function App() {
       document.body.removeChild(link);
     };
 
-    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+    img.src = 'data:image/svg+xml;base64,' + toBase64(svgData);
   };
 
   return (

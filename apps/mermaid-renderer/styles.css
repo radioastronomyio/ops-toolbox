@@ -6,7 +6,7 @@
  * @see https://github.com/radioastronomyio/ops-toolbox
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+/* System fonts used - no external font loading for data sovereignty */
 @import "../../shared/styles/tokens.css";
 
 :root {

@@ -6,7 +6,7 @@
 
 - **React:** 18.x - UI framework for stateful applications (mermaid-renderer)
 - **Vite:** 5.x - Build tooling, dev server, workspace support
-- **mermaid.js:** 10.x - Diagram parsing and rendering
+- **mermaid.js:** 11.x - Diagram parsing and rendering (Required for `registerLayoutLoaders`)
 - **@mermaid-js/layout-elk:** Latest - ELK.js layout engine for superior diagram layouts
 
 ### Supporting Technologies
@@ -21,8 +21,9 @@
 
 ```json
 {
-  "mermaid": "^10.x",
-  "@mermaid-js/layout-elk": "^0.x",
+  "mermaid": "^11.x",
+  "@mermaid-js/layout-elk": "^0.1.x",
+  "lucide-react": "^0.400.x",
   "react": "^18.x",
   "react-dom": "^18.x"
 }

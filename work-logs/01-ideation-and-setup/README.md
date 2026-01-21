@@ -2,7 +2,7 @@
 ---
 title: "Milestone 01: Ideation and Setup"
 description: "Repository scaffolding, documentation, and initial commit"
-author: "CrainBramp"
+author: "vintagedon"
 date: "2025-01-20"
 version: "1.0"
 status: "Complete"
@@ -153,7 +153,7 @@ Immediate actions:
 
 | | |
 |---|---|
-| Author | CrainBramp + Claude |
+| Author | vintagedon + Claude |
 | Created | 2025-01-20 |
 | Version | 1.0 |
 | Status | Complete |

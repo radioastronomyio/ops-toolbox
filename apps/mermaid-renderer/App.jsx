@@ -65,32 +65,33 @@ const toBase64 = (str) => {
 };
 
 /**
- * Parse mermaid error message to extract absolute line number
+ * Parse mermaid error message to extract line number
+ * 
+ * Mermaid error formats vary by diagram type and error source:
+ * - "Parse error on line 5" (parser errors)
+ * - "Error on line 12" (validation errors)  
+ * - "5:" at start of line (some lexer errors)
+ * 
+ * Line numbers from mermaid are 1-indexed and absolute to input.
+ * CodeMirror's doc.line() is also 1-indexed, so no conversion needed.
+ * 
  * @param {string} msg - The error message from mermaid
- * @param {string} code - The full source code in the editor
- * @returns {number|null} 1-indexed absolute line number or null
+ * @param {string} code - The full source code (for bounds checking)
+ * @returns {number|null} 1-indexed line number or null if not parseable
  */
 const parseMermaidError = (msg, code) => {
   if (!msg) return null;
-  // Match "line X" or "X:" patterns common in mermaid errors
-  const match = msg.match(/line\s+(\d+)/i) || msg.match(/Parse error on line\s+(\d+)/i) || msg.match(/^(\d+):/m);
-  if (match) {
-    const relativeLine = parseInt(match[1], 10);
-    
-    // Find the line where the diagram actually starts (non-empty, non-comment line)
-    const lines = code.split('\n');
-    let startOffset = 0;
-    for (let i = 0; i < lines.length; i++) {
-      const trimmed = lines[i].trim();
-      if (trimmed && !trimmed.startsWith('%%')) {
-        startOffset = i;
-        break;
-      }
-    }
-    
-    return relativeLine + startOffset;
-  }
-  return null;
+  
+  const match = msg.match(/line\s+(\d+)/i) || msg.match(/^(\d+):/m);
+  if (!match) return null;
+  
+  const lineNum = parseInt(match[1], 10);
+  const maxLine = code.split('\n').length;
+  
+  // Validate bounds (1-indexed, within document)
+  if (lineNum < 1 || lineNum > maxLine) return null;
+  
+  return lineNum;
 };
 
 function App() {
@@ -101,8 +102,12 @@ function App() {
   const [error, setError] = useState(null);
   const [errorLine, setErrorLine] = useState(null);
   const [autoUpdate, setAutoUpdate] = useState(() => {
-    const saved = localStorage.getItem('mermaid-auto-update');
-    return saved !== null ? JSON.parse(saved) : true;
+    try {
+      const saved = localStorage.getItem('mermaid-auto-update');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
   });
   const containerRef = useRef(null);
   const renderTimeout = useRef(null);

@@ -11,27 +11,16 @@ import mermaid from 'mermaid';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { getMermaidConfig } from './config';
 import './styles.css';
 
 // Register ELK before initialization
 mermaid.registerLayoutLoaders(elkLayouts);
 
-mermaid.initialize({
-  startOnLoad: false,
-  theme: 'dark',
-  securityLevel: 'antiscript', // Allows HTML labels while blocking script execution
-  layout: 'elk',
-  flowchart: {
-    useMaxWidth: true,
-    htmlLabels: true,
-    curve: 'basis',
-  },
-  elk: {
-    mergeEdges: true,
-    nodePlacementStrategy: 'SIMPLE',
-    cycleBreakingStrategy: 'GREEDY',
-  }
-});
+const initialTheme = localStorage.getItem('mermaid-theme') || 'dark';
+const initialLayout = localStorage.getItem('mermaid-layout') || 'elk';
+
+mermaid.initialize(getMermaidConfig(initialTheme, initialLayout));
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

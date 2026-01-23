@@ -14,10 +14,14 @@ import {
     Image as ImageIcon,
     Moon,
     Play,
+    Share2,
+    Square,
     Sun
 } from 'lucide-react';
 import mermaid from 'mermaid';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { getMermaidConfig } from './config';
+import Editor from './Editor';
 
 const DEFAULT_DIAGRAM = `flowchart TB
     subgraph WAN["WAN Zone"]
@@ -60,11 +64,46 @@ const toBase64 = (str) => {
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
 };
 
+/**
+ * Parse mermaid error message to extract absolute line number
+ * @param {string} msg - The error message from mermaid
+ * @param {string} code - The full source code in the editor
+ * @returns {number|null} 1-indexed absolute line number or null
+ */
+const parseMermaidError = (msg, code) => {
+  if (!msg) return null;
+  // Match "line X" or "X:" patterns common in mermaid errors
+  const match = msg.match(/line\s+(\d+)/i) || msg.match(/Parse error on line\s+(\d+)/i) || msg.match(/^(\d+):/m);
+  if (match) {
+    const relativeLine = parseInt(match[1], 10);
+    
+    // Find the line where the diagram actually starts (non-empty, non-comment line)
+    const lines = code.split('\n');
+    let startOffset = 0;
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim();
+      if (trimmed && !trimmed.startsWith('%%')) {
+        startOffset = i;
+        break;
+      }
+    }
+    
+    return relativeLine + startOffset;
+  }
+  return null;
+};
+
 function App() {
   const [code, setCode] = useState(DEFAULT_DIAGRAM);
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('mermaid-theme') || 'dark');
+  const [layout, setLayout] = useState(() => localStorage.getItem('mermaid-layout') || 'elk');
   const [isCopied, setIsCopied] = useState(false);
   const [error, setError] = useState(null);
+  const [errorLine, setErrorLine] = useState(null);
+  const [autoUpdate, setAutoUpdate] = useState(() => {
+    const saved = localStorage.getItem('mermaid-auto-update');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
   const containerRef = useRef(null);
   const renderTimeout = useRef(null);
 
@@ -74,6 +113,7 @@ function App() {
     
     try {
       setError(null);
+      setErrorLine(null);
       // Generate unique ID for each render to avoid conflicts
       const id = 'mermaid-svg-' + Math.random().toString(36).slice(2, 11);
       
@@ -81,29 +121,44 @@ function App() {
       containerRef.current.innerHTML = svg;
     } catch (err) {
       console.error('Mermaid render error:', err);
-      setError(err.message || 'Syntax Error');
+      const msg = err.message || 'Syntax Error';
+      setError(msg);
+      setErrorLine(parseMermaidError(msg, code));
     }
   }, [code]);
 
-  // Initialize theme
+  // Persist preferences and sync DOM
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
-    reRender();
-  }, [theme, reRender]);
+    localStorage.setItem('mermaid-theme', theme);
+    localStorage.setItem('mermaid-layout', layout);
+    localStorage.setItem('mermaid-auto-update', JSON.stringify(autoUpdate));
+  }, [theme, layout, autoUpdate]);
 
-  // Debounced rendering
+  // Reinitialize mermaid and re-render on theme/layout change (always, regardless of autoUpdate)
   useEffect(() => {
+    mermaid.initialize(getMermaidConfig(theme, layout));
+    reRender();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme, layout]);
+
+  // Debounced rendering for code changes
+  useEffect(() => {
+    if (!autoUpdate) return;
+    
     if (renderTimeout.current) clearTimeout(renderTimeout.current);
     renderTimeout.current = setTimeout(() => {
       reRender();
     }, 300);
     return () => clearTimeout(renderTimeout.current);
-  }, [code, reRender]);
+  }, [code, autoUpdate, reRender]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    mermaid.initialize({ theme: newTheme === 'dark' ? 'dark' : 'default' });
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
+  const toggleLayout = () => {
+    setLayout(prev => prev === 'elk' ? 'dagre' : 'elk');
   };
 
   const copySVG = () => {
@@ -183,6 +238,10 @@ function App() {
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
           </button>
+          <button className="btn" onClick={toggleLayout} title="Toggle Layout Engine">
+            {layout === 'elk' ? <Share2 size={18} /> : <Square size={18} />}
+            {layout === 'elk' ? 'Dagre Layout' : 'ELK Layout'}
+          </button>
           <button className="btn" onClick={copySVG} title="Copy SVG">
             {isCopied ? <Check size={18} color="#10b981" /> : <Copy size={18} />}
             Copy SVG
@@ -202,23 +261,66 @@ function App() {
         <aside className="editor-pane">
           <div className="editor-header">
             <span>Editor</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Play size={14} /> Live
+            <div className="editor-controls">
+              {!autoUpdate && (
+                <button 
+                  className="icon-btn" 
+                  onClick={reRender} 
+                  title="Render Diagram"
+                >
+                  <Play size={14} />
+                </button>
+              )}
+              <div 
+                className={`toggle-switch ${autoUpdate ? 'active' : ''}`}
+                onClick={() => setAutoUpdate(!autoUpdate)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setAutoUpdate(!autoUpdate);
+                  }
+                }}
+                tabIndex={0}
+                role="switch"
+                aria-checked={autoUpdate}
+                title="Auto-update on change"
+              >
+                <div className="toggle-thumb" />
+              </div>
+              <span className="toggle-label">{autoUpdate ? 'Live' : 'Manual'}</span>
             </div>
           </div>
           <div className="editor-container">
-            <textarea
-              className="editor-textarea"
+            <Editor
               value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="Enter Mermaid syntax here..."
-              spellCheck="false"
+              onChange={setCode}
+              theme={theme}
+              errorLine={errorLine}
             />
           </div>
           <div className="status-bar">
             <span>{code.split('\n').length} lines</span>
             {error && (
-              <span style={{ color: '#ef4444', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <span 
+                className="status-error"
+                style={{ 
+                  color: '#ef4444', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.25rem',
+                  cursor: errorLine ? 'pointer' : 'default',
+                  userSelect: 'none'
+                }}
+                onClick={() => {
+                  if (errorLine) {
+                    // Re-dispatch errorLine to trigger scroll in Editor
+                    const currentLine = errorLine;
+                    setErrorLine(null);
+                    setTimeout(() => setErrorLine(currentLine), 10);
+                  }
+                }}
+                title={errorLine ? `Click to scroll to line ${errorLine}` : null}
+              >
                 <AlertCircle size={14} /> {error}
               </span>
             )}

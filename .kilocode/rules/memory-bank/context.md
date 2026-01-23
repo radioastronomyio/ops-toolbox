@@ -2,7 +2,7 @@
 
 ## Current State
 
-**Last Updated:** 2025-01-21
+**Last Updated:** 2025-01-22
 
 ### Recent Accomplishments
 
@@ -18,49 +18,58 @@
 - Added JavaScript/JSX header standard to documentation-standards
 - Added file headers to all source files
 - Pushed to GitHub at `radioastronomyio/ops-toolbox`
+- Deployed to Azure Static Web Apps (live)
+- **Added CodeMirror 6 editor** with line numbers and proper editor behavior
+- **Added layout engine toggle** (ELK/Dagre) with localStorage persistence
+- **Added auto-update toggle** for manual render mode
+- **Added error line highlighting** with click-to-scroll in editor
+- **Refactored mermaid config** to factory pattern, fixing theme toggle bug
 
 ### Current Phase
 
-**Phase 1: MVP Implementation** is complete. Mermaid renderer is functional with ELK layout, live preview, theme toggle, and export capabilities. Ready for deployment.
+**Phase 2: Editor Enhancements** complete. Mermaid renderer now has professional editor features matching mermaid.live UX patterns.
 
 ### Active Work
 
 Currently working on:
 
-1. **Memory bank setup:** ✅ Complete
-2. **Mermaid renderer implementation:** ✅ Complete
-3. **Worklog documentation:** In progress
-4. **Azure deployment pipeline:** Not started — next phase
+1. **Milestone 03 closeout:** PR creation and code review
 
 ## Next Steps
 
 ### Immediate (This Session)
 
-1. Write worklog for `02-mermaid-renderer-implementation`
-2. Final commit and merge to main
+1. Create feature branch, commit, push
+2. Create PR with labels
+3. Trigger Copilot and Greptile reviews
+4. Address any feedback
+5. Merge
 
 ### Near-Term (Next Session)
 
-1. Set up Azure Static Web Apps deployment workflow
-2. Configure GitHub Actions for CI/CD
-3. Deploy to Azure and verify production behavior
-4. Update `apps/mermaid-renderer/README.md` with live URL
+- Address any code review feedback if deferred
+- Consider additional utilities (WHOIS lookup, markdown preview)
+- Evaluate pan/zoom for preview pane
 
 ### Future / Backlog
 
-- Subgraph label positioning refinement (labels outside boxes)
+- Mermaid-specific syntax highlighting (custom grammar)
+- Keyboard shortcut for manual render (Ctrl+Enter)
+- Subgraph label positioning refinement
 - WHOIS lookup utility
 - Markdown preview utility
-- Shared theme system across apps (tokens.css is the foundation)
 
 ## Active Decisions
 
 ### Pending Decisions
 
-- **Custom domain:** Need to decide on domain/subdomain for deployment (TBD)
+None.
 
 ### Recent Decisions
 
+- **2025-01-22 - Layout toggle:** Turned theme-toggle bug into feature (ELK/Dagre selection)
+- **2025-01-22 - CodeMirror 6:** Selected for editor; modular, supports decorations
+- **2025-01-22 - Markdown grammar:** Using `lang-markdown` since no native mermaid grammar exists
 - **2025-01-21 - Public repo:** Repository is public at `radioastronomyio/ops-toolbox`
 - **2025-01-21 - JSDoc headers:** Adopted lightweight JSDoc-style headers for JS/JSX/TS files
 - **2025-01-21 - Antigravity for implementation:** Used Google Antigravity IDE for autonomous implementation with browser validation
@@ -76,31 +85,22 @@ None.
 
 ### External Dependencies
 
-- **Azure Static Web Apps:** Account/subscription needed for deployment (assumed available)
+None.
 
 ## Notes and Observations
 
 ### Recent Insights
 
-- Antigravity completed full implementation in ~5 minutes with browser-based validation
-- Mermaid 11.x required for `registerLayoutLoaders` API (upgraded from initially planned 10.x)
-- ELK layout produces clean hierarchical flow with orthogonal routing as expected
-- Subgraph labels render inside boxes by default — refinement for external labels is a future enhancement
+- KiloCode/Antigravity completed 4 work units efficiently with structured KC prompts
+- CodeMirror 6 Compartment pattern is correct for dynamic theme switching
+- Effect dependency chains can bypass conditional logic — split effects when needed
+- Error line parsing may need refinement for diagrams with leading comments
 
 ### Context for Next Session
 
-Implementation is complete. Primary objective is Azure deployment:
-
-1. Create `.github/workflows/azure-static-web-apps.yml`
-2. Configure Azure Static Web App resource
-3. Deploy and verify
-4. Update README with live URL
+PR merge pending. Once complete, repo is in clean state for next feature work.
 
 Key files created this session:
-- `apps/mermaid-renderer/App.jsx` — main React component
-- `apps/mermaid-renderer/main.jsx` — entry point with ELK initialization  
-- `apps/mermaid-renderer/styles.css` — dark/light theme styles
-- `apps/mermaid-renderer/vite.config.js` — build configuration
-- `shared/styles/tokens.css` — shared design tokens
-- `index.html` (root) — landing page for mono-repo
-- `docs/documentation-standards/script-header-javascript.md` — JS header standard
+- `apps/mermaid-renderer/config.js` — mermaid configuration factory
+- `apps/mermaid-renderer/Editor.jsx` — CodeMirror 6 component
+- `work-logs/03-editor-enhancements/README.md` — milestone worklog

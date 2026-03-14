@@ -24,6 +24,7 @@ staging/
 # IDE & EDITOR
 # ----------------------------------------------------------------------------
 scratch/
+.deep-research/
 .vscode/
 .idea/
 .internal-files/

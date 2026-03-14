@@ -96,8 +96,20 @@ const parseMermaidError = (msg, code) => {
 
 function App() {
   const [code, setCode] = useState(DEFAULT_DIAGRAM);
-  const [theme, setTheme] = useState(() => localStorage.getItem('mermaid-theme') || 'dark');
-  const [layout, setLayout] = useState(() => localStorage.getItem('mermaid-layout') || 'elk');
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('mermaid-theme') || 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+  const [layout, setLayout] = useState(() => {
+    try {
+      return localStorage.getItem('mermaid-layout') || 'elk';
+    } catch {
+      return 'elk';
+    }
+  });
   const [isCopied, setIsCopied] = useState(false);
   const [error, setError] = useState(null);
   const [errorLine, setErrorLine] = useState(null);

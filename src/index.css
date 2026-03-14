@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* CodeMirror overrides — cannot be expressed as Tailwind utilities */
+.cm-editor {
+  height: 100%;
+}
+
+.cm-focused {
+  outline: none !important;
+}
+
+.cm-gutters {
+  background-color: transparent;
+  border-right: 1px solid #334155;
+  color: #94a3b8;
+  min-width: 40px;
+}
+
+.cm-error-line {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  position: relative;
+}
+
+.cm-error-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: #ef4444;
+}

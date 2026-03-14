@@ -77,13 +77,13 @@ const Editor = ({ value, onChange, theme = 'dark', errorLine = null }) => {
             fontSize: "14px"
           },
           ".cm-scroller": {
-            fontFamily: "var(--font-mono, monospace)",
+            fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace",
             lineHeight: "1.6"
           },
           ".cm-gutters": {
             backgroundColor: "transparent",
-            borderRight: "1px solid var(--border-color)",
-            color: "var(--text-secondary)",
+            borderRight: "1px solid #334155",
+            color: "#94a3b8",
             minWidth: "40px"
           }
         })
@@ -126,7 +126,7 @@ const Editor = ({ value, onChange, theme = 'dark', errorLine = null }) => {
       viewRef.current.dispatch({
         effects: errorLineEffect.of(errorLine)
       });
-      
+
       if (errorLine !== null) {
         try {
           const line = viewRef.current.state.doc.line(errorLine);

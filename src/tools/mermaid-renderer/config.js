@@ -32,7 +32,7 @@ export const getMermaidConfig = (theme, layout) => {
       cycleBreakingStrategy: 'GREEDY',
     };
   } else {
-    // Dagre is the default, so we don't strictly need to set layout: 'dagre'
+    // Dagre is default, so we don't strictly need to set layout: 'dagre'
     // but some versions of mermaid might benefit or require it if previously set to elk
     config.layout = 'dagre';
   }

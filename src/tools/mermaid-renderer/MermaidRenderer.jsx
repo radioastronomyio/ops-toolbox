@@ -1,22 +1,22 @@
 /**
- * @file App.jsx
- * @description Main React component for mermaid diagram renderer with live preview and export
+ * @file MermaidRenderer.jsx
+ * @description Main component for mermaid diagram renderer with live preview and export
  * @author vintagedon
  * @license MIT
  * @see https://github.com/radioastronomyio/ops-toolbox
  */
 
 import {
-    AlertCircle,
-    Check,
-    Copy, Download,
-    FileCode,
-    Image as ImageIcon,
-    Moon,
-    Play,
-    Share2,
-    Square,
-    Sun
+  AlertCircle,
+  Check,
+  Copy,
+  Download,
+  Image as ImageIcon,
+  Moon,
+  Play,
+  Share2,
+  Square,
+  Sun
 } from 'lucide-react';
 import mermaid from 'mermaid';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -26,17 +26,17 @@ import Editor from './Editor';
 const DEFAULT_DIAGRAM = `flowchart TB
     subgraph WAN["WAN Zone"]
         ISP[Internet]
-    end
+        end
     
     subgraph CORE["Core Infrastructure"]
         FW[Firewall]
         RTR[Core Router]
-    end
+        end
     
     subgraph DIST["Distribution"]
         SW1[Switch-01]
         SW2[Switch-02]
-    end
+        end
     
     subgraph ACCESS["Access Layer"]
         AP1[AP-Office]
@@ -44,7 +44,7 @@ const DEFAULT_DIAGRAM = `flowchart TB
         SRV[Server]
         WS1[Workstation-1]
         WS2[Workstation-2]
-    end
+        end
     
     ISP --> FW
     FW --> RTR
@@ -58,7 +58,6 @@ const DEFAULT_DIAGRAM = `flowchart TB
 
 /**
  * Convert string to base64, handling unicode characters properly
- * Replaces deprecated unescape(encodeURIComponent()) pattern
  */
 const toBase64 = (str) => {
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
@@ -66,36 +65,24 @@ const toBase64 = (str) => {
 
 /**
  * Parse mermaid error message to extract line number
- * 
- * Mermaid error formats vary by diagram type and error source:
- * - "Parse error on line 5" (parser errors)
- * - "Error on line 12" (validation errors)  
- * - "5:" at start of line (some lexer errors)
- * 
- * Line numbers from mermaid are 1-indexed and absolute to input.
- * CodeMirror's doc.line() is also 1-indexed, so no conversion needed.
- * 
- * @param {string} msg - The error message from mermaid
- * @param {string} code - The full source code (for bounds checking)
- * @returns {number|null} 1-indexed line number or null if not parseable
  */
 const parseMermaidError = (msg, code) => {
   if (!msg) return null;
-  
+
   const match = msg.match(/line\s+(\d+)/i) || msg.match(/^(\d+):/m);
   if (!match) return null;
-  
+
   const lineNum = parseInt(match[1], 10);
   const maxLine = code.split('\n').length;
-  
-  // Validate bounds (1-indexed, within document)
+
   if (lineNum < 1 || lineNum > maxLine) return null;
-  
+
   return lineNum;
 };
 
-function App() {
+function MermaidRenderer() {
   const [code, setCode] = useState(DEFAULT_DIAGRAM);
+  const [elkReady, setElkReady] = useState(false);
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem('mermaid-theme') || 'dark';
@@ -124,16 +111,24 @@ function App() {
   const containerRef = useRef(null);
   const renderTimeout = useRef(null);
 
-  // Memoized render function to satisfy useEffect dependencies
+  // Register ELK layout engine (runs once on module load)
+  useEffect(() => {
+    import('@mermaid-js/layout-elk').then(elkLayouts => {
+      mermaid.registerLayoutLoaders(elkLayouts);
+      setElkReady(true);
+    }).catch(err => {
+      console.error('Failed to load ELK layout engine:', err);
+    });
+  }, []);
+
+  // Memoized render function
   const reRender = useCallback(async () => {
     if (!containerRef.current) return;
-    
+
     try {
       setError(null);
       setErrorLine(null);
-      // Generate unique ID for each render to avoid conflicts
       const id = 'mermaid-svg-' + Math.random().toString(36).slice(2, 11);
-      
       const { svg } = await mermaid.render(id, code);
       containerRef.current.innerHTML = svg;
     } catch (err) {
@@ -144,7 +139,7 @@ function App() {
     }
   }, [code]);
 
-  // Persist preferences and sync DOM
+  // Persist preferences
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
     localStorage.setItem('mermaid-theme', theme);
@@ -152,23 +147,25 @@ function App() {
     localStorage.setItem('mermaid-auto-update', JSON.stringify(autoUpdate));
   }, [theme, layout, autoUpdate]);
 
-  // Reinitialize mermaid and re-render on theme/layout change (always, regardless of autoUpdate)
+  // Initialize mermaid and render on theme/layout/elkReady change
   useEffect(() => {
+    if (!elkReady && layout === 'elk') return;
     mermaid.initialize(getMermaidConfig(theme, layout));
     reRender();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme, layout]);
+  }, [theme, layout, elkReady]);
 
   // Debounced rendering for code changes
   useEffect(() => {
     if (!autoUpdate) return;
-    
+    if (!elkReady && layout === 'elk') return;
+
     if (renderTimeout.current) clearTimeout(renderTimeout.current);
     renderTimeout.current = setTimeout(() => {
       reRender();
     }, 300);
     return () => clearTimeout(renderTimeout.current);
-  }, [code, autoUpdate, reRender]);
+  }, [code, autoUpdate, reRender, elkReady, layout]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -216,12 +213,10 @@ function App() {
     const ctx = canvas.getContext('2d');
     const img = new Image();
 
-    // Get dimensions
     const bbox = svgElement.getBBox ? svgElement.getBBox() : { width: 800, height: 600 };
     const width = svgElement.width.baseVal.value || bbox.width;
     const height = svgElement.height.baseVal.value || bbox.height;
 
-    // Scale for better quality
     const scale = 2;
     canvas.width = width * scale;
     canvas.height = height * scale;
@@ -230,7 +225,7 @@ function App() {
       ctx.fillStyle = theme === 'dark' ? '#0f172a' : '#ffffff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      
+
       const pngUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = pngUrl;
@@ -244,70 +239,87 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      <header className="header">
-        <div className="logo">
-          <FileCode size={24} />
-          Ops Toolbox <span>Mermaid Renderer</span>
-        </div>
-        <div className="controls">
-          <button className="btn" onClick={toggleTheme} title="Toggle Theme">
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-          </button>
-          <button className="btn" onClick={toggleLayout} title="Toggle Layout Engine">
-            {layout === 'elk' ? <Share2 size={18} /> : <Square size={18} />}
-            {layout === 'elk' ? 'Dagre Layout' : 'ELK Layout'}
-          </button>
-          <button className="btn" onClick={copySVG} title="Copy SVG">
-            {isCopied ? <Check size={18} color="#10b981" /> : <Copy size={18} />}
-            Copy SVG
-          </button>
-          <button className="btn" onClick={downloadSVG}>
-            <Download size={18} />
-            SVG
-          </button>
-          <button className="btn btn-primary" onClick={downloadPNG}>
-            <ImageIcon size={18} />
-            PNG
-          </button>
-        </div>
-      </header>
+    <div className="space-y-4">
+      <div>
+        <h1 className="text-2xl font-bold text-white mb-2">Mermaid Renderer</h1>
+        <p className="text-slate-400">
+          Paste mermaid diagram code and get rendered SVG with ELK layout engine.
+        </p>
+      </div>
 
-      <main className="main-content">
-        <aside className="editor-pane">
-          <div className="editor-header">
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          onClick={toggleTheme}
+          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-md border border-slate-700 transition-colors"
+          title="Toggle Theme"
+        >
+          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          {theme === 'dark' ? 'Light' : 'Dark'}
+        </button>
+        <button
+          onClick={toggleLayout}
+          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-md border border-slate-700 transition-colors"
+          title="Toggle Layout Engine"
+        >
+          {layout === 'elk' ? <Share2 size={16} /> : <Square size={16} />}
+          {layout === 'elk' ? 'Dagre' : 'ELK'}
+        </button>
+        <button
+          onClick={copySVG}
+          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-md border border-slate-700 transition-colors"
+          title="Copy SVG"
+        >
+          {isCopied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
+          Copy SVG
+        </button>
+        <button
+          onClick={downloadSVG}
+          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-md border border-slate-700 transition-colors"
+          title="Download SVG"
+        >
+          <Download size={16} />
+          SVG
+        </button>
+        <button
+          onClick={downloadPNG}
+          className="flex items-center gap-2 px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white text-sm font-medium rounded-md transition-colors"
+          title="Download PNG"
+        >
+          <ImageIcon size={16} />
+          PNG
+        </button>
+      </div>
+
+      {/* Editor + Preview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4" style={{ minHeight: '500px' }}>
+        {/* Editor pane */}
+        <div className="flex flex-col border border-slate-700 rounded-lg overflow-hidden">
+          <div className="flex items-center justify-between px-3 py-2 bg-slate-800 border-b border-slate-700 text-xs text-slate-400 uppercase tracking-wide">
             <span>Editor</span>
-            <div className="editor-controls">
+            <div className="flex items-center gap-3">
               {!autoUpdate && (
-                <button 
-                  className="icon-btn" 
-                  onClick={reRender} 
+                <button
+                  className="text-slate-400 hover:text-sky-400 transition-colors"
+                  onClick={reRender}
                   title="Render Diagram"
                 >
                   <Play size={14} />
                 </button>
               )}
-              <div 
-                className={`toggle-switch ${autoUpdate ? 'active' : ''}`}
+              <button
+                className={`relative w-8 h-[18px] rounded-full transition-colors cursor-pointer ${autoUpdate ? 'bg-emerald-500' : 'bg-slate-600'}`}
                 onClick={() => setAutoUpdate(!autoUpdate)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setAutoUpdate(!autoUpdate);
-                  }
-                }}
-                tabIndex={0}
                 role="switch"
                 aria-checked={autoUpdate}
                 title="Auto-update on change"
               >
-                <div className="toggle-thumb" />
-              </div>
-              <span className="toggle-label">{autoUpdate ? 'Live' : 'Manual'}</span>
+                <span className={`absolute top-[2px] w-[14px] h-[14px] bg-white rounded-full transition-transform ${autoUpdate ? 'left-[18px]' : 'left-[2px]'}`} />
+              </button>
+              <span className="text-slate-500 text-[11px] font-semibold min-w-[40px]">{autoUpdate ? 'Live' : 'Manual'}</span>
             </div>
           </div>
-          <div className="editor-container">
+          <div className="flex-1 overflow-hidden bg-slate-900">
             <Editor
               value={code}
               onChange={setCode}
@@ -315,41 +327,33 @@ function App() {
               errorLine={errorLine}
             />
           </div>
-          <div className="status-bar">
+          <div className="flex items-center justify-between px-3 py-1.5 bg-slate-800 border-t border-slate-700 text-xs text-slate-500">
             <span>{code.split('\n').length} lines</span>
             {error && (
-              <span 
-                className="status-error"
-                style={{ 
-                  color: '#ef4444', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '0.25rem',
-                  cursor: errorLine ? 'pointer' : 'default',
-                  userSelect: 'none'
-                }}
+              <span
+                className="flex items-center gap-1 text-red-400 cursor-pointer"
                 onClick={() => {
                   if (errorLine) {
-                    // Re-dispatch errorLine to trigger scroll in Editor
                     const currentLine = errorLine;
                     setErrorLine(null);
                     setTimeout(() => setErrorLine(currentLine), 10);
                   }
                 }}
-                title={errorLine ? `Click to scroll to line ${errorLine}` : null}
+                title={errorLine ? `Click to scroll to line ${errorLine}` : undefined}
               >
-                <AlertCircle size={14} /> {error}
+                <AlertCircle size={12} /> {error}
               </span>
             )}
           </div>
-        </aside>
+        </div>
 
-        <section className="preview-pane">
-          <div ref={containerRef} className="mermaid-output" />
-        </section>
-      </main>
+        {/* Preview pane */}
+        <div className="flex items-center justify-center border border-slate-700 rounded-lg bg-slate-900 overflow-auto p-4">
+          <div ref={containerRef} className="w-full h-full flex items-center justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
+        </div>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default MermaidRenderer;

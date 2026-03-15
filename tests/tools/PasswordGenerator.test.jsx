@@ -33,4 +33,30 @@ describe('PasswordGenerator', () => {
     fireEvent.click(screen.getByText('!@#$%^&*()'));
     expect(screen.getByText('Enable at least one character set')).toBeInTheDocument();
   });
+
+  it('renders mode toggle with Password and Passphrase buttons', () => {
+    render(<PasswordGenerator />);
+    expect(screen.getByText('Password')).toBeInTheDocument();
+    expect(screen.getByText('Passphrase')).toBeInTheDocument();
+  });
+
+  it('switching to Passphrase mode shows word count slider', () => {
+    render(<PasswordGenerator />);
+    fireEvent.click(screen.getByText('Passphrase'));
+    expect(screen.getByLabelText('Word Count')).toBeInTheDocument();
+  });
+
+  it('switching to Passphrase mode hides character pool toggles', () => {
+    render(<PasswordGenerator />);
+    fireEvent.click(screen.getByText('Passphrase'));
+    expect(screen.queryByText('Uppercase')).not.toBeInTheDocument();
+  });
+
+  it('passphrase mode generates output with word separators', () => {
+    render(<PasswordGenerator />);
+    fireEvent.click(screen.getByText('Passphrase'));
+    const pre = document.querySelector('.font-mono');
+    expect(pre).toBeInTheDocument();
+    expect(pre.textContent).toMatch(/-/);
+  });
 });

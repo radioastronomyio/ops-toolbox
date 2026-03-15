@@ -1,3 +1,5 @@
+import { EFF_SHORT_WORDLIST } from './wordlist.js';
+
 /**
  * Character pools for password generation
  */
@@ -40,15 +42,27 @@ export function generatePassword(length, options) {
  * @param {string} charset - Character set string
  * @returns {number} Entropy in bits
  */
-export function calculateEntropy(length, charset) {
-  if (length === 0 || !charset) return 0;
+export function calculateEntropy(length, poolSize) {
+  if (length === 0 || !poolSize) return 0;
+  return Math.floor(length * Math.log2(poolSize));
+}
 
-  const poolSize = charset.length;
+export function generatePassphrase(wordCount, separator = '-', capitalize = false) {
+  const wordlist = EFF_SHORT_WORDLIST;
+  const randomValues = new Uint32Array(wordCount);
+  crypto.getRandomValues(randomValues);
 
-  // Calculate entropy: E = log2(poolSize^length)
-  const entropy = Math.floor(length * Math.log2(poolSize));
+  const words = Array.from(randomValues).map(val => {
+    const word = wordlist[val % wordlist.length];
+    return capitalize ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+  });
 
-  return entropy;
+  return words.join(separator);
+}
+
+export function calculatePassphraseEntropy(wordCount, wordlistSize) {
+  if (wordCount === 0 || !wordlistSize) return 0;
+  return Math.floor(wordCount * Math.log2(wordlistSize));
 }
 
 /**

@@ -30,7 +30,7 @@ describe('config.js', () => {
     expect(config).toEqual({
       startOnLoad: false,
       theme: 'dark',
-      securityLevel: 'antiscript',
+      securityLevel: 'strict',
       flowchart: {
         useMaxWidth: true,
         htmlLabels: true,
@@ -50,7 +50,7 @@ describe('config.js', () => {
     expect(config).toEqual({
       startOnLoad: false,
       theme: 'default',
-      securityLevel: 'antiscript',
+      securityLevel: 'strict',
       flowchart: {
         useMaxWidth: true,
         htmlLabels: true,

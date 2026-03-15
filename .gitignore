@@ -55,6 +55,7 @@ eggs/
 .eggs/
 lib/
 !src/lib/
+!tests/lib/
 lib64/
 parts/
 sdist/

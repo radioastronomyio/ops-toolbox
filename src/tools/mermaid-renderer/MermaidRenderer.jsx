@@ -113,11 +113,21 @@ function MermaidRenderer() {
 
   // Register ELK layout engine (runs once on module load)
   useEffect(() => {
-    import('@mermaid-js/layout-elk').then(elkLayouts => {
-      mermaid.registerLayoutLoaders(elkLayouts);
-      setElkReady(true);
+    import('@mermaid-js/layout-elk').then(elkModule => {
+      const loaders = elkModule.default ?? elkModule;
+      if (typeof loaders === 'function') {
+        loaders(mermaid);
+        setElkReady(true);
+      } else if (loaders && typeof loaders === 'object') {
+        mermaid.registerLayoutLoaders(loaders);
+        setElkReady(true);
+      } else {
+        console.error('ELK module format not recognized:', elkModule);
+        setLayout('dagre');
+      }
     }).catch(err => {
       console.error('Failed to load ELK layout engine:', err);
+      setLayout('dagre');
     });
   }, []);
 

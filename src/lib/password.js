@@ -39,7 +39,7 @@ export function generatePassword(length, options) {
 /**
  * Calculates the entropy of a password in bits
  * @param {number} length - Password length
- * @param {string} charset - Character set string
+ * @param {number} poolSize - Number of possible characters in the pool
  * @returns {number} Entropy in bits
  */
 export function calculateEntropy(length, poolSize) {

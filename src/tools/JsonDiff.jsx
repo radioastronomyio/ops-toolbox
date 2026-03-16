@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { parseJson, computeDiff, renderDiffHtml } from '../lib/jsonDiff';
 
 export default function JsonDiff() {
@@ -107,7 +108,7 @@ export default function JsonDiff() {
           <div
             data-testid="diff-output"
             className="bg-slate-900 border border-slate-700 rounded p-4 overflow-auto"
-            dangerouslySetInnerHTML={{ __html: diffHtml }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(diffHtml) }}
           />
 
           <div>

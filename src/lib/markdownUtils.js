@@ -4,8 +4,7 @@ import DOMPurify from 'dompurify';
 export function renderMarkdown(markdown, options = {}) {
   if (!markdown) return '';
   const { gfm = true, breaks = false } = options;
-  marked.setOptions({ gfm, breaks });
-  const html = marked.parse(markdown);
+  const html = marked.parse(markdown, { gfm, breaks });
   try {
     return DOMPurify.sanitize(html);
   } catch {

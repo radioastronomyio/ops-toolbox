@@ -52,7 +52,9 @@ export function parseQueryString(qs) {
     const encoded = eqIdx === -1 ? '' : pair.slice(eqIdx + 1);
     let decoded = '';
     try { decoded = decodeURIComponent(encoded.replace(/\+/g, ' ')); } catch { decoded = encoded; }
-    if (key) result.push({ key: decodeURIComponent(key), encoded, decoded });
+    let decodedKey = key;
+    try { decodedKey = decodeURIComponent(key); } catch {}
+    if (decodedKey) result.push({ key: decodedKey, encoded, decoded });
   });
   return result;
 }

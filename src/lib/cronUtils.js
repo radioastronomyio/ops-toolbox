@@ -65,7 +65,7 @@ function matchField(field, value, min, max, isDow = false) {
   // Step values: */n
   if (field.startsWith('*/')) {
     const step = parseInt(field.slice(2));
-    return value % step === 0;
+    return (value - min) % step === 0;
   }
 
   // Range: a-b

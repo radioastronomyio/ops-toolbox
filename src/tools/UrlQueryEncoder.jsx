@@ -58,9 +58,9 @@ export default function UrlQueryEncoder() {
 
   function handleBuildUrl() {
     try {
-      const params = {};
-      rows.forEach(r => { if (r.key) params[r.key] = r.value; });
-      const result = buildUrl(baseUrl, params);
+      const url = new URL(baseUrl);
+      rows.forEach(r => { if (r.key) url.searchParams.append(r.key, r.value); });
+      const result = url.toString();
       setBuiltUrl(result);
       setBuildError('');
     } catch (e) {

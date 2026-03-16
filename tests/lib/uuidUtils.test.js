@@ -14,13 +14,12 @@ describe('generateV7', () => {
   it('matches v7 pattern', () => {
     expect(generateV7()).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
   });
-  it('successive v7 UUIDs are sortable', () => {
+  it('successive v7 UUIDs are sortable', async () => {
     const a = generateV7();
     // Small delay to ensure different timestamps
+    await new Promise(r => setTimeout(r, 2));
     const b = generateV7();
-    // Both should be valid v7
-    expect(a).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7/);
-    expect(b).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7/);
+    expect(a < b).toBe(true);
   });
 });
 

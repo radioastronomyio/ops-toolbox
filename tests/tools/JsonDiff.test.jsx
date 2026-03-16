@@ -10,8 +10,8 @@ describe('JsonDiff', () => {
 
   it('two textareas labeled Original and Modified', () => {
     render(<JsonDiff />);
-    expect(screen.getByPlaceholderText(/original/i) || screen.getByText(/Original/)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/modified/i) || screen.getByText(/Modified/)).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/original/i) || screen.getByText(/Original/)).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/modified/i) || screen.getByText(/Modified/)).toBeInTheDocument();
   });
 
   it('Compare button is present', () => {

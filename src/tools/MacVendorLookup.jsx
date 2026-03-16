@@ -45,10 +45,6 @@ export default function MacVendorLookup() {
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleLookup();
-  };
-
   return (
     <div className="space-y-6">
       <div>
@@ -61,7 +57,6 @@ export default function MacVendorLookup() {
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
           placeholder="e.g. AA:BB:CC:DD:EE:FF"
           className="flex-1 bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-3 font-mono focus:outline-none focus:border-blue-500"
         />

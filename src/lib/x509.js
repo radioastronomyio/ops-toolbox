@@ -42,8 +42,13 @@ export function parseCertificate(pemString) {
     try {
       const spki = cert.subjectPublicKeyInfo;
       publicKeyAlgorithm = spki?.algorithm?.algorithmId || '';
-      const keyBitLen = spki?.parsedKey?.modulus?.valueBlock?.valueHex?.byteLength;
-      if (keyBitLen) publicKeySize = String(keyBitLen * 8);
+      const modHex = spki?.parsedKey?.modulus?.valueBlock?.valueHex;
+      if (modHex) {
+        const bytes = new Uint8Array(modHex);
+        // DER encodes a leading 0x00 when high bit is set; strip it for bit length
+        const leadingZero = bytes.length > 0 && bytes[0] === 0 ? 1 : 0;
+        publicKeySize = String((bytes.length - leadingZero) * 8);
+      }
     } catch {}
     return { subject, issuer, serialNumber, validFrom, validTo, signatureAlgorithm: sigAlg, publicKeyAlgorithm, publicKeySize };
   } catch (e) {

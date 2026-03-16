@@ -20,8 +20,10 @@ export default function FileHashCalculator() {
   const [copied, setCopied] = useState({});
   const fileInputRef = useRef(null);
   const dropRef = useRef(null);
+  const hashGeneration = useRef(0);
 
   async function computeHashes(f, algos) {
+    const gen = ++hashGeneration.current;
     setHashing(true);
     setHashes({});
     const results = {};
@@ -36,6 +38,8 @@ export default function FileHashCalculator() {
         }
       })
     );
+    // Discard results if a newer file was selected while hashing
+    if (gen !== hashGeneration.current) return;
     setHashes(results);
     setHashing(false);
   }

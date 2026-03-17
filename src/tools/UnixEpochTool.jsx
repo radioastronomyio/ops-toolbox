@@ -52,7 +52,7 @@ export default function UnixEpochTool() {
       <div className="bg-slate-800 rounded-lg p-4 space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium text-slate-400">Current Epoch (Live)</h2>
-          <CopyButton text={now} />
+          <CopyButton text={String(now)} />
         </div>
         <div className="font-mono text-3xl text-slate-100">{now}</div>
         <div className="flex flex-wrap gap-2">
@@ -151,12 +151,12 @@ export default function UnixEpochTool() {
             <div className="flex items-center gap-3 bg-slate-900 rounded px-3 py-2">
               <span className="text-xs text-slate-500 w-24">Seconds</span>
               <span className="text-slate-100 font-mono text-sm flex-1">{humanEpoch.seconds}</span>
-              <CopyButton text={humanEpoch.seconds} />
+              <CopyButton text={String(humanEpoch.seconds)} />
             </div>
             <div className="flex items-center gap-3 bg-slate-900 rounded px-3 py-2">
               <span className="text-xs text-slate-500 w-24">Milliseconds</span>
               <span className="text-slate-100 font-mono text-sm flex-1">{humanEpoch.milliseconds}</span>
-              <CopyButton text={humanEpoch.milliseconds} />
+              <CopyButton text={String(humanEpoch.milliseconds)} />
             </div>
           </div>
         )}

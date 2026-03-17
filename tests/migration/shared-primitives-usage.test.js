@@ -31,7 +31,7 @@ describe('shared primitives adoption', () => {
   });
 
   test('no tool uses hand-rolled debounce pattern', () => {
-    const pattern = /debounceRef\.current\s*=\s*setTimeout/;
+    const pattern = /\.current\s*=\s*setTimeout\s*\(/;
     for (const file of toolFiles) {
       const content = readFileSync(file, 'utf-8');
       expect(content).not.toMatch(pattern);

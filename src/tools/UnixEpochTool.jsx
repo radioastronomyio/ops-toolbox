@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fromEpoch, toEpoch, formatInTimezone, parseHumanDate } from '../lib/epochUtils.js';
+import CopyButton from '../components/CopyButton';
 
 const TIMEZONES = ['UTC', 'Local', 'America/New_York', 'Europe/London', 'Asia/Tokyo'];
 
@@ -20,24 +21,6 @@ function getRelativeTime(date) {
   if (hours > 0) return `${hours} hour${hours !== 1 ? 's' : ''} ${suffix}`;
   if (mins > 0) return `${mins} minute${mins !== 1 ? 's' : ''} ${suffix}`;
   return `${secs} second${secs !== 1 ? 's' : ''} ${suffix}`;
-}
-
-function CopyButton({ text, label = 'Copy' }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(String(text)).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-  return (
-    <button
-      onClick={handleCopy}
-      className="px-2 py-0.5 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors"
-    >
-      {copied ? 'Copied!' : label}
-    </button>
-  );
 }
 
 export default function UnixEpochTool() {
@@ -69,7 +52,7 @@ export default function UnixEpochTool() {
       <div className="bg-slate-800 rounded-lg p-4 space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium text-slate-400">Current Epoch (Live)</h2>
-          <CopyButton text={now} />
+          <CopyButton text={String(now)} />
         </div>
         <div className="font-mono text-3xl text-slate-100">{now}</div>
         <div className="flex flex-wrap gap-2">
@@ -168,12 +151,12 @@ export default function UnixEpochTool() {
             <div className="flex items-center gap-3 bg-slate-900 rounded px-3 py-2">
               <span className="text-xs text-slate-500 w-24">Seconds</span>
               <span className="text-slate-100 font-mono text-sm flex-1">{humanEpoch.seconds}</span>
-              <CopyButton text={humanEpoch.seconds} />
+              <CopyButton text={String(humanEpoch.seconds)} />
             </div>
             <div className="flex items-center gap-3 bg-slate-900 rounded px-3 py-2">
               <span className="text-xs text-slate-500 w-24">Milliseconds</span>
               <span className="text-slate-100 font-mono text-sm flex-1">{humanEpoch.milliseconds}</span>
-              <CopyButton text={humanEpoch.milliseconds} />
+              <CopyButton text={String(humanEpoch.milliseconds)} />
             </div>
           </div>
         )}

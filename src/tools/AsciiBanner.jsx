@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAvailableFonts, generateBanner } from '../lib/asciiBanner.js';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import CopyButton from '../components/CopyButton';
 
 const PRESET_FONTS = ['Standard', 'Big', 'Slant', 'Banner', 'Block', 'Doom'];
 const LAYOUT_OPTIONS = [
@@ -15,32 +17,20 @@ export default function AsciiBanner() {
   const [layout, setLayout] = useState('default');
   const [output, setOutput] = useState('');
   const [fonts, setFonts] = useState([]);
-  const debounceRef = useRef(null);
-  const [copied, setCopied] = useState(false);
+  const debouncedText = useDebouncedValue(text, 300);
 
   useEffect(() => {
     setFonts(getAvailableFonts());
   }, []);
 
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      generateBanner(text, font, { width, horizontalLayout: layout })
-        .then(result => setOutput(result))
-        .catch(() => setOutput(''));
-    }, 300);
-    return () => clearTimeout(debounceRef.current);
-  }, [text, font, width, layout]);
+    generateBanner(debouncedText, font, { width, horizontalLayout: layout })
+      .then(result => setOutput(result))
+      .catch(() => setOutput(''));
+  }, [debouncedText, font, width, layout]);
 
   const lines = output ? output.split('\n').length : 0;
   const chars = output ? output.length : 0;
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(output).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
 
   const handleDownload = () => {
     const blob = new Blob([output], { type: 'text/plain' });
@@ -134,12 +124,7 @@ export default function AsciiBanner() {
             {lines} lines · {chars} characters
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={handleCopy}
-              className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded transition-colors"
-            >
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
+            <CopyButton text={output} className="py-1.5 text-sm" />
             <button
               onClick={handleDownload}
               className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded transition-colors"

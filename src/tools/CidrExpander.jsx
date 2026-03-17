@@ -1,43 +1,30 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { expandCIDR } from '../lib/subnet.js';
+import { useClipboard } from '../hooks/useClipboard';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
 
 export default function CidrExpander() {
   const [input, setInput] = useState('192.168.1.0/24');
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [copied, setCopied] = useState(false);
-  const debounceRef = useRef(null);
+  const { copy, copied } = useClipboard();
+  const debouncedInput = useDebouncedValue(input, 300);
 
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      if (!input.trim()) {
-        setResult(null);
-        setError(null);
-        return;
-      }
-      const r = expandCIDR(input.trim());
-      if (!r) {
-        setError('Invalid CIDR format');
-        setResult(null);
-      } else {
-        setError(null);
-        setResult(r);
-      }
-    }, 300);
-    return () => clearTimeout(debounceRef.current);
-  }, [input]);
-
-  const handleCopy = async () => {
-    if (!result?.ips) return;
-    try {
-      await navigator.clipboard.writeText(result.ips.join('\n'));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Copy failed:', err);
+    if (!debouncedInput.trim()) {
+      setResult(null);
+      setError(null);
+      return;
     }
-  };
+    const r = expandCIDR(debouncedInput.trim());
+    if (!r) {
+      setError('Invalid CIDR format');
+      setResult(null);
+    } else {
+      setError(null);
+      setResult(r);
+    }
+  }, [debouncedInput]);
 
   return (
     <div className="space-y-6">
@@ -88,7 +75,7 @@ export default function CidrExpander() {
                   IP Addresses ({result.totalIPs.toLocaleString()})
                 </h2>
                 <button
-                  onClick={handleCopy}
+                  onClick={() => copy(result.ips.join('\n'))}
                   className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
                 >
                   {copied ? 'Copied!' : 'Copy List'}

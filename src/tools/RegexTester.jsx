@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { compileRegex, runMatches, buildHighlightSegments } from '../lib/regexTester.js';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
 
 const QUICK_REF = [
   { token: '.', desc: 'Any character except newline' },
@@ -30,29 +31,26 @@ export default function RegexTester() {
   const [segments, setSegments] = useState([]);
   const [error, setError] = useState(null);
   const [showRef, setShowRef] = useState(false);
-  const debounceRef = useRef(null);
+  const debouncedPattern = useDebouncedValue(pattern, 150);
+  const debouncedTestString = useDebouncedValue(testString, 150);
 
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      const flagStr = Object.entries(flags)
-        .filter(([, v]) => v)
-        .map(([k]) => k)
-        .join('');
-      const { regex, error: compileError } = compileRegex(pattern, flagStr);
-      if (compileError) {
-        setError(compileError);
-        setMatches([]);
-        setSegments(testString ? [{ text: testString, isMatch: false, groupIndex: null }] : []);
-        return;
-      }
-      setError(null);
-      const { matches: m } = runMatches(regex, testString);
-      setMatches(m);
-      setSegments(buildHighlightSegments(testString, m));
-    }, 150);
-    return () => clearTimeout(debounceRef.current);
-  }, [pattern, flags, testString]);
+    const flagStr = Object.entries(flags)
+      .filter(([, v]) => v)
+      .map(([k]) => k)
+      .join('');
+    const { regex, error: compileError } = compileRegex(debouncedPattern, flagStr);
+    if (compileError) {
+      setError(compileError);
+      setMatches([]);
+      setSegments(debouncedTestString ? [{ text: debouncedTestString, isMatch: false, groupIndex: null }] : []);
+      return;
+    }
+    setError(null);
+    const { matches: m } = runMatches(regex, debouncedTestString);
+    setMatches(m);
+    setSegments(buildHighlightSegments(debouncedTestString, m));
+  }, [debouncedPattern, debouncedTestString, flags]);
 
   const toggleFlag = (flag) => setFlags(f => ({ ...f, [flag]: !f[flag] }));
 

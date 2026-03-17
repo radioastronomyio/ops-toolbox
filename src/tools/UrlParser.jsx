@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { parseURL } from '../lib/url-parser.js';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
 
 const DEFAULT_URL = 'https://example.com:8080/path/to/page?key=value&foo=bar#section';
 
@@ -18,27 +19,23 @@ export default function UrlParser() {
   const [input, setInput] = useState(DEFAULT_URL);
   const [result, setResult] = useState(() => parseURL(DEFAULT_URL));
   const [error, setError] = useState(null);
-  const debounceRef = useRef(null);
+  const debouncedInput = useDebouncedValue(input, 200);
 
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      if (!input.trim()) {
-        setResult(null);
-        setError(null);
-        return;
-      }
-      const r = parseURL(input);
-      if (!r) {
-        setError('Invalid URL format');
-        setResult(null);
-      } else {
-        setError(null);
-        setResult(r);
-      }
-    }, 200);
-    return () => clearTimeout(debounceRef.current);
-  }, [input]);
+    if (!debouncedInput.trim()) {
+      setResult(null);
+      setError(null);
+      return;
+    }
+    const r = parseURL(debouncedInput);
+    if (!r) {
+      setError('Invalid URL format');
+      setResult(null);
+    } else {
+      setError(null);
+      setResult(r);
+    }
+  }, [debouncedInput]);
 
   return (
     <div className="space-y-6">

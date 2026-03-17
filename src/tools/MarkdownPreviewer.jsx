@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { renderMarkdown, countWords, estimateReadTime } from '../lib/markdownUtils.js';
+import { useClipboard } from '../hooks/useClipboard';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
 
 const DEFAULT_CONTENT = `# Welcome to Markdown Previewer
 
@@ -38,35 +40,17 @@ export default function MarkdownPreviewer() {
   const [gfm, setGfm] = useState(true);
   const [breaks, setBreaks] = useState(false);
   const [viewMode, setViewMode] = useState('split');
-  const [copiedMd, setCopiedMd] = useState(false);
-  const [copiedHtml, setCopiedHtml] = useState(false);
-  const debounceRef = useRef(null);
+  const mdCb = useClipboard();
+  const htmlCb = useClipboard();
+  const debouncedMarkdown = useDebouncedValue(markdown, 150);
 
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      setHtml(renderMarkdown(markdown, { gfm, breaks }));
-    }, 150);
-    return () => clearTimeout(debounceRef.current);
-  }, [markdown, gfm, breaks]);
+    setHtml(renderMarkdown(debouncedMarkdown, { gfm, breaks }));
+  }, [debouncedMarkdown, gfm, breaks]);
 
   const words = countWords(markdown);
   const readTime = estimateReadTime(markdown);
   const lines = markdown ? markdown.split('\n').length : 0;
-
-  const handleCopyMarkdown = () => {
-    navigator.clipboard.writeText(markdown).then(() => {
-      setCopiedMd(true);
-      setTimeout(() => setCopiedMd(false), 2000);
-    });
-  };
-
-  const handleCopyHtml = () => {
-    navigator.clipboard.writeText(html).then(() => {
-      setCopiedHtml(true);
-      setTimeout(() => setCopiedHtml(false), 2000);
-    });
-  };
 
   const handleDownload = () => {
     const blob = new Blob([markdown], { type: 'text/markdown' });
@@ -139,16 +123,16 @@ export default function MarkdownPreviewer() {
         {/* Action buttons */}
         <div className="flex gap-2">
           <button
-            onClick={handleCopyMarkdown}
+            onClick={() => mdCb.copy(markdown)}
             className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded"
           >
-            {copiedMd ? 'Copied!' : 'Copy Markdown'}
+            {mdCb.copied ? 'Copied!' : 'Copy Markdown'}
           </button>
           <button
-            onClick={handleCopyHtml}
+            onClick={() => htmlCb.copy(html)}
             className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded"
           >
-            {copiedHtml ? 'Copied!' : 'Copy HTML'}
+            {htmlCb.copied ? 'Copied!' : 'Copy HTML'}
           </button>
           <button
             onClick={handleDownload}

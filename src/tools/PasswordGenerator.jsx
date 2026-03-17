@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { generatePassword, calculateEntropy, buildCharset, generatePassphrase, calculatePassphraseEntropy } from '../lib/password.js';
 import { EFF_SHORT_WORDLIST } from '../lib/wordlist.js';
+import { useClipboard } from '../hooks/useClipboard';
+import ErrorBanner from '../components/ErrorBanner';
 
 const SEPARATOR_OPTIONS = [
   { label: 'Hyphen (-)', value: '-' },
@@ -27,8 +29,8 @@ export default function PasswordGenerator() {
 
   const [output, setOutput] = useState('');
   const [entropy, setEntropy] = useState(0);
-  const [copied, setCopied] = useState(false);
   const [error, setError] = useState(null);
+  const { copy, copied } = useClipboard();
 
   useEffect(() => {
     if (mode === 'password') {
@@ -57,16 +59,6 @@ export default function PasswordGenerator() {
       setError(null);
     }
   }, [mode, length, uppercase, lowercase, numeric, special, wordCount, separator, capitalize]);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(output);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy to clipboard:', err);
-    }
-  };
 
   const handleRegenerate = () => {
     if (mode === 'password') {
@@ -211,7 +203,7 @@ export default function PasswordGenerator() {
           {/* Action buttons */}
           <div className="flex gap-4">
             <button
-              onClick={handleCopy}
+              onClick={() => copy(output)}
               disabled={!output || copied}
               className="px-6 py-3 bg-blue-600 hover:bg-blue-500 border-blue-500 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -228,11 +220,7 @@ export default function PasswordGenerator() {
 
         {/* Right panel: Output */}
         <div className="space-y-4">
-          {error && (
-            <div className="p-6 bg-red-900/20 border border-red-500 rounded-lg">
-              <p className="text-red-400">{error}</p>
-            </div>
-          )}
+          <ErrorBanner message={error} />
 
           {!output && !error && (
             <div className="p-6 bg-slate-800 border border-slate-600 rounded-lg text-slate-400">

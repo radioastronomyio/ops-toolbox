@@ -17,20 +17,24 @@ const POOLS = {
  * @returns {string} Generated password
  */
 export function generatePassword(length, options) {
-  // Build charset from options
   const charset = buildCharset(options);
   if (!charset) {
     throw new Error('At least one character set must be enabled');
   }
 
-  // Generate random values
-  const randomValues = window.crypto.getRandomValues(new Uint8Array(length));
+  const poolSize = charset.length;
+  // Largest multiple of poolSize that fits in a Uint8 (0–255)
+  const maxValid = 256 - (256 % poolSize);
 
-  // Build password from random values
   let password = '';
-  for (let i = 0; i < length; i++) {
-    const randomValue = randomValues[i] % charset.length;
-    password += charset[randomValue];
+  while (password.length < length) {
+    const randomValues = window.crypto.getRandomValues(new Uint8Array(length * 2));
+    for (let i = 0; i < randomValues.length && password.length < length; i++) {
+      if (randomValues[i] < maxValid) {
+        password += charset[randomValues[i] % poolSize];
+      }
+      // else: reject this byte, try next
+    }
   }
 
   return password;
@@ -49,13 +53,21 @@ export function calculateEntropy(length, poolSize) {
 
 export function generatePassphrase(wordCount, separator = '-', capitalize = false) {
   const wordlist = EFF_SHORT_WORDLIST;
-  const randomValues = new Uint32Array(wordCount);
-  crypto.getRandomValues(randomValues);
+  const poolSize = wordlist.length;
+  // Largest multiple of poolSize that fits in a Uint32 (0–4294967295)
+  const maxValid = 4294967296 - (4294967296 % poolSize);
 
-  const words = Array.from(randomValues).map(val => {
-    const word = wordlist[val % wordlist.length];
-    return capitalize ? word.charAt(0).toUpperCase() + word.slice(1) : word;
-  });
+  const words = [];
+  while (words.length < wordCount) {
+    const randomValues = window.crypto.getRandomValues(new Uint32Array(wordCount * 2));
+    for (let i = 0; i < randomValues.length && words.length < wordCount; i++) {
+      if (randomValues[i] < maxValid) {
+        let word = wordlist[randomValues[i] % poolSize];
+        if (capitalize) word = word.charAt(0).toUpperCase() + word.slice(1);
+        words.push(word);
+      }
+    }
+  }
 
   return words.join(separator);
 }

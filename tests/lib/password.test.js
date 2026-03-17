@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { generatePassword, calculateEntropy, buildCharset, generatePassphrase, calculatePassphraseEntropy } from '../../src/lib/password.js';
+import { EFF_SHORT_WORDLIST } from '../../src/lib/wordlist.js';
 
 describe('Password Generator', () => {
   beforeEach(() => {
@@ -192,5 +193,101 @@ describe('calculatePassphraseEntropy', () => {
 
   it('wordCount=0 → 0', () => {
     expect(calculatePassphraseEntropy(0, 1296)).toBe(0);
+  });
+});
+
+describe('generatePassword — rejection sampling', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it.each([8, 16, 32, 64])('generates a password of length %i', (length) => {
+    const password = generatePassword(length, { uppercase: true, lowercase: true, numeric: true, special: true });
+    expect(password).toHaveLength(length);
+  });
+
+  it('all characters in output are from the selected charset', () => {
+    const options = { uppercase: true, lowercase: true, numeric: true, special: false };
+    const charset = buildCharset(options);
+    const password = generatePassword(32, options);
+    for (const ch of password) {
+      expect(charset).toContain(ch);
+    }
+  });
+
+  it('throws if no character set is enabled', () => {
+    expect(() => generatePassword(8, { uppercase: false, lowercase: false, numeric: false, special: false })).toThrow('At least one character set must be enabled');
+  });
+
+  it('two consecutive calls produce different results', () => {
+    const results = Array.from({ length: 10 }, () =>
+      generatePassword(16, { uppercase: true, lowercase: true, numeric: true, special: true })
+    );
+    const unique = new Set(results);
+    expect(unique.size).toBeGreaterThan(1);
+  });
+
+  it('works with a single character set enabled (lowercase only)', () => {
+    const options = { uppercase: false, lowercase: true, numeric: false, special: false };
+    const charset = buildCharset(options);
+    const password = generatePassword(20, options);
+    expect(password).toHaveLength(20);
+    for (const ch of password) {
+      expect(charset).toContain(ch);
+    }
+  });
+});
+
+describe('generatePassphrase — rejection sampling', () => {
+  it('generates correct number of words split by separator', () => {
+    const result = generatePassphrase(6);
+    expect(result.split('-')).toHaveLength(6);
+  });
+
+  it('all words in output exist in EFF_SHORT_WORDLIST', () => {
+    const result = generatePassphrase(8);
+    const words = result.split('-');
+    for (const word of words) {
+      expect(EFF_SHORT_WORDLIST).toContain(word);
+    }
+  });
+
+  it('default separator is hyphen', () => {
+    const result = generatePassphrase(4);
+    expect(result.split('-')).toHaveLength(4);
+  });
+
+  it('capitalize option capitalizes first letter of each word', () => {
+    const result = generatePassphrase(4, '-', true);
+    const words = result.split('-');
+    for (const word of words) {
+      expect(word[0]).toBe(word[0].toUpperCase());
+    }
+  });
+
+  it('custom separator works', () => {
+    const result = generatePassphrase(3, '.');
+    expect(result.split('.')).toHaveLength(3);
+  });
+
+  it('two consecutive calls produce different results', () => {
+    const results = Array.from({ length: 10 }, () => generatePassphrase(6));
+    const unique = new Set(results);
+    expect(unique.size).toBeGreaterThan(1);
+  });
+});
+
+describe('generatePassword — distribution uniformity', () => {
+  it('distributes lowercase letters roughly uniformly over 10000 samples', () => {
+    const options = { uppercase: false, lowercase: true, numeric: false, special: false };
+    const counts = {};
+    for (let i = 0; i < 10000; i++) {
+      const ch = generatePassword(1, options);
+      counts[ch] = (counts[ch] || 0) + 1;
+    }
+    for (const count of Object.values(counts)) {
+      expect(count / 10000).toBeGreaterThan(0.01);
+      expect(count / 10000).toBeLessThan(0.15);
+    }
   });
 });

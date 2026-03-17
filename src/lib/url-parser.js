@@ -1,6 +1,14 @@
 /**
+ * @file url-parser.js
+ * @description URL component parsing via the native URL API
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+/**
  * Parse a URL string into a structured object.
- * Returns null if URL is invalid.
+ * Returns null if URL is invalid. Masks password field for safety.
  */
 export function parseURL(urlString) {
   if (!urlString || typeof urlString !== 'string' || !urlString.trim()) return null;

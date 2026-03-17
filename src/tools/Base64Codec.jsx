@@ -1,3 +1,11 @@
+/**
+ * @file Base64Codec.jsx
+ * @description Base64 encode/decode with UTF-8 support and real-time conversion via useMemo
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useState, useMemo } from 'react';
 import { encodeBase64, decodeBase64 } from '../lib/base64.js';
 
@@ -5,6 +13,7 @@ function Base64Codec() {
   const [inputText, setInputText] = useState('');
   const [mode, setMode] = useState('encode'); // 'encode' or 'decode'
 
+  // Conversion runs synchronously on each input change — no button needed
   const { output, error, byteCount } = useMemo(() => {
     if (!inputText.trim()) {
       return { output: '', error: null, byteCount: 0 };
@@ -30,8 +39,8 @@ function Base64Codec() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">Base64 Codec</h1>
-        <p className="text-slate-400">
+        <h1 className="text-2xl font-bold text-text-primary mb-2">Base64 Codec</h1>
+        <p className="text-text-secondary">
           Encode and decode Base64 strings. Supports UTF-8 text properly.
         </p>
       </div>
@@ -39,7 +48,7 @@ function Base64Codec() {
       <div className="flex items-center justify-center mb-4">
         <button
           onClick={toggleMode}
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+          className="px-6 py-2 bg-accent hover:bg-accent-hover text-black font-medium rounded-md transition-micro"
         >
           {mode === 'encode' ? 'Encode' : 'Decode'}
         </button>
@@ -47,28 +56,28 @@ function Base64Codec() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <label htmlFor="base64-input" className="block text-sm font-medium text-slate-300 mb-2">
+          <label htmlFor="base64-input" className="block text-sm font-medium text-text-secondary mb-2">
             {mode === 'encode' ? 'Input (Text)' : 'Input (Base64)'}
           </label>
           <textarea
             id="base64-input"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            className="w-full h-96 px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full h-96 px-4 py-3 bg-surface-1 border border-border-subtle rounded-md text-text-primary font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none"
             spellCheck={false}
           />
         </div>
 
         <div className="space-y-4">
-          <label htmlFor="base64-output" className="block text-sm font-medium text-slate-300 mb-2">
+          <label htmlFor="base64-output" className="block text-sm font-medium text-text-secondary mb-2">
             {mode === 'encode' ? 'Output (Base64)' : 'Output (Text)'}
           </label>
           <div
             id="base64-output"
-            className={`w-full h-96 px-4 py-3 rounded-lg font-mono text-sm overflow-auto ${
+            className={`w-full h-96 px-4 py-3 rounded-md font-mono text-sm overflow-auto ${
               error
-                ? 'bg-red-900/20 border-2 border-red-500 text-red-400'
-                : 'bg-slate-800 border border-slate-600 text-slate-300'
+                ? 'bg-status-error/20 border-2 border-status-error text-status-error'
+                : 'bg-surface-1 border border-border-subtle text-text-secondary'
             }`}
           >
             {error ? (
@@ -77,7 +86,7 @@ function Base64Codec() {
               <div>
                 <pre className="whitespace-pre-wrap">{output}</pre>
                 {output && (
-                  <div className="mt-4 text-xs text-slate-500">
+                  <div className="mt-4 text-xs text-text-muted">
                     {byteCount} bytes
                   </div>
                 )}

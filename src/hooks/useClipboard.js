@@ -1,3 +1,11 @@
+/**
+ * @file useClipboard.js
+ * @description Clipboard copy hook with auto-reset feedback after a configurable delay
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useState, useCallback, useRef } from 'react';
 
 /**
@@ -7,6 +15,7 @@ import { useState, useCallback, useRef } from 'react';
  */
 export function useClipboard(resetMs = 2000) {
   const [copied, setCopied] = useState(false);
+  // Track timeout so rapid copies don't stack stale resets
   const timeoutRef = useRef(null);
 
   const copy = useCallback(async (text) => {

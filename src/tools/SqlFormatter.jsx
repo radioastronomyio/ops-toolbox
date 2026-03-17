@@ -1,3 +1,11 @@
+/**
+ * @file SqlFormatter.jsx
+ * @description SQL query formatter/beautifier supporting multiple dialects (PostgreSQL, MySQL, T-SQL, etc.)
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import React, { useState, useRef } from 'react';
 import { formatSql } from '../lib/sqlFormat';
 import CopyButton from '../components/CopyButton';
@@ -44,6 +52,7 @@ export default function SqlFormatter() {
     }
   }
 
+  // Ctrl+Enter / Cmd+Enter keyboard shortcut to format
   function handleKeyDown(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
@@ -55,7 +64,7 @@ export default function SqlFormatter() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-slate-100">SQL Formatter</h1>
+      <h1 className="text-2xl font-bold text-text-primary">SQL Formatter</h1>
 
       <textarea
         ref={inputRef}
@@ -64,17 +73,17 @@ export default function SqlFormatter() {
         onKeyDown={handleKeyDown}
         placeholder="SELECT*FROM users WHERE id=1 AND status='active'"
         rows={10}
-        className="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-y"
+        className="w-full font-mono text-sm bg-bg border border-border rounded px-3 py-2 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent resize-y"
       />
 
       {/* Options */}
-      <div className="bg-slate-800 rounded-lg p-4 flex flex-wrap gap-6 items-end">
+      <div className="bg-surface-1 rounded-md p-4 flex flex-wrap gap-6 items-end">
         <div className="space-y-1">
-          <label className="block text-xs text-slate-400 uppercase tracking-wide">Dialect</label>
+          <label className="block text-xs text-text-secondary uppercase tracking-wide">Dialect</label>
           <select
             value={dialect}
             onChange={e => setDialect(e.target.value)}
-            className="bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-sky-500"
+            className="bg-bg border border-border rounded px-3 py-1.5 text-text-primary text-sm focus:outline-none focus:border-accent"
           >
             {DIALECTS.map(d => (
               <option key={d.value} value={d.value}>{d.label}</option>
@@ -83,11 +92,11 @@ export default function SqlFormatter() {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-xs text-slate-400 uppercase tracking-wide">Keyword Case</label>
+          <label className="block text-xs text-text-secondary uppercase tracking-wide">Keyword Case</label>
           <select
             value={keywordCase}
             onChange={e => setKeywordCase(e.target.value)}
-            className="bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-sky-500"
+            className="bg-bg border border-border rounded px-3 py-1.5 text-text-primary text-sm focus:outline-none focus:border-accent"
           >
             {KEYWORD_CASES.map(k => (
               <option key={k.value} value={k.value}>{k.label}</option>
@@ -96,11 +105,11 @@ export default function SqlFormatter() {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-xs text-slate-400 uppercase tracking-wide">Indent</label>
+          <label className="block text-xs text-text-secondary uppercase tracking-wide">Indent</label>
           <select
             value={indentIdx}
             onChange={e => setIndentIdx(Number(e.target.value))}
-            className="bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-sky-500"
+            className="bg-bg border border-border rounded px-3 py-1.5 text-text-primary text-sm focus:outline-none focus:border-accent"
           >
             {INDENT_OPTIONS.map((o, i) => (
               <option key={i} value={i}>{o.label}</option>
@@ -109,11 +118,11 @@ export default function SqlFormatter() {
         </div>
       </div>
 
-      <p className="text-xs text-slate-500">Tip: Press Ctrl+Enter to format</p>
+      <p className="text-xs text-text-muted">Tip: Press Ctrl+Enter to format</p>
 
       <button
         onClick={handleFormat}
-        className="px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded font-medium"
+        className="px-5 py-2 bg-accent hover:bg-accent-hover text-black rounded font-medium"
       >
         Format
       </button>
@@ -122,11 +131,11 @@ export default function SqlFormatter() {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-slate-500">{lineCount > 0 ? `${lineCount} line${lineCount !== 1 ? 's' : ''}` : ''}</span>
+          <span className="text-xs text-text-muted">{lineCount > 0 ? `${lineCount} line${lineCount !== 1 ? 's' : ''}` : ''}</span>
           <CopyButton text={output} className="py-1.5 text-sm" />
         </div>
         {output && (
-          <pre className="bg-slate-900 border border-slate-700 rounded p-4 text-sm font-mono text-slate-300 overflow-auto max-h-96 whitespace-pre">
+          <pre className="bg-bg border border-border rounded p-4 text-sm font-mono text-text-secondary overflow-auto max-h-96 whitespace-pre">
             {output}
           </pre>
         )}

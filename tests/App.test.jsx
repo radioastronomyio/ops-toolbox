@@ -16,7 +16,7 @@ describe('App routing', () => {
         <DirectoryGrid />
       </MemoryRouter>
     );
-    expect(screen.getByText('Tool Directory')).toBeInTheDocument();
+    expect(screen.getByText('Client-Side Developer Utilities')).toBeInTheDocument();
   });
 
   it('renders NotFound for unknown paths', () => {

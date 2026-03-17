@@ -1,3 +1,11 @@
+/**
+ * @file App.jsx
+ * @description Root SPA router with lazy-loaded tool routes driven by the tool registry
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { toolRegistry } from './lib/toolRegistry';
@@ -5,7 +13,7 @@ import ToolLayout from './components/ToolLayout';
 import DirectoryGrid from './components/DirectoryGrid';
 import NotFound from './components/NotFound';
 
-// Lazy-loaded components keyed by registry id
+// Map each tool registry id to its lazy-loaded component for code-splitting
 const toolComponents = {
   'subnet-calculator': lazy(() => import('./tools/SubnetCalculator')),
   'jwt-decoder': lazy(() => import('./tools/JwtDecoder')),
@@ -36,7 +44,7 @@ const toolComponents = {
 
 function Loading() {
   return (
-    <div className="flex items-center justify-center h-64 text-slate-500">
+    <div className="flex items-center justify-center h-64 text-text-muted">
       Loading tool…
     </div>
   );
@@ -48,6 +56,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<ToolLayout />}>
           <Route index element={<DirectoryGrid />} />
+          {/* Dynamically generate routes from the central tool registry */}
           {toolRegistry.map((tool) => {
             const Component = toolComponents[tool.id];
             if (!Component) {

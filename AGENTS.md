@@ -2,55 +2,76 @@
 
 ## Project Identity
 
-**Ops Toolbox** is a collection of client-side utility web tools for IT operations and platform engineering. All processing happens in the browser — no backends, no data transmission. Hosted on Azure Static Web Apps.
+**Ops Toolbox** is a collection of 25 client-side utility web tools for IT operations and platform engineering. All processing happens in the browser — no backends, no data transmission. Hosted on Azure Static Web Apps.
 
 **Repository:** `radioastronomyio/ops-toolbox`
 **Live:** `https://opstoolbox.donfather.dev/`
-**Stack:** React 18, Vite 5, React Router v6, Tailwind CSS v3, Vitest, dark-mode-first
+**Stack:** React 18, Vite 5, React Router v6, Tailwind CSS v3, Vitest, dual-theme (light/dark/system)
 
-## Current State
+## Architecture
 
-**Active refactor:** Migrating from a monorepo of standalone apps (`apps/*` workspace pattern) to a single SPA with React Router. The existing `apps/mermaid-renderer/` is the only built app and must be ported into the new SPA structure.
+Single-page application with React Router v6. Tools are lazy-loaded via `React.lazy()` + `Suspense`.
 
-**Refactor specs live in:** `specs/spa-refactor/`
+- **`src/lib/toolRegistry.js`** — Canonical tool registry (data-only, no React). All routing, directory grid, badges, and search derive from this.
+- **`src/lib/`** — Pure utility functions (no React dependencies). Business logic lives here.
+- **`src/tools/`** — One React component per tool. UI layer only.
+- **`src/components/`** — Shared UI: `CopyButton`, `ErrorBanner`, `ResultPanel`, `ToolLayout`, `DirectoryGrid`, `NotFound`, `SettingsFlyout` (non-modal flyout for theme/density/font settings).
+- **`src/hooks/`** — `useClipboard` (clipboard with auto-reset), `useDebouncedValue` (debounce any value), `useTheme` (light/dark/system preference), `useDensity` (compact/default/comfortable layout density), `useFontFamily` (system/inter/mono font switching).
+- **`src/styles/design-tokens.css`** — HSL-based CSS custom properties for all semantic color, typography, and motion tokens. Imported before Tailwind directives in `src/index.css`.
+- **`src/App.jsx`** — Router with lazy imports mapped to registry IDs.
 
-Read them in order:
+### Adding a Tool
 
-1. `00-shared-framework.md` — SPA scaffold, routing, layout, Tailwind, Vitest setup. **Build this first.**
-2. `01-subnet-calculator.md` — IPv4 subnet calculator (pure logic in `src/lib/subnet.js`)
-3. `02-jwt-decoder.md` — JWT token inspector
-4. `03-password-generator.md` — Cryptographic password generator (pure logic in `src/lib/password.js`)
-5. `04-json-yaml-converter.md` — Bidirectional JSON/YAML converter
-6. `05-base64-codec.md` — Base64 encoder/decoder (pure logic in `src/lib/base64.js`)
-7. `06-mermaid-renderer-port.md` — Port existing mermaid renderer into SPA
-
-Each spec is a self-contained work unit with unit tests. Build sequentially. Run `npm run test` after each spec to verify.
+1. Add entry to `src/lib/toolRegistry.js`
+2. Create component in `src/tools/`
+3. Add lazy import in `src/App.jsx` keyed to the registry `id`
+4. Extract pure logic to `src/lib/` where applicable
+5. Write tests, run `npm run test`
 
 ## Testing Strategy
 
-- **Test framework:** Vitest + @testing-library/react + jsdom
-- **Pure logic** lives in `src/lib/` — tested with pure unit tests in `tests/lib/`
-- **React components** tested with @testing-library/react in `tests/tools/`
-- **Validation:** `npm run test` must pass after each spec is complete
-- **Run tests:** `npm run test` (single run) or `npm run test:watch` (watch mode)
+- **Framework:** Vitest + @testing-library/react + jsdom
+- **Pure logic** in `src/lib/` → tested in `tests/lib/` (fast, no DOM)
+- **React components** → tested in `tests/tools/`, `tests/components/`, `tests/hooks/`
+- **Pattern absence tests** in `tests/migration/` ensure banned patterns (hand-rolled clipboard, manual debounce) don't recur
+- **Run:** `npm run test` (single run, 464 tests) or `npm run test:watch`
 
-## Branching
+## Documentation
 
-Work on a single feature branch: `feature/spa-refactor`
-Commit after each numbered spec is complete with a descriptive message.
+- **`docs/architecture.md`** — SPA architecture overview
+- **`docs/apps/tool-reference.md`** — Complete reference for all 25 tools
+- **`docs/documentation-standards/`** — Template library for READMEs, KB articles, script headers
+- All source files have JSDoc `@file` headers per `docs/documentation-standards/script-header-javascript.md`
 
 ## Key Constraints
 
-- **100% client-side.** No API calls, no server-side processing, no analytics.
+- **100% client-side.** No API calls except MAC Vendor Lookup (clearly labeled "Online").
 - **Privacy-first.** Data never leaves the browser.
 - **Lazy loading.** Each tool route uses `React.lazy()` + `Suspense`.
-- **Dark mode default.** Light mode toggle optional but not required for initial build.
-- **Testable architecture:** Extract computation into `src/lib/` pure functions where applicable.
+- **Dual-theme.** Dark mode is the default but theme is togglable (light/dark/system) via `useTheme` hook. Theme preference persists to `localStorage` key `ops-theme-preference`.
+- **Testable architecture:** Extract computation into `src/lib/` pure functions.
+- **Shared primitives:** Use `useClipboard`/`useDebouncedValue`/`CopyButton`/`ErrorBanner` — never hand-roll clipboard or debounce.
+- **Rejection sampling:** `src/lib/password.js` uses rejection sampling for unbiased crypto RNG.
+- **Semantic tokens only.** All colors use CSS custom property tokens via Tailwind semantic classes (`bg-surface-1`, `text-accent`, `text-status-error`, etc.). The default Tailwind color palette is intentionally disabled.
 
 ## What NOT To Do
 
 - Do not create a backend or API functions
-- Do not use `@cldn/ip` npm package (does not exist — GDR hallucination)
-- Do not use Tailwind v4 (use v3 with PostCSS)
 - Do not add analytics, telemetry, or third-party scripts
-- Do not modify `.github/workflows/` yet (deployment config comes later)
+- Do not hand-roll clipboard copy (`setTimeout(() => setCopied(false), ...)`) — use `useClipboard` or `CopyButton`
+- Do not hand-roll debounce (`debounceRef.current = setTimeout(...)`) — use `useDebouncedValue`
+- Do not use Tailwind v4 (use v3 with PostCSS)
+- Do not modify `.github/workflows/` without explicit approval
+- Do not use raw Tailwind palette colors (`slate-*`, `sky-*`, `blue-*`, `red-*`, `green-*`, etc.) — use semantic tokens exclusively (`bg-surface-1`, `text-accent`, `text-status-error`, etc.)
+- Do not hand-roll theme switching — use `useTheme` hook
+- Do not add `transition-all` to `<body>` or `<html>` for theme switching — theme toggle must be instant
+- Do not use `backdrop-filter` / `backdrop-blur` anywhere except the sticky header
+
+## Specs
+
+Feature specifications live in `specs/`. These are reference documents for completed work:
+
+- `specs/v2/` — Original tool implementations (20 tools)
+- `specs/v3-architecture-fixes/` — RNG bias fix, tool registry, 404 route, shared hooks/components, badges
+- `specs/v3.1-primitives-migration/` — Migration of all tools to shared clipboard/debounce primitives
+- `specs/v4-design-system/` — HSL token design system, dual-theme, density/font settings, full tool migration to semantic tokens

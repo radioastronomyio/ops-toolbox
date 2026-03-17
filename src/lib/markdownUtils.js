@@ -1,3 +1,11 @@
+/**
+ * @file markdownUtils.js
+ * @description Markdown to sanitized HTML rendering (marked + DOMPurify) with word count and read time
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 
@@ -26,6 +34,7 @@ export function countWords(markdown) {
   return stripped.split(/\s+/).filter(Boolean).length;
 }
 
+/** Estimate read time based on average 200 WPM reading speed */
 export function estimateReadTime(markdown) {
   const words = countWords(markdown);
   const minutes = Math.ceil(words / 200);

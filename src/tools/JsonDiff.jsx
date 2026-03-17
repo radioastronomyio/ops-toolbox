@@ -1,3 +1,11 @@
+/**
+ * @file JsonDiff.jsx
+ * @description Side-by-side JSON structural diff viewer with sanitized HTML output via DOMPurify
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { parseJson, computeDiff, renderDiffHtml } from '../lib/jsonDiff';
@@ -13,6 +21,7 @@ export default function JsonDiff() {
   const [showRaw, setShowRaw] = useState(false);
 
   function handleCompare() {
+    // Default to empty objects so diffing still works with one side blank
     const leftVal = left.trim() ? left : '{}';
     const rightVal = right.trim() ? right : '{}';
 
@@ -54,51 +63,51 @@ export default function JsonDiff() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-slate-100">JSON Diff</h1>
+      <h1 className="text-2xl font-bold text-text-primary">JSON Diff</h1>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-slate-300">Original</label>
+          <label className="block text-sm font-medium text-text-secondary">Original</label>
           <textarea
             value={left}
             onChange={e => setLeft(e.target.value)}
             placeholder="Original JSON..."
             rows={12}
-            className="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-y"
+            className="w-full font-mono text-sm bg-bg border border-border rounded px-3 py-2 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent resize-y"
           />
-          {leftError && <p className="text-xs text-red-400">{leftError}</p>}
+          {leftError && <p className="text-xs text-status-error">{leftError}</p>}
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-slate-300">Modified</label>
+          <label className="block text-sm font-medium text-text-secondary">Modified</label>
           <textarea
             value={right}
             onChange={e => setRight(e.target.value)}
             placeholder="Modified JSON..."
             rows={12}
-            className="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-y"
+            className="w-full font-mono text-sm bg-bg border border-border rounded px-3 py-2 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent resize-y"
           />
-          {rightError && <p className="text-xs text-red-400">{rightError}</p>}
+          {rightError && <p className="text-xs text-status-error">{rightError}</p>}
         </div>
       </div>
 
       <div className="flex gap-3">
         <button
           onClick={handleCompare}
-          className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded font-medium"
+          className="px-4 py-2 bg-accent hover:bg-accent-hover text-black rounded font-medium"
         >
           Compare
         </button>
         <button
           onClick={handleSwap}
-          className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded font-medium"
+          className="px-4 py-2 bg-surface-2 hover:bg-surface-3 text-text-primary rounded font-medium"
         >
           Swap
         </button>
       </div>
 
       {identical && (
-        <div className="px-4 py-3 bg-slate-800 border border-slate-600 rounded text-slate-300">
+        <div className="px-4 py-3 bg-surface-1 border border-border-subtle rounded text-text-secondary">
           Identical — no differences found
         </div>
       )}
@@ -107,19 +116,20 @@ export default function JsonDiff() {
         <div className="space-y-3">
           <div
             data-testid="diff-output"
-            className="bg-slate-900 border border-slate-700 rounded p-4 overflow-auto"
+            className="bg-bg border border-border rounded p-4 overflow-auto"
+            /* Diff HTML is sanitized to prevent XSS from pasted JSON values */
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(diffHtml) }}
           />
 
           <div>
             <button
               onClick={() => setShowRaw(!showRaw)}
-              className="text-sm text-sky-400 hover:text-sky-300"
+              className="text-sm text-accent hover:text-accent-hover"
             >
               {showRaw ? 'Hide' : 'Show'} raw delta
             </button>
             {showRaw && (
-              <pre className="mt-2 bg-slate-900 border border-slate-700 rounded p-4 text-xs font-mono text-slate-300 overflow-auto">
+              <pre className="mt-2 bg-bg border border-border rounded p-4 text-xs font-mono text-text-secondary overflow-auto">
                 {JSON.stringify(delta, null, 2)}
               </pre>
             )}

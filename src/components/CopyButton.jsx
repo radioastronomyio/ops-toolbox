@@ -1,3 +1,11 @@
+/**
+ * @file CopyButton.jsx
+ * @description Reusable copy-to-clipboard button with transient "Copied!" feedback
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useClipboard } from '../hooks/useClipboard';
 
 /**
@@ -11,7 +19,7 @@ export default function CopyButton({ text, label = 'Copy', className = '' }) {
     <button
       onClick={() => copy(text)}
       disabled={!text}
-      className={`px-3 py-1 bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-slate-200 rounded text-xs transition-colors ${className}`}
+      className={`px-3 py-1 bg-surface-2 hover:bg-surface-3 disabled:opacity-40 text-text-primary rounded text-xs transition-micro ${className}`}
     >
       {copied ? 'Copied!' : label}
     </button>

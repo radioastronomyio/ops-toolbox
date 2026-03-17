@@ -1,3 +1,11 @@
+/**
+ * @file useDebouncedValue.js
+ * @description Debounce hook that delays updating a value until input settles
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useState, useEffect } from 'react';
 
 /**

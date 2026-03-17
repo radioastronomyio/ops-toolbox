@@ -1,3 +1,11 @@
+/**
+ * @file csvToJson.js
+ * @description CSV parsing wrapper around PapaParse with auto-delimiter detection
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import Papa from 'papaparse';
 
 export function parseCsvString(csvString, options = {}) {
@@ -10,6 +18,7 @@ export function toJsonString(data, indent = 2) {
   return JSON.stringify(data, null, indent);
 }
 
+/** Heuristic delimiter detection — counts occurrences of common delimiters in a sample */
 export function detectDelimiter(sample) {
   const candidates = [',', ';', '\t', '|'];
   let best = ',';

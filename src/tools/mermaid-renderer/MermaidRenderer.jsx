@@ -251,8 +251,8 @@ function MermaidRenderer() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">Mermaid Renderer</h1>
-        <p className="text-slate-400">
+        <h1 className="text-2xl font-bold text-text-primary mb-2">Mermaid Renderer</h1>
+        <p className="text-text-secondary">
           Paste mermaid diagram code and get rendered SVG with ELK layout engine.
         </p>
       </div>
@@ -261,7 +261,7 @@ function MermaidRenderer() {
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={toggleTheme}
-          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-md border border-slate-700 transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 bg-surface-1 hover:bg-surface-2 text-text-secondary text-sm font-medium rounded-md border border-border transition-micro"
           title="Toggle Theme"
         >
           {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
@@ -269,7 +269,7 @@ function MermaidRenderer() {
         </button>
         <button
           onClick={toggleLayout}
-          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-md border border-slate-700 transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 bg-surface-1 hover:bg-surface-2 text-text-secondary text-sm font-medium rounded-md border border-border transition-micro"
           title="Toggle Layout Engine"
         >
           {layout === 'elk' ? <Share2 size={16} /> : <Square size={16} />}
@@ -277,15 +277,15 @@ function MermaidRenderer() {
         </button>
         <button
           onClick={copySVG}
-          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-md border border-slate-700 transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 bg-surface-1 hover:bg-surface-2 text-text-secondary text-sm font-medium rounded-md border border-border transition-micro"
           title="Copy SVG"
         >
-          {isCopied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
+          {isCopied ? <Check size={16} className="text-status-success" /> : <Copy size={16} />}
           Copy SVG
         </button>
         <button
           onClick={downloadSVG}
-          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-md border border-slate-700 transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 bg-surface-1 hover:bg-surface-2 text-text-secondary text-sm font-medium rounded-md border border-border transition-micro"
           title="Download SVG"
         >
           <Download size={16} />
@@ -293,7 +293,7 @@ function MermaidRenderer() {
         </button>
         <button
           onClick={downloadPNG}
-          className="flex items-center gap-2 px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white text-sm font-medium rounded-md transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 bg-accent hover:bg-accent-hover text-black text-sm font-medium rounded-md transition-micro"
           title="Download PNG"
         >
           <ImageIcon size={16} />
@@ -304,13 +304,13 @@ function MermaidRenderer() {
       {/* Editor + Preview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4" style={{ minHeight: '500px' }}>
         {/* Editor pane */}
-        <div className="flex flex-col border border-slate-700 rounded-lg overflow-hidden">
-          <div className="flex items-center justify-between px-3 py-2 bg-slate-800 border-b border-slate-700 text-xs text-slate-400 uppercase tracking-wide">
+        <div className="flex flex-col border border-border rounded-md overflow-hidden">
+          <div className="flex items-center justify-between px-3 py-2 bg-surface-1 border-b border-border text-xs text-text-secondary uppercase tracking-wide">
             <span>Editor</span>
             <div className="flex items-center gap-3">
               {!autoUpdate && (
                 <button
-                  className="text-slate-400 hover:text-sky-400 transition-colors"
+                  className="text-text-secondary hover:text-accent transition-micro"
                   onClick={reRender}
                   title="Render Diagram"
                 >
@@ -318,7 +318,7 @@ function MermaidRenderer() {
                 </button>
               )}
               <button
-                className={`relative w-8 h-[18px] rounded-full transition-colors cursor-pointer ${autoUpdate ? 'bg-emerald-500' : 'bg-slate-600'}`}
+                className={`relative w-8 h-[18px] rounded-full transition-micro cursor-pointer ${autoUpdate ? 'bg-status-success' : 'bg-surface-3'}`}
                 onClick={() => setAutoUpdate(!autoUpdate)}
                 role="switch"
                 aria-checked={autoUpdate}
@@ -326,10 +326,10 @@ function MermaidRenderer() {
               >
                 <span className={`absolute top-[2px] w-[14px] h-[14px] bg-white rounded-full transition-transform ${autoUpdate ? 'left-[18px]' : 'left-[2px]'}`} />
               </button>
-              <span className="text-slate-500 text-[11px] font-semibold min-w-[40px]">{autoUpdate ? 'Live' : 'Manual'}</span>
+              <span className="text-text-muted text-[11px] font-semibold min-w-[40px]">{autoUpdate ? 'Live' : 'Manual'}</span>
             </div>
           </div>
-          <div className="flex-1 overflow-hidden bg-slate-900">
+          <div className="flex-1 overflow-hidden bg-bg">
             <Editor
               value={code}
               onChange={setCode}
@@ -337,11 +337,11 @@ function MermaidRenderer() {
               errorLine={errorLine}
             />
           </div>
-          <div className="flex items-center justify-between px-3 py-1.5 bg-slate-800 border-t border-slate-700 text-xs text-slate-500">
+          <div className="flex items-center justify-between px-3 py-1.5 bg-surface-1 border-t border-border text-xs text-text-muted">
             <span>{code.split('\n').length} lines</span>
             {error && (
               <span
-                className="flex items-center gap-1 text-red-400 cursor-pointer"
+                className="flex items-center gap-1 text-status-error cursor-pointer"
                 onClick={() => {
                   if (errorLine) {
                     const currentLine = errorLine;
@@ -358,7 +358,7 @@ function MermaidRenderer() {
         </div>
 
         {/* Preview pane */}
-        <div className="flex items-center justify-center border border-slate-700 rounded-lg bg-slate-900 overflow-auto p-4">
+        <div className="flex items-center justify-center border border-border rounded-md bg-bg overflow-auto p-4">
           <div ref={containerRef} className="w-full h-full flex items-center justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
         </div>
       </div>

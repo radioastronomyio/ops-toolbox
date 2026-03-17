@@ -1,6 +1,14 @@
 /**
+ * @file mac.js
+ * @description MAC address normalization and OUI (first 3 octets) extraction for vendor lookup
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+/**
  * Normalize any MAC format to colon-separated uppercase.
- * Accepts: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, AABB.CCDD.EEFF, AABBCCDDEEFF
+ * Accepts: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, AABB.CCDD.EEFF (Cisco), AABBCCDDEEFF
  * Returns uppercase colon-separated or null if invalid.
  */
 export function normalizeMac(input) {

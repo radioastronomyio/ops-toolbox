@@ -1,3 +1,11 @@
+/**
+ * @file CidrExpander.jsx
+ * @description CIDR range expander showing network summary and individual IP enumeration
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useState, useEffect } from 'react';
 import { expandCIDR } from '../lib/subnet.js';
 import { useClipboard } from '../hooks/useClipboard';
@@ -29,27 +37,27 @@ export default function CidrExpander() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">CIDR Range Expander</h1>
-        <p className="text-slate-400">Expand a CIDR block into its full IP range.</p>
+        <h1 className="text-2xl font-bold text-text-primary mb-2">CIDR Range Expander</h1>
+        <p className="text-text-secondary">Expand a CIDR block into its full IP range.</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-2">CIDR Input</label>
+        <label className="block text-sm font-medium text-text-secondary mb-2">CIDR Input</label>
         <input
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="e.g. 192.168.1.0/24"
-          className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-3 font-mono focus:outline-none focus:border-blue-500"
+          className="w-full bg-surface-1 border border-border-subtle text-text-primary rounded-md px-4 py-3 font-mono focus:outline-none focus:border-accent"
         />
-        {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+        {error && <p className="text-status-error text-sm mt-2">{error}</p>}
       </div>
 
       {result && (
         <>
           {/* Summary card */}
-          <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-            <h2 className="text-lg font-semibold text-white mb-3">Summary</h2>
+          <div className="bg-surface-1 border border-border rounded-md p-4">
+            <h2 className="text-lg font-semibold text-text-primary mb-3">Summary</h2>
             <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
               {[
                 ['Network', result.networkStr],
@@ -60,8 +68,8 @@ export default function CidrExpander() {
                 ['Usable Hosts', result.hosts.toLocaleString()],
               ].map(([label, value]) => (
                 <div key={label}>
-                  <dt className="text-slate-400">{label}</dt>
-                  <dd className="text-white font-mono">{value}</dd>
+                  <dt className="text-text-secondary">{label}</dt>
+                  <dd className="text-text-primary font-mono">{value}</dd>
                 </div>
               ))}
             </dl>
@@ -71,22 +79,23 @@ export default function CidrExpander() {
           {result.ips ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-text-primary">
                   IP Addresses ({result.totalIPs.toLocaleString()})
                 </h2>
                 <button
                   onClick={() => copy(result.ips.join('\n'))}
-                  className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
+                  className="px-3 py-1.5 text-sm bg-accent hover:bg-accent-hover text-black rounded-md"
                 >
                   {copied ? 'Copied!' : 'Copy List'}
                 </button>
               </div>
-              <pre className="bg-slate-900 border border-slate-700 rounded-lg p-4 text-sm font-mono text-slate-300 max-h-80 overflow-y-auto">
+              <pre className="bg-bg border border-border rounded-md p-4 text-sm font-mono text-text-secondary max-h-80 overflow-y-auto">
                 {result.ips.join('\n')}
               </pre>
             </div>
           ) : (
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 text-slate-400">
+            /* Large ranges (e.g. /8) skip enumeration to avoid freezing the browser */
+            <div className="bg-surface-1 border border-border rounded-md p-4 text-text-secondary">
               Range too large to enumerate ({result.totalIPs.toLocaleString()} IPs). Showing summary only.
             </div>
           )}

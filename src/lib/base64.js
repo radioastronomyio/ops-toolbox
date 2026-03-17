@@ -1,4 +1,12 @@
 /**
+ * @file base64.js
+ * @description Base64 encode/decode with full Unicode support via TextEncoder/TextDecoder
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+/**
  * Encodes a text string to Base64 using UTF-8 encoding
  * @param {string} text - Text to encode
  * @returns {string} Base64 encoded string

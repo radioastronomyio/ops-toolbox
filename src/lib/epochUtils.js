@@ -1,3 +1,12 @@
+/**
+ * @file epochUtils.js
+ * @description Unix epoch / human date bidirectional conversion with timezone formatting
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+/** Auto-detect seconds vs milliseconds: 11+ digits (absolute) means milliseconds */
 export function detectUnit(numericStr) {
   if (!numericStr) return 'seconds';
   const n = numericStr.replace(/^-/, '');

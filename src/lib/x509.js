@@ -1,3 +1,11 @@
+/**
+ * @file x509.js
+ * @description X.509 certificate PEM parsing — extracts subject, issuer, validity, key info via pkijs/asn1js
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import * as pkijs from 'pkijs';
 import * as asn1js from 'asn1js';
 
@@ -11,11 +19,13 @@ export function pemToArrayBuffer(pem) {
   return bytes.buffer;
 }
 
+/** Format an X.500 RelativeDistinguishedName into a human-readable string (CN=..., O=...) */
 export function formatDN(rdns) {
   if (!rdns || !rdns.typesAndValues) return '';
   const parts = rdns.typesAndValues.map(tv => {
     const type = tv.type;
     const value = tv.value?.valueBlock?.value || '';
+    // OID-to-name mapping for common X.500 attribute types
     const names = { '2.5.4.3': 'CN', '2.5.4.6': 'C', '2.5.4.7': 'L', '2.5.4.8': 'ST', '2.5.4.10': 'O', '2.5.4.11': 'OU' };
     const name = names[type] || type;
     return `${name}=${value}`;
@@ -45,7 +55,7 @@ export function parseCertificate(pemString) {
       const modHex = spki?.parsedKey?.modulus?.valueBlock?.valueHex;
       if (modHex) {
         const bytes = new Uint8Array(modHex);
-        // DER encodes a leading 0x00 when high bit is set; strip it for bit length
+        // DER encoding adds a leading 0x00 byte when the high bit is set (to avoid sign ambiguity)
         const leadingZero = bytes.length > 0 && bytes[0] === 0 ? 1 : 0;
         publicKeySize = String((bytes.length - leadingZero) * 8);
       }

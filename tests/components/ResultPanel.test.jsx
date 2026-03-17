@@ -30,7 +30,7 @@ describe('ResultPanel', () => {
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     // Check error container has red border class
     const container = screen.getByText('Something went wrong').parentElement;
-    expect(container.className).toContain('border-red-500');
+    expect(container.className).toContain('border-status-error');
   });
 
   it('shows CopyButton when copyable=true and value is present', () => {

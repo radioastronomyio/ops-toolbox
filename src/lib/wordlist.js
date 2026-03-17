@@ -1,6 +1,14 @@
-// EFF Short Wordlist 2.0 (1296 unique words, diceware-compatible, 4 dice / 6^4)
+/**
+ * @file wordlist.js
+ * @description EFF Short Wordlist 2.0 for diceware-style passphrase generation (1296 words)
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+// EFF Short Wordlist 2.0 — 1296 unique words (6^4, 4-dice), diceware-compatible.
 // Source: https://www.eff.org/files/2016/09/08/eff_short_wordlist_2_0.txt
-// Each word has a unique 3-character prefix; edit distance >= 3 between all pairs.
+// Properties: unique 3-char prefixes, edit distance >= 3 between all pairs.
 // License: Creative Commons Attribution 3.0
 export const EFF_SHORT_WORDLIST = [
   'aardvark','abandoned','abbreviate','abdomen','abhorrence','abiding','abnormal','abrasion','absorbing','abundant',

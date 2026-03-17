@@ -1,3 +1,11 @@
+/**
+ * @file jsonDiff.js
+ * @description JSON structural diff via jsondiffpatch with HTML-formatted output
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { diff } from 'jsondiffpatch';
 import { format as htmlFormat } from 'jsondiffpatch/formatters/html';
 

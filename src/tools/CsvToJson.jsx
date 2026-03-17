@@ -1,3 +1,11 @@
+/**
+ * @file CsvToJson.jsx
+ * @description CSV to JSON converter with auto-delimiter detection, file upload, and configurable parsing options
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import React, { useState, useRef } from 'react';
 import { parseCsvString, toJsonString, detectDelimiter } from '../lib/csvToJson';
 import { useClipboard } from '../hooks/useClipboard';
@@ -43,6 +51,7 @@ export default function CsvToJson() {
       return;
     }
 
+    // Auto-detect samples only the first 500 chars for performance on large files
     const delimiter =
       delimiterMode === 'auto' ? detectDelimiter(csvText.slice(0, 500)) : manualDelimiter;
 
@@ -76,18 +85,18 @@ export default function CsvToJson() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-slate-100">CSV to JSON</h1>
+      <h1 className="text-2xl font-bold text-text-primary">CSV to JSON</h1>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-slate-800 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 bg-surface-1 rounded-md p-1 w-fit">
         {['paste', 'upload'].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-1.5 rounded text-sm font-medium transition-colors ${
+            className={`px-4 py-1.5 rounded text-sm font-medium transition-micro ${
               activeTab === tab
-                ? 'bg-sky-600 text-white'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-accent text-black'
+                : 'text-text-secondary hover:text-text-primary'
             }`}
           >
             {tab === 'paste' ? 'Paste CSV' : 'Upload File'}
@@ -101,7 +110,7 @@ export default function CsvToJson() {
           onChange={e => setCsvText(e.target.value)}
           placeholder="Paste CSV data here..."
           rows={10}
-          className="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-y"
+          className="w-full font-mono text-sm bg-bg border border-border rounded px-3 py-2 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent resize-y"
         />
       ) : (
         <div className="space-y-2">
@@ -110,18 +119,18 @@ export default function CsvToJson() {
             type="file"
             accept=".csv,.tsv,.txt"
             onChange={handleFileChange}
-            className="block text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-sky-600 file:text-white hover:file:bg-sky-500"
+            className="block text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-accent file:text-black hover:file:bg-accent-hover"
           />
-          {fileName && <p className="text-sm text-slate-400">Loaded: {fileName}</p>}
-          {fileWarning && <p className="text-sm text-amber-400">{fileWarning}</p>}
+          {fileName && <p className="text-sm text-text-secondary">Loaded: {fileName}</p>}
+          {fileWarning && <p className="text-sm text-status-warning">{fileWarning}</p>}
         </div>
       )}
 
       {/* Options */}
-      <div className="bg-slate-800 rounded-lg p-4 space-y-3">
-        <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">Options</h2>
+      <div className="bg-surface-1 rounded-md p-4 space-y-3">
+        <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wide">Options</h2>
         <div className="flex flex-wrap gap-6">
-          <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
             <input
               type="checkbox"
               checked={headerRow}
@@ -130,7 +139,7 @@ export default function CsvToJson() {
             />
             Header row
           </label>
-          <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
             <input
               type="checkbox"
               checked={dynamicTyping}
@@ -139,7 +148,7 @@ export default function CsvToJson() {
             />
             Dynamic typing
           </label>
-          <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
             <input
               type="checkbox"
               checked={skipEmptyLines}
@@ -151,11 +160,11 @@ export default function CsvToJson() {
         </div>
 
         <div className="flex items-center gap-3">
-          <label className="text-sm text-slate-400">Delimiter:</label>
+          <label className="text-sm text-text-secondary">Delimiter:</label>
           <select
             value={delimiterMode}
             onChange={e => setDelimiterMode(e.target.value)}
-            className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-100 text-sm focus:outline-none focus:border-sky-500"
+            className="bg-bg border border-border rounded px-2 py-1 text-text-primary text-sm focus:outline-none focus:border-accent"
           >
             <option value="auto">Auto-detect</option>
             <option value="manual">Manual</option>
@@ -166,7 +175,7 @@ export default function CsvToJson() {
               value={manualDelimiter}
               onChange={e => setManualDelimiter(e.target.value)}
               maxLength={1}
-              className="w-12 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-100 text-sm text-center focus:outline-none focus:border-sky-500"
+              className="w-12 bg-bg border border-border rounded px-2 py-1 text-text-primary text-sm text-center focus:outline-none focus:border-accent"
             />
           )}
         </div>
@@ -174,15 +183,15 @@ export default function CsvToJson() {
 
       <button
         onClick={handleConvert}
-        className="px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded font-medium"
+        className="px-5 py-2 bg-accent hover:bg-accent-hover text-black rounded font-medium"
       >
         Convert
       </button>
 
       {errors.length > 0 && (
-        <div className="bg-red-900/30 border border-red-700 rounded p-3 space-y-1">
+        <div className="bg-status-error/10 border border-status-error/50 rounded p-3 space-y-1">
           {errors.map((err, i) => (
-            <p key={i} className="text-sm text-red-300">{err.message}</p>
+            <p key={i} className="text-sm text-status-error">{err.message}</p>
           ))}
         </div>
       )}
@@ -190,29 +199,29 @@ export default function CsvToJson() {
       {jsonOutput && (
         <div className="space-y-3">
           {stats && (
-            <div className="flex gap-4 text-sm text-slate-400">
+            <div className="flex gap-4 text-sm text-text-secondary">
               <span>{stats.rows} rows</span>
               <span>{stats.cols} columns</span>
-              <span>delimiter: <code className="font-mono text-slate-300">{stats.delimiter === '\t' ? '\\t' : stats.delimiter}</code></span>
+              <span>delimiter: <code className="font-mono text-text-primary">{stats.delimiter === '\t' ? '\\t' : stats.delimiter}</code></span>
             </div>
           )}
 
           <div className="flex gap-2">
             <button
               onClick={() => copy(jsonOutput)}
-              className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-sm"
+              className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-text-primary rounded text-sm"
             >
               {copied ? 'Copied!' : 'Copy JSON'}
             </button>
             <button
               onClick={handleDownload}
-              className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-sm"
+              className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-text-primary rounded text-sm"
             >
               Download
             </button>
           </div>
 
-          <pre className="bg-slate-900 border border-slate-700 rounded p-4 text-sm font-mono text-slate-300 overflow-auto max-h-96">
+          <pre className="bg-bg border border-border rounded p-4 text-sm font-mono text-text-secondary overflow-auto max-h-96">
             {jsonOutput}
           </pre>
         </div>

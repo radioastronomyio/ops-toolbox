@@ -1,12 +1,51 @@
+/**
+ * @file index.css
+ * @description Global styles, Tailwind directives, scrollbar theming, and CodeMirror overrides
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+@import './styles/design-tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Scrollbar styling */
+@layer base {
+  html {
+    font-size: var(--base-font-size);
+  }
+}
+
+/* Standardized transition utilities */
+@layer utilities {
+  .transition-micro {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: var(--duration-micro);
+    transition-timing-function: var(--ease-micro);
+  }
+  .transition-enter {
+    transition-property: transform, opacity;
+    transition-duration: var(--duration-enter);
+    transition-timing-function: var(--ease-enter);
+  }
+  .transition-exit {
+    transition-property: transform, opacity;
+    transition-duration: var(--duration-exit);
+    transition-timing-function: var(--ease-exit);
+  }
+}
+
+/* Scrollbar styling — light default, dark override */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #0f172a; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar-track { background: hsl(220 20% 98%); }
+::-webkit-scrollbar-thumb { background: hsl(220 15% 80%); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(220 15% 60%); }
+
+.dark ::-webkit-scrollbar-track { background: hsl(220 10% 6%); }
+.dark ::-webkit-scrollbar-thumb { background: hsl(220 10% 20%); border-radius: 4px; }
+.dark ::-webkit-scrollbar-thumb:hover { background: hsl(220 10% 45%); }
 
 /* CodeMirror overrides — cannot be expressed as Tailwind utilities */
 .cm-editor {
@@ -17,15 +56,16 @@
   outline: none !important;
 }
 
+/* Light default */
 .cm-gutters {
   background-color: transparent;
-  border-right: 1px solid #334155;
-  color: #94a3b8;
+  border-right: 1px solid hsl(220 15% 80%);
+  color: hsl(220 15% 55%);
   min-width: 40px;
 }
 
 .cm-error-line {
-  background-color: rgba(239, 68, 68, 0.15) !important;
+  background-color: hsl(0 70% 45% / 0.15) !important;
   position: relative;
 }
 
@@ -36,5 +76,19 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background-color: #ef4444;
+  background-color: hsl(0 70% 45%);
+}
+
+/* Dark overrides */
+.dark .cm-gutters {
+  border-right: 1px solid hsl(220 10% 20%);
+  color: hsl(220 10% 45%);
+}
+
+.dark .cm-error-line {
+  background-color: hsl(0 60% 60% / 0.15) !important;
+}
+
+.dark .cm-error-line::after {
+  background-color: hsl(0 60% 60%);
 }

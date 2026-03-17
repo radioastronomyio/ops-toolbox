@@ -1,3 +1,11 @@
+/**
+ * @file fileHash.js
+ * @description File hashing (MD5, SHA-1, SHA-256, SHA-512) — MD5 via js-md5, SHA via Web Crypto subtle
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import md5 from 'js-md5';
 
 export function bufferToHex(buffer) {
@@ -17,6 +25,7 @@ export async function hashBufferSHA(buffer, algorithm) {
   return bufferToHex(hashBuffer);
 }
 
+/** Hash a File object. MD5 uses js-md5 (Web Crypto doesn't support MD5); SHA uses subtle.digest. */
 export async function hashFile(file, algorithm) {
   const buffer = await file.arrayBuffer();
   if (algorithm === 'MD5') return hashBufferMD5(buffer);

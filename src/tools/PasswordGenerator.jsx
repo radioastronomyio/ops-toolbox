@@ -1,3 +1,11 @@
+/**
+ * @file PasswordGenerator.jsx
+ * @description Cryptographic password/passphrase generator with entropy display and strength indicator
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useState, useEffect } from 'react';
 import { generatePassword, calculateEntropy, buildCharset, generatePassphrase, calculatePassphraseEntropy } from '../lib/password.js';
 import { EFF_SHORT_WORDLIST } from '../lib/wordlist.js';
@@ -32,6 +40,7 @@ export default function PasswordGenerator() {
   const [error, setError] = useState(null);
   const { copy, copied } = useClipboard();
 
+  // Auto-generate on any option change; entropy = log2(charset^length)
   useEffect(() => {
     if (mode === 'password') {
       const options = { uppercase, lowercase, numeric, special };
@@ -55,6 +64,7 @@ export default function PasswordGenerator() {
     } else {
       const phrase = generatePassphrase(wordCount, separator, capitalize);
       setOutput(phrase);
+      // Passphrase entropy = log2(wordlist_size ^ word_count)
       setEntropy(calculatePassphraseEntropy(wordCount, EFF_SHORT_WORDLIST.length));
       setError(null);
     }
@@ -80,21 +90,21 @@ export default function PasswordGenerator() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">Password Generator</h1>
-        <p className="text-slate-400">Generate cryptographically secure random passwords using Web Crypto API.</p>
+        <h1 className="text-2xl font-bold text-text-primary mb-2">Password Generator</h1>
+        <p className="text-text-secondary">Generate cryptographically secure random passwords using Web Crypto API.</p>
       </div>
 
       {/* Mode toggle */}
       <div className="flex gap-2">
         <button
           onClick={() => setMode('password')}
-          className={`px-4 py-2 rounded-lg font-medium ${mode === 'password' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300'}`}
+          className={`px-4 py-2 rounded-md font-medium ${mode === 'password' ? 'bg-accent text-black' : 'bg-surface-2 text-text-secondary'}`}
         >
           Password
         </button>
         <button
           onClick={() => setMode('passphrase')}
-          className={`px-4 py-2 rounded-lg font-medium ${mode === 'passphrase' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300'}`}
+          className={`px-4 py-2 rounded-md font-medium ${mode === 'passphrase' ? 'bg-accent text-black' : 'bg-surface-2 text-text-secondary'}`}
         >
           Passphrase
         </button>
@@ -107,7 +117,7 @@ export default function PasswordGenerator() {
             <>
               {/* Length slider */}
               <div>
-                <label htmlFor="length-slider" className="block text-sm font-medium text-slate-300 mb-2">
+                <label htmlFor="length-slider" className="block text-sm font-medium text-text-secondary mb-2">
                   Password Length
                 </label>
                 <input
@@ -117,10 +127,10 @@ export default function PasswordGenerator() {
                   max="128"
                   value={length}
                   onChange={(e) => setLength(parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-800 accent-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full h-2 bg-surface-1 accent-accent focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                 />
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-slate-400">{length} characters</span>
+                  <span className="text-sm text-text-secondary">{length} characters</span>
                 </div>
               </div>
 
@@ -128,25 +138,25 @@ export default function PasswordGenerator() {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   onClick={() => setUppercase(!uppercase)}
-                  className={`px-4 py-2 rounded-lg font-mono ${uppercase ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-700 border-slate-600 text-slate-300'}`}
+                  className={`px-4 py-2 rounded-md font-mono ${uppercase ? 'bg-accent border-accent text-black' : 'bg-surface-2 border-border-subtle text-text-secondary'}`}
                 >
                   Uppercase
                 </button>
                 <button
                   onClick={() => setLowercase(!lowercase)}
-                  className={`px-4 py-2 rounded-lg font-mono ${lowercase ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-700 border-slate-600 text-slate-300'}`}
+                  className={`px-4 py-2 rounded-md font-mono ${lowercase ? 'bg-accent border-accent text-black' : 'bg-surface-2 border-border-subtle text-text-secondary'}`}
                 >
                   Lowercase
                 </button>
                 <button
                   onClick={() => setNumeric(!numeric)}
-                  className={`px-4 py-2 rounded-lg font-mono ${numeric ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-700 border-slate-600 text-slate-300'}`}
+                  className={`px-4 py-2 rounded-md font-mono ${numeric ? 'bg-accent border-accent text-black' : 'bg-surface-2 border-border-subtle text-text-secondary'}`}
                 >
                   0-9
                 </button>
                 <button
                   onClick={() => setSpecial(!special)}
-                  className={`px-4 py-2 rounded-lg font-mono ${special ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-700 border-slate-600 text-slate-300'}`}
+                  className={`px-4 py-2 rounded-md font-mono ${special ? 'bg-accent border-accent text-black' : 'bg-surface-2 border-border-subtle text-text-secondary'}`}
                 >
                   !@#$%^&*()
                 </button>
@@ -156,7 +166,7 @@ export default function PasswordGenerator() {
             <>
               {/* Word count slider */}
               <div>
-                <label htmlFor="word-count-slider" className="block text-sm font-medium text-slate-300 mb-2">
+                <label htmlFor="word-count-slider" className="block text-sm font-medium text-text-secondary mb-2">
                   Word Count
                 </label>
                 <input
@@ -166,20 +176,20 @@ export default function PasswordGenerator() {
                   max="12"
                   value={wordCount}
                   onChange={(e) => setWordCount(parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-800 accent-blue-500"
+                  className="w-full h-2 bg-surface-1 accent-accent"
                 />
                 <div className="mt-2">
-                  <span className="text-sm text-slate-400">{wordCount} words</span>
+                  <span className="text-sm text-text-secondary">{wordCount} words</span>
                 </div>
               </div>
 
               {/* Separator selector */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Separator</label>
+                <label className="block text-sm font-medium text-text-secondary mb-2">Separator</label>
                 <select
                   value={separator}
                   onChange={(e) => setSeparator(e.target.value)}
-                  className="bg-slate-700 text-slate-200 rounded-lg px-3 py-2 border border-slate-600"
+                  className="bg-surface-2 text-text-primary rounded-md px-3 py-2 border border-border-subtle"
                 >
                   {SEPARATOR_OPTIONS.map(opt => (
                     <option key={opt.label} value={opt.value}>{opt.label}</option>
@@ -191,11 +201,11 @@ export default function PasswordGenerator() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setCapitalize(!capitalize)}
-                  className={`px-4 py-2 rounded-lg font-medium ${capitalize ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300'}`}
+                  className={`px-4 py-2 rounded-md font-medium ${capitalize ? 'bg-accent text-black' : 'bg-surface-2 text-text-secondary'}`}
                 >
                   Capitalize
                 </button>
-                <span className="text-sm text-slate-400">Capitalize first letter of each word</span>
+                <span className="text-sm text-text-secondary">Capitalize first letter of each word</span>
               </div>
             </>
           )}
@@ -205,13 +215,13 @@ export default function PasswordGenerator() {
             <button
               onClick={() => copy(output)}
               disabled={!output || copied}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-500 border-blue-500 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-accent hover:bg-accent-hover border-accent text-black rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {copied ? 'Copied!' : 'Copy to Clipboard'}
             </button>
             <button
               onClick={handleRegenerate}
-              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 border-emerald-500 text-white rounded-lg font-medium"
+              className="px-6 py-3 bg-status-success hover:opacity-90 border-status-success text-black rounded-md font-medium"
             >
               Regenerate
             </button>
@@ -223,7 +233,7 @@ export default function PasswordGenerator() {
           <ErrorBanner message={error} />
 
           {!output && !error && (
-            <div className="p-6 bg-slate-800 border border-slate-600 rounded-lg text-slate-400">
+            <div className="p-6 bg-surface-1 border border-border-subtle rounded-md text-text-secondary">
               <p>Adjust settings and click Regenerate to create a password.</p>
             </div>
           )}
@@ -231,26 +241,26 @@ export default function PasswordGenerator() {
           {output && (
             <>
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-4">Generated {mode === 'passphrase' ? 'Passphrase' : 'Password'}</h2>
-                <p className="text-slate-400 text-sm mb-2">Click "Copy to Clipboard" to copy.</p>
+                <h2 className="text-2xl font-bold text-text-primary mb-4">Generated {mode === 'passphrase' ? 'Passphrase' : 'Password'}</h2>
+                <p className="text-text-secondary text-sm mb-2">Click "Copy to Clipboard" to copy.</p>
               </div>
 
-              <div className="bg-slate-800 border border-slate-600 rounded-lg p-6">
-                <pre className="bg-slate-900 border-slate-700 rounded-lg p-4 overflow-x-auto text-sm font-mono text-white break-all">
+              <div className="bg-surface-1 border border-border-subtle rounded-md p-6">
+                <pre className="bg-bg border-border rounded-md p-4 overflow-x-auto text-sm font-mono text-text-primary break-all">
                   {output}
                 </pre>
               </div>
 
-              <div className="bg-slate-800 border border-slate-600 rounded-lg p-4">
-                <h3 className="text-lg font-medium text-slate-300 mb-2">Password Entropy</h3>
-                <p className="text-4xl font-bold text-emerald-400 mb-2">{entropy} bits</p>
-                <p className="text-sm text-slate-400">
+              <div className="bg-surface-1 border border-border-subtle rounded-md p-4">
+                <h3 className="text-lg font-medium text-text-secondary mb-2">Password Entropy</h3>
+                <p className="text-4xl font-bold text-status-success mb-2">{entropy} bits</p>
+                <p className="text-sm text-text-secondary">
                   {entropy >= 80 ? (
-                    <span className="text-emerald-400">Strong password</span>
+                    <span className="text-status-success">Strong password</span>
                   ) : entropy >= 60 ? (
-                    <span className="text-yellow-400">Moderate password</span>
+                    <span className="text-status-warning">Moderate password</span>
                   ) : (
-                    <span className="text-red-400">Weak password</span>
+                    <span className="text-status-error">Weak password</span>
                   )}
                 </p>
               </div>

@@ -1,3 +1,11 @@
+/**
+ * @file ResultPanel.jsx
+ * @description Read-only output panel with optional copy button and error state styling
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import CopyButton from './CopyButton';
 
 /**
@@ -15,16 +23,16 @@ export default function ResultPanel({
   return (
     <div className={`space-y-2 ${className}`}>
       <div className="flex items-center justify-between">
-        <label className="block text-sm text-slate-400">{label}</label>
+        <label className="block text-sm text-text-secondary">{label}</label>
         {copyable && value && !error && <CopyButton text={value} />}
       </div>
       <div
-        className={`w-full min-h-[3rem] px-3 py-2 rounded-lg text-sm overflow-auto ${
+        className={`w-full min-h-[3rem] px-3 py-2 rounded-md text-sm overflow-auto ${
           mono ? 'font-mono' : ''
         } ${
           error
-            ? 'bg-red-900/20 border-2 border-red-500 text-red-400'
-            : 'bg-slate-900 border border-slate-700 text-slate-300'
+            ? 'bg-status-error/20 border-2 border-status-error text-status-error'
+            : 'bg-surface-2 border border-border text-text-primary'
         }`}
       >
         {error ? (
@@ -32,7 +40,7 @@ export default function ResultPanel({
         ) : value ? (
           <pre className="whitespace-pre-wrap">{value}</pre>
         ) : (
-          <span className="text-slate-600">No output</span>
+          <span className="text-text-muted">No output</span>
         )}
       </div>
     </div>

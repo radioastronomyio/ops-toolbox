@@ -4,16 +4,16 @@ title: "Mermaid Renderer"
 description: "Self-hosted diagram rendering with ELK layout engine"
 author: "vintagedon"
 date: "2025-01-21"
-version: "0.1"
-status: "Draft"
+version: "1.0"
+status: "Active"
 tags:
   - type: guide
-  - category: web-application-servers
-  - tech: react/mermaid/elk
+  - domain: utilities
+  - tech: [react, mermaid, elk]
   - audience: all
 related_documents:
-  - "[App Source](../../apps/mermaid-renderer/)"
-  - "[Memory Bank](../../.kilocode/rules/memory-bank/README.md)"
+  - "[Tool Source](../../src/tools/mermaid-renderer/)"
+  - "[Tool Reference](tool-reference.md)"
 ---
 -->
 
@@ -130,7 +130,7 @@ This produces a clean vertical hierarchy with the WAN zone at top, core infrastr
 | Package | Version | Purpose |
 |---------|---------|---------|
 | mermaid | 11.x | Diagram parsing and rendering |
-| @mermaid-js/layout-elk | 0.1.x | ELK layout algorithm |
+| @mermaid-js/layout-elk | 0.2.x | ELK layout algorithm |
 | React | 18.x | UI framework |
 | Vite | 5.x | Build tooling |
 
@@ -190,7 +190,7 @@ The only network activity is the initial page load.
 |---|---|
 | Author | vintagedon |
 | Created | 2025-01-21 |
-| Updated | 2025-01-21 |
-| Version | 0.1 (Draft) |
+| Updated | 2026-03-16 |
+| Version | 1.0 |
 
 ---

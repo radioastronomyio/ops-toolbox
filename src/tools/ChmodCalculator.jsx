@@ -1,3 +1,11 @@
+/**
+ * @file ChmodCalculator.jsx
+ * @description Unix file permission calculator with bidirectional octal/symbolic conversion and checkbox grid
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useState } from 'react';
 import { octalToPermissions, permissionsToOctal, permissionsToSymbolic, symbolicToPermissions } from '../lib/chmod.js';
 
@@ -7,6 +15,7 @@ const DEFAULT = '755';
 const ENTITIES = ['owner', 'group', 'other'];
 const BITS = ['read', 'write', 'execute'];
 
+// Converts an octal string into the full permission state used by all three input modes
 function makeState(octalStr) {
   const perms = octalToPermissions(octalStr);
   if (!perms) return null;
@@ -73,6 +82,7 @@ export default function ChmodCalculator() {
     setSymbolicError(null);
   }
 
+  // Checkbox toggle: flips one permission bit and recomputes octal + symbolic
   function toggleBit(entity, bit) {
     const newPerms = {
       owner: { ...state.owner },
@@ -92,8 +102,8 @@ export default function ChmodCalculator() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">Chmod Calculator</h1>
-        <p className="text-slate-400">Bidirectional Unix permission converter: octal ↔ symbolic with interactive checkbox grid.</p>
+        <h1 className="text-2xl font-bold text-text-primary mb-2">Chmod Calculator</h1>
+        <p className="text-text-secondary">Bidirectional Unix permission converter: octal ↔ symbolic with interactive checkbox grid.</p>
       </div>
 
       {/* Presets */}
@@ -102,7 +112,7 @@ export default function ChmodCalculator() {
           <button
             key={p}
             onClick={() => applyPreset(p)}
-            className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded font-mono transition-colors"
+            className="px-3 py-1.5 bg-surface-2 hover:bg-surface-3 text-text-primary text-sm rounded font-mono transition-micro"
           >
             {p}
           </button>
@@ -112,52 +122,52 @@ export default function ChmodCalculator() {
       {/* Inputs */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-slate-400 text-sm mb-1">Octal</label>
+          <label className="block text-text-secondary text-sm mb-1">Octal</label>
           <input
             type="text"
             value={octalInput}
             onChange={e => applyOctal(e.target.value)}
-            className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-2 font-mono text-sm focus:outline-none focus:border-blue-500"
+            className="w-full bg-surface-1 border border-border-subtle text-text-primary rounded-md px-4 py-2 font-mono text-sm focus:outline-none focus:border-accent"
             maxLength={3}
           />
-          {octalError && <p className="text-red-400 text-xs mt-1">{octalError}</p>}
+          {octalError && <p className="text-status-error text-xs mt-1">{octalError}</p>}
         </div>
         <div>
-          <label className="block text-slate-400 text-sm mb-1">Symbolic</label>
+          <label className="block text-text-secondary text-sm mb-1">Symbolic</label>
           <input
             type="text"
             value={symbolicInput}
             onChange={e => applySymbolic(e.target.value)}
-            className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-2 font-mono text-sm focus:outline-none focus:border-blue-500"
+            className="w-full bg-surface-1 border border-border-subtle text-text-primary rounded-md px-4 py-2 font-mono text-sm focus:outline-none focus:border-accent"
             maxLength={9}
           />
-          {symbolicError && <p className="text-red-400 text-xs mt-1">{symbolicError}</p>}
+          {symbolicError && <p className="text-status-error text-xs mt-1">{symbolicError}</p>}
         </div>
       </div>
 
       {/* Checkbox grid */}
       {state && (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+        <div className="bg-surface-1 border border-border rounded-md overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-700">
-                <th className="px-4 py-2 text-left text-slate-400 font-medium w-24"></th>
-                <th className="px-4 py-2 text-center text-slate-400 font-medium">Read</th>
-                <th className="px-4 py-2 text-center text-slate-400 font-medium">Write</th>
-                <th className="px-4 py-2 text-center text-slate-400 font-medium">Execute</th>
+              <tr className="border-b border-border">
+                <th className="px-4 py-2 text-left text-text-secondary font-medium w-24"></th>
+                <th className="px-4 py-2 text-center text-text-secondary font-medium">Read</th>
+                <th className="px-4 py-2 text-center text-text-secondary font-medium">Write</th>
+                <th className="px-4 py-2 text-center text-text-secondary font-medium">Execute</th>
               </tr>
             </thead>
             <tbody>
               {ENTITIES.map(entity => (
-                <tr key={entity} className="border-b border-slate-700 last:border-0">
-                  <td className="px-4 py-3 text-slate-300 font-medium capitalize">{entity}</td>
+                <tr key={entity} className="border-b border-border last:border-0">
+                  <td className="px-4 py-3 text-text-secondary font-medium capitalize">{entity}</td>
                   {BITS.map(bit => (
                     <td key={bit} className="px-4 py-3 text-center">
                       <input
                         type="checkbox"
                         checked={state[entity][bit]}
                         onChange={() => toggleBit(entity, bit)}
-                        className="w-4 h-4 accent-blue-500 cursor-pointer"
+                        className="w-4 h-4 accent-accent cursor-pointer"
                       />
                     </td>
                   ))}
@@ -170,14 +180,14 @@ export default function ChmodCalculator() {
 
       {/* Summary */}
       {state && (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 flex flex-wrap gap-6">
+        <div className="bg-surface-1 border border-border rounded-md p-4 flex flex-wrap gap-6">
           <div>
-            <span className="text-slate-400 text-xs uppercase">Octal</span>
-            <p className="text-white font-mono text-2xl mt-1">{state.octal}</p>
+            <span className="text-text-secondary text-xs uppercase">Octal</span>
+            <p className="text-text-primary font-mono text-2xl mt-1">{state.octal}</p>
           </div>
           <div>
-            <span className="text-slate-400 text-xs uppercase">Symbolic</span>
-            <p className="text-white font-mono text-2xl mt-1">{state.symbolic}</p>
+            <span className="text-text-secondary text-xs uppercase">Symbolic</span>
+            <p className="text-text-primary font-mono text-2xl mt-1">{state.symbolic}</p>
           </div>
         </div>
       )}

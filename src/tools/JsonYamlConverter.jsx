@@ -1,3 +1,11 @@
+/**
+ * @file JsonYamlConverter.jsx
+ * @description Bidirectional JSON/YAML converter with real-time parsing via js-yaml
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useState, useMemo } from 'react';
 import yaml from 'js-yaml';
 
@@ -30,6 +38,7 @@ function JsonYamlConverter() {
     try {
       if (direction === 'json-to-yaml') {
         const parsed = JSON.parse(inputText);
+        // lineWidth: -1 disables wrapping so long strings stay on one line
         const yamlOutput = yaml.dump(parsed, { indent: 2, lineWidth: -1 });
         return { output: yamlOutput, error: null };
       } else {
@@ -52,8 +61,8 @@ function JsonYamlConverter() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">JSON ↔ YAML Converter</h1>
-        <p className="text-slate-400">
+        <h1 className="text-2xl font-bold text-text-primary mb-2">JSON ↔ YAML Converter</h1>
+        <p className="text-text-secondary">
           Bidirectional conversion between JSON and YAML with real-time parsing.
         </p>
       </div>
@@ -61,7 +70,7 @@ function JsonYamlConverter() {
       <div className="flex items-center justify-center mb-4">
         <button
           onClick={toggleDirection}
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+          className="px-6 py-2 bg-accent hover:bg-accent-hover text-black font-medium rounded-md transition-micro"
         >
           {direction === 'json-to-yaml' ? 'JSON → YAML' : 'YAML → JSON'}
         </button>
@@ -69,28 +78,28 @@ function JsonYamlConverter() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <label htmlFor="json-yaml-input" className="block text-sm font-medium text-slate-300 mb-2">
+          <label htmlFor="json-yaml-input" className="block text-sm font-medium text-text-secondary mb-2">
             Input ({inputFormat})
           </label>
           <textarea
             id="json-yaml-input"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            className="w-full h-96 px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full h-96 px-4 py-3 bg-surface-1 border border-border-subtle rounded-md text-text-primary font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none"
             spellCheck={false}
           />
         </div>
 
         <div className="space-y-4">
-          <label htmlFor="json-yaml-output" className="block text-sm font-medium text-slate-300 mb-2">
+          <label htmlFor="json-yaml-output" className="block text-sm font-medium text-text-secondary mb-2">
             Output ({outputFormat})
           </label>
           <div
             id="json-yaml-output"
-            className={`w-full h-96 px-4 py-3 rounded-lg font-mono text-sm overflow-auto ${
+            className={`w-full h-96 px-4 py-3 rounded-md font-mono text-sm overflow-auto ${
               error
-                ? 'bg-red-900/20 border-2 border-red-500 text-red-400'
-                : 'bg-slate-800 border border-slate-600 text-slate-300'
+                ? 'bg-status-error/20 border-2 border-status-error text-status-error'
+                : 'bg-surface-1 border border-border-subtle text-text-secondary'
             }`}
           >
             {error ? (

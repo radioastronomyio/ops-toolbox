@@ -1,12 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ops Toolbox</title>
     <meta name="description" content="Client-side utility tools for IT operations. 100% local processing — data never leaves your browser." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+      try {
+        var t = localStorage.getItem('ops-theme-preference');
+        var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (t === 'dark' || (!t && d)) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.style.backgroundColor = '#0E1013';
+        } else if (t === 'light') {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.style.backgroundColor = '#F8F9FA';
+        } else {
+          if (d) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.backgroundColor = '#0E1013';
+          } else {
+            document.documentElement.style.backgroundColor = '#F8F9FA';
+          }
+        }
+      } catch (e) {}
+    </script>
   </head>
-  <body class="bg-slate-900 text-slate-300 antialiased">
+  <body class="antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

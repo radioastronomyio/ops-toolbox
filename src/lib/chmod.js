@@ -1,3 +1,12 @@
+/**
+ * @file chmod.js
+ * @description Unix file permission conversion between octal, symbolic (rwx), and boolean representations
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+/** Convert octal string (e.g. "755") to permission object. Max valid octal is 777 (decimal 511). */
 export function octalToPermissions(octalStr) {
   const n = parseInt(octalStr, 8);
   if (isNaN(n) || n < 0 || n > 511) return null;
@@ -8,6 +17,7 @@ export function octalToPermissions(octalStr) {
   return { owner, group, other, octal: octalStr.padStart(3, '0'), symbolic: permissionsToSymbolic({ owner, group, other }) };
 }
 
+/** Convert boolean permission object back to octal. Each role maps to 3 bits (r=4, w=2, x=1). */
 export function permissionsToOctal(perms) {
   const val = (p) => (p.read ? 4 : 0) + (p.write ? 2 : 0) + (p.execute ? 1 : 0);
   const n = val(perms.owner) * 64 + val(perms.group) * 8 + val(perms.other);
@@ -19,6 +29,7 @@ export function permissionsToSymbolic(perms) {
   return s(perms.owner) + s(perms.group) + s(perms.other);
 }
 
+/** Parse a 9-char symbolic string like "rwxr-xr--" into boolean permission object */
 export function symbolicToPermissions(symbolic) {
   if (!symbolic || symbolic.length !== 9) return null;
   const parse = (chars) => ({ read: chars[0] === 'r', write: chars[1] === 'w', execute: chars[2] === 'x' });

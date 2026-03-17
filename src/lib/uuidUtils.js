@@ -1,3 +1,11 @@
+/**
+ * @file uuidUtils.js
+ * @description UUID v4 (random) and v7 (timestamp-sortable) generation with batch and format options
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { v4 as uuidv4, v7 as uuidv7, validate } from 'uuid';
 
 export function generateV4() {

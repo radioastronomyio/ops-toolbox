@@ -1,5 +1,14 @@
+/**
+ * @file asciiBanner.js
+ * @description ASCII art text banner generation via the figlet library
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import figlet from 'figlet';
 
+/** Returns installed figlet fonts, falling back to a hardcoded set if sync load fails */
 export function getAvailableFonts() {
   try {
     return figlet.fontsSync();

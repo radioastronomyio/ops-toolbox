@@ -1,0 +1,98 @@
+/**
+ * @file design-tokens.css
+ * @description HSL design tokens for dual-theme (light/dark) token architecture
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+@layer base {
+
+  /* ─── Light Theme (default) ─── */
+  :root {
+    /* Background & Surfaces */
+    --color-bg-base:        220 20% 98%;
+    --color-surface-1:      0 0% 100%;
+    --color-surface-2:      220 15% 95%;
+    --color-surface-3:      220 15% 90%;
+
+    /* Borders */
+    --color-border-subtle:  220 15% 90%;
+    --color-border-default: 220 15% 80%;
+    --color-border-strong:  220 15% 60%;
+
+    /* Text */
+    --color-text-primary:   220 20% 10%;
+    --color-text-secondary: 220 15% 35%;
+    --color-text-muted:     220 15% 55%;
+
+    /* Accent — Desaturated Teal */
+    --color-accent-base:    180 40% 40%;
+    --color-accent-hover:   180 50% 35%;
+    --color-accent-muted:   180 30% 90%;
+    --color-accent-text:    180 70% 25%;
+
+    /* Semantic */
+    --color-success:        150 80% 30%;
+    --color-error:          0 70% 45%;
+    --color-warning:        40 90% 50%;
+    --color-info:           210 70% 50%;
+
+    /* Typography */
+    --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --base-font-size: 14px;
+
+    /* Motion */
+    --duration-micro:  150ms;
+    --duration-enter:  250ms;
+    --duration-exit:   200ms;
+    --ease-micro:      cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-enter:      ease-out;
+    --ease-exit:       ease-in;
+  }
+
+  /* ─── Dark Theme ─── */
+  .dark {
+    /* Background & Surfaces */
+    --color-bg-base:        220 10% 6%;
+    --color-surface-1:      220 10% 10%;
+    --color-surface-2:      220 10% 14%;
+    --color-surface-3:      220 10% 18%;
+
+    /* Borders */
+    --color-border-subtle:  220 10% 14%;
+    --color-border-default: 220 10% 20%;
+    --color-border-strong:  220 10% 35%;
+
+    /* Text */
+    --color-text-primary:   220 15% 95%;
+    --color-text-secondary: 220 10% 70%;
+    --color-text-muted:     220 10% 45%;
+
+    /* Accent — Desaturated Teal */
+    --color-accent-base:    180 50% 60%;
+    --color-accent-hover:   180 60% 65%;
+    --color-accent-muted:   180 40% 15%;
+    --color-accent-text:    180 60% 70%;
+
+    /* Semantic */
+    --color-success:        150 60% 45%;
+    --color-error:          0 60% 60%;
+    --color-warning:        40 80% 60%;
+    --color-info:           210 60% 60%;
+
+    /* Typography (theme-independent, duplicated for clarity) */
+    --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --base-font-size: 14px;
+
+    /* Motion */
+    --duration-micro:  150ms;
+    --duration-enter:  250ms;
+    --duration-exit:   200ms;
+    --ease-micro:      cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-enter:      ease-out;
+    --ease-exit:       ease-in;
+  }
+}

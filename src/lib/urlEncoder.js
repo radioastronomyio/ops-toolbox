@@ -1,3 +1,11 @@
+/**
+ * @file urlEncoder.js
+ * @description URL component encoding/decoding, query string parsing, and URL construction
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 export function encodeComponent(str) {
   if (!str) return '';
   return encodeURIComponent(str);
@@ -44,7 +52,7 @@ export function parseQueryString(qs) {
   if (!qs) return [];
   const s = qs.startsWith('?') ? qs.slice(1) : qs;
   if (!s) return [];
-  // Parse manually to get raw encoded values
+  // Manual parsing preserves raw encoded values (URLSearchParams would auto-decode)
   const result = [];
   s.split('&').forEach(pair => {
     const eqIdx = pair.indexOf('=');

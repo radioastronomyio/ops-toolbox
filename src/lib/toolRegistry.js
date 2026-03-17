@@ -1,4 +1,12 @@
 /**
+ * @file toolRegistry.js
+ * @description Canonical tool registry — single source of truth for all tool metadata, routing, and queries
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+/**
  * Canonical tool registry. Every tool in the suite is registered here.
  * Routing, directory grid, search, docs, and badges all derive from this.
  *

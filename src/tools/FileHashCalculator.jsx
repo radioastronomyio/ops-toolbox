@@ -1,3 +1,11 @@
+/**
+ * @file FileHashCalculator.jsx
+ * @description File hash calculator supporting MD5, SHA-1, SHA-256, SHA-512 with in-browser Web Crypto API
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useState, useRef, useCallback } from 'react';
 import { hashFile } from '../lib/fileHash.js';
 
@@ -22,6 +30,7 @@ export default function FileHashCalculator() {
   const dropRef = useRef(null);
   const hashGeneration = useRef(0);
 
+  // Generation counter prevents stale results when a new file is selected mid-hash
   async function computeHashes(f, algos) {
     const gen = ++hashGeneration.current;
     setHashing(true);
@@ -79,6 +88,7 @@ export default function FileHashCalculator() {
 
   const hasResults = file && Object.keys(hashes).length > 0;
 
+  // Case-insensitive comparison against an optional user-provided expected hash
   function getVerificationStatus(algo, hash) {
     if (!expectedHash.trim()) return null;
     const norm = expectedHash.trim().toLowerCase();
@@ -89,8 +99,8 @@ export default function FileHashCalculator() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">File Hash Calculator</h1>
-        <p className="text-slate-400">Compute MD5, SHA-1, SHA-256, SHA-512 digests for any file. All processing in-browser.</p>
+        <h1 className="text-2xl font-bold text-text-primary mb-2">File Hash Calculator</h1>
+        <p className="text-text-secondary">Compute MD5, SHA-1, SHA-256, SHA-512 digests for any file. All processing in-browser.</p>
       </div>
 
       {/* Drop zone */}
@@ -99,9 +109,9 @@ export default function FileHashCalculator() {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onClick={() => fileInputRef.current?.click()}
-        className="border-2 border-dashed border-slate-600 hover:border-blue-500 rounded-lg p-10 text-center cursor-pointer transition-colors"
+        className="border-2 border-dashed border-border-subtle hover:border-accent rounded-md p-10 text-center cursor-pointer transition-micro"
       >
-        <p className="text-slate-400 text-sm">Drop a file here or click to browse</p>
+        <p className="text-text-secondary text-sm">Drop a file here or click to browse</p>
         <input
           ref={fileInputRef}
           type="file"
@@ -118,40 +128,40 @@ export default function FileHashCalculator() {
               type="checkbox"
               checked={selectedAlgos[algo]}
               onChange={() => toggleAlgo(algo)}
-              className="w-4 h-4 accent-blue-500"
+              className="w-4 h-4 accent-accent"
             />
-            <span className="text-slate-300 text-sm font-mono">{algo}</span>
+            <span className="text-text-secondary text-sm font-mono">{algo}</span>
           </label>
         ))}
       </div>
 
       {/* Expected hash input */}
       <div>
-        <label className="block text-slate-400 text-sm mb-1">Expected Hash (optional)</label>
+        <label className="block text-text-secondary text-sm mb-1">Expected Hash (optional)</label>
         <input
           type="text"
           value={expectedHash}
           onChange={e => setExpectedHash(e.target.value)}
           placeholder="Paste expected hash to verify"
-          className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-4 py-2 font-mono text-sm focus:outline-none focus:border-blue-500"
+          className="w-full bg-surface-1 border border-border-subtle text-text-primary rounded-md px-4 py-2 font-mono text-sm focus:outline-none focus:border-accent"
         />
       </div>
 
       {/* File metadata */}
       {file && (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 space-y-1">
+        <div className="bg-surface-1 border border-border rounded-md p-4 space-y-1">
           <div className="flex gap-4 text-sm flex-wrap">
-            <span className="text-slate-400">Name: <span className="text-white font-mono">{file.name}</span></span>
-            <span className="text-slate-400">Size: <span className="text-white">{formatSize(file.size)}</span></span>
-            <span className="text-slate-400">Type: <span className="text-white font-mono">{file.type || 'unknown'}</span></span>
+            <span className="text-text-secondary">Name: <span className="text-text-primary font-mono">{file.name}</span></span>
+            <span className="text-text-secondary">Size: <span className="text-text-primary">{formatSize(file.size)}</span></span>
+            <span className="text-text-secondary">Type: <span className="text-text-primary font-mono">{file.type || 'unknown'}</span></span>
           </div>
         </div>
       )}
 
       {/* Hashing spinner */}
       {hashing && (
-        <div className="flex items-center gap-3 text-slate-400 text-sm">
-          <svg className="animate-spin h-4 w-4 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <div className="flex items-center gap-3 text-text-secondary text-sm">
+          <svg className="animate-spin h-4 w-4 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
           </svg>
@@ -161,13 +171,13 @@ export default function FileHashCalculator() {
 
       {/* Results table */}
       {hasResults && !hashing && (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+        <div className="bg-surface-1 border border-border rounded-md overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-700 bg-slate-700/50">
-                <th className="px-4 py-2 text-left text-slate-400 font-medium w-24">Algorithm</th>
-                <th className="px-4 py-2 text-left text-slate-400 font-medium">Hash</th>
-                <th className="px-4 py-2 text-slate-400 font-medium w-24 text-center">Status</th>
+              <tr className="border-b border-border bg-surface-2/50">
+                <th className="px-4 py-2 text-left text-text-secondary font-medium w-24">Algorithm</th>
+                <th className="px-4 py-2 text-left text-text-secondary font-medium">Hash</th>
+                <th className="px-4 py-2 text-text-secondary font-medium w-24 text-center">Status</th>
                 <th className="px-4 py-2 w-16"></th>
               </tr>
             </thead>
@@ -176,21 +186,21 @@ export default function FileHashCalculator() {
                 const hash = hashes[algo];
                 const status = getVerificationStatus(algo, hash);
                 return (
-                  <tr key={algo} className="border-b border-slate-700 last:border-0">
-                    <td className="px-4 py-2 text-slate-300 font-mono">{algo}</td>
-                    <td className="px-4 py-2 text-white font-mono text-xs break-all">{hash}</td>
+                  <tr key={algo} className="border-b border-border last:border-0">
+                    <td className="px-4 py-2 text-text-secondary font-mono">{algo}</td>
+                    <td className="px-4 py-2 text-text-primary font-mono text-xs break-all">{hash}</td>
                     <td className="px-4 py-2 text-center">
                       {status === 'match' && (
-                        <span className="text-green-400 text-xs font-semibold">Match</span>
+                        <span className="text-status-success text-xs font-semibold">Match</span>
                       )}
                       {status === 'nomatch' && (
-                        <span className="text-red-400 text-xs font-semibold">No Match</span>
+                        <span className="text-status-error text-xs font-semibold">No Match</span>
                       )}
                     </td>
                     <td className="px-4 py-2 text-center">
                       <button
                         onClick={() => copyHash(algo, hash)}
-                        className="px-2 py-1 bg-slate-700 hover:bg-slate-600 text-white text-xs rounded transition-colors"
+                        className="px-2 py-1 bg-surface-2 hover:bg-surface-3 text-text-primary text-xs rounded transition-micro"
                       >
                         {copied[algo] ? 'Copied!' : 'Copy'}
                       </button>

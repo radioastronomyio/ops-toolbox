@@ -1,3 +1,11 @@
+/**
+ * @file cronUtils.js
+ * @description Cron expression parsing, validation, human-readable description, and next-run computation
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import cronstrue from 'cronstrue';
 
 export function describeExpression(expr) {
@@ -28,7 +36,7 @@ export function getNextRuns(expr, n, fromDate = new Date()) {
   if (!fields) return [];
 
   const results = [];
-  const MAX_MINUTES = 60 * 24 * 365 * 4; // 4 years
+  const MAX_MINUTES = 60 * 24 * 365 * 4; // Scan up to 4 years ahead to find next runs
   let current = new Date(fromDate);
   // Advance to next minute boundary
   current.setSeconds(0, 0);
@@ -59,6 +67,7 @@ function matchesCron(date, fields) {
   );
 }
 
+// Match a single cron field against a date value. Handles *, step (*/n), ranges, and lists.
 function matchField(field, value, min, max, isDow = false) {
   if (field === '*') return true;
 
@@ -80,7 +89,7 @@ function matchField(field, value, min, max, isDow = false) {
     return field.split(',').some(f => matchField(f.trim(), value, min, max, isDow));
   }
 
-  // Named days (MON-FRI etc) - basic numeric only for simplicity
+  // Numeric literal — treat 7 as Sunday (alias for 0) per cron convention
   const n = parseInt(field);
   if (isDow && n === 7) return value === 0;
   return value === n;

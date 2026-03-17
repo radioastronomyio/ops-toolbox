@@ -1,11 +1,21 @@
+/**
+ * @file SubnetCalculator.jsx
+ * @description IPv4 subnet calculator with interactive binary-tree splitting and joining
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { useState, useCallback } from 'react';
 import {
   createRootNode, splitSubnet, joinSubnet, flattenTree,
   getSubnetInfo, uint32ToIp,
 } from '../lib/subnet.js';
 
+// Color palette for visual subnet differentiation; cycles back to null after last color
 const PALETTE = ['#3b82f6', '#22c55e', '#eab308', '#f97316', '#ef4444', '#a855f7', '#14b8a6', '#6b7280'];
 
+/** Immutably update a node in the binary tree by following a path of [0,1] child indices */
 function updateNodeByPath(tree, path, updater) {
   if (path.length === 0) return updater(tree);
   const [head, ...rest] = path;
@@ -14,6 +24,7 @@ function updateNodeByPath(tree, path, updater) {
   return { ...tree, children: newChildren };
 }
 
+/** DFS to find the path (array of 0/1 indices) to a leaf node matching network/prefix */
 function findPathToLeaf(tree, targetNetwork, targetPrefix, path = []) {
   if (tree.network === targetNetwork && tree.prefix === targetPrefix && !tree.children) {
     return path;
@@ -24,6 +35,7 @@ function findPathToLeaf(tree, targetNetwork, targetPrefix, path = []) {
   return findPathToLeaf(tree.children[1], targetNetwork, targetPrefix, [...path, 1]);
 }
 
+/** DFS to find path to any node (leaf or parent) matching network/prefix */
 function findPathToNode(tree, targetNetwork, targetPrefix, path = []) {
   if (tree.network === targetNetwork && tree.prefix === targetPrefix) return path;
   if (!tree.children) return null;
@@ -76,7 +88,7 @@ export default function SubnetCalculator() {
     }));
   }, [tree]);
 
-  // Find parent node if both its children are leaves (joinable)
+  // Find parent node whose both children are leaves — only those pairs can be joined back
   function getJoinableParent(node) {
     function search(t) {
       if (!t.children) return null;
@@ -96,47 +108,47 @@ export default function SubnetCalculator() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">Subnet Calculator</h1>
-        <p className="text-slate-400">Visual IPv4 subnet designer — split and join subnets interactively.</p>
+        <h1 className="text-2xl font-bold text-text-primary mb-2">Subnet Calculator</h1>
+        <p className="text-text-secondary">Visual IPv4 subnet designer — split and join subnets interactively.</p>
       </div>
 
       {/* Network input */}
       <div className="flex flex-wrap items-end gap-3">
         <div>
-          <label className="block text-xs text-slate-400 mb-1">Network Address</label>
+          <label className="block text-xs text-text-secondary mb-1">Network Address</label>
           <input
             type="text"
             value={networkInput}
             onChange={e => setNetworkInput(e.target.value)}
-            className="bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 font-mono w-40"
+            className="bg-surface-1 border border-border-subtle text-text-primary rounded-md px-3 py-2 font-mono w-40"
             placeholder="10.0.0.0"
           />
         </div>
         <div>
-          <label className="block text-xs text-slate-400 mb-1">/ Prefix</label>
+          <label className="block text-xs text-text-secondary mb-1">/ Prefix</label>
           <input
             type="number"
             min="0" max="32"
             value={prefixInput}
             onChange={e => setPrefixInput(e.target.value)}
-            className="bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 w-20"
+            className="bg-surface-1 border border-border-subtle text-text-primary rounded-md px-3 py-2 w-20"
           />
         </div>
         <button
           onClick={handleGo}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium"
+          className="px-4 py-2 bg-accent hover:bg-accent-hover text-black rounded-md font-medium"
         >
           Go
         </button>
-        {inputError && <span className="text-red-400 text-sm">{inputError}</span>}
+        {inputError && <span className="text-status-error text-sm">{inputError}</span>}
       </div>
 
       {/* Subnet table */}
       {tree && (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-slate-300 border-collapse">
+          <table className="w-full text-sm text-text-secondary border-collapse">
             <thead>
-              <tr className="bg-slate-800 text-xs text-slate-400 uppercase">
+              <tr className="bg-surface-1 text-xs text-text-secondary uppercase">
                 <th className="px-2 py-2 text-left w-6"></th>
                 <th className="px-3 py-2 text-left">Subnet Address</th>
                 <th className="px-3 py-2 text-left">Range of Addresses</th>
@@ -153,14 +165,14 @@ export default function SubnetCalculator() {
                 return (
                   <tr
                     key={`${node.network}-${node.prefix}`}
-                    className="border-b border-slate-700 hover:bg-slate-800/50"
+                    className="border-b border-border hover:bg-surface-1/50"
                     style={node.color ? { borderLeft: `4px solid ${node.color}` } : {}}
                   >
                     <td className="px-2 py-2">
                       <button
                         onClick={() => handleColorCycle(node)}
                         title="Cycle color"
-                        className="w-4 h-4 rounded-full border border-slate-600"
+                        className="w-4 h-4 rounded-full border border-border-subtle"
                         style={{ backgroundColor: node.color || '#334155' }}
                       />
                     </td>
@@ -182,14 +194,14 @@ export default function SubnetCalculator() {
                         value={node.note}
                         onChange={e => handleNoteChange(node, e.target.value)}
                         placeholder="Add note…"
-                        className="bg-transparent border-b border-slate-600 text-slate-300 text-xs px-1 py-0.5 w-full focus:outline-none focus:border-blue-500"
+                        className="bg-transparent border-b border-border-subtle text-text-secondary text-xs px-1 py-0.5 w-full focus:outline-none focus:border-accent"
                       />
                     </td>
                     <td className="px-3 py-2 text-center whitespace-nowrap">
                       {node.prefix < 32 && (
                         <button
                           onClick={() => handleSplit(node)}
-                          className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded mr-1"
+                          className="px-2 py-1 text-xs bg-surface-2 hover:bg-surface-3 text-text-secondary rounded mr-1"
                         >
                           Split
                         </button>
@@ -197,7 +209,7 @@ export default function SubnetCalculator() {
                       {parent && (
                         <button
                           onClick={() => handleJoin(parent)}
-                          className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded"
+                          className="px-2 py-1 text-xs bg-surface-2 hover:bg-surface-3 text-text-secondary rounded"
                         >
                           Join
                         </button>

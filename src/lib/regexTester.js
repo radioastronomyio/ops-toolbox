@@ -1,3 +1,11 @@
+/**
+ * @file regexTester.js
+ * @description Regex pattern compilation, match execution with capture groups, and highlight segmentation
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 export function compileRegex(pattern, flags) {
   if (!pattern) {
     try {
@@ -19,6 +27,7 @@ export function runMatches(regex, testString) {
     const matches = [];
     if (regex.flags.includes('g')) {
       let match;
+      // Recreate regex to reset lastIndex for safe iteration
       const re = new RegExp(regex.source, regex.flags);
       while ((match = re.exec(testString)) !== null) {
         matches.push({
@@ -27,7 +36,7 @@ export function runMatches(regex, testString) {
           groups: match.slice(1),
           namedGroups: match.groups || null,
         });
-        if (match[0].length === 0) re.lastIndex++; // avoid infinite loop
+        if (match[0].length === 0) re.lastIndex++; // Advance past zero-length match to prevent infinite loop
       }
     } else {
       const match = regex.exec(testString);
@@ -46,6 +55,7 @@ export function runMatches(regex, testString) {
   }
 }
 
+/** Split test string into alternating match/non-match segments for UI highlighting */
 export function buildHighlightSegments(testString, matches) {
   if (!matches || matches.length === 0) {
     return [{ text: testString, isMatch: false, groupIndex: null }];

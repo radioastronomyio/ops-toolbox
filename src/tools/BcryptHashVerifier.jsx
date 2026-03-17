@@ -1,3 +1,11 @@
+/**
+ * @file BcryptHashVerifier.jsx
+ * @description Bcrypt hash generation and password verification with configurable salt rounds
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import React, { useState } from 'react';
 import { hashPassword, verifyPassword, isBcryptHash } from '../lib/bcryptUtils';
 import CopyButton from '../components/CopyButton';
@@ -32,6 +40,7 @@ export default function BcryptHashVerifier() {
 
   async function handleVerify() {
     if (!verifyPlain || !verifyHash) return;
+    // Reject early if the hash doesn't match $2a$/$2b$ format to avoid wasting CPU
     if (!isBcryptHash(verifyHash)) {
       setVerifyResult({ valid: false, message: 'Invalid hash format' });
       return;
@@ -51,29 +60,29 @@ export default function BcryptHashVerifier() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-8">
-      <h1 className="text-2xl font-bold text-slate-100">Bcrypt Hash Verifier</h1>
+      <h1 className="text-2xl font-bold text-text-primary">Bcrypt Hash Verifier</h1>
 
       {/* Hash panel */}
-      <div className="bg-slate-800 rounded-lg p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-200">Hash</h2>
+      <div className="bg-surface-1 rounded-md p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-text-primary">Hash</h2>
 
         <div className="space-y-2">
-          <label className="block text-sm text-slate-400">Plain Text</label>
+          <label className="block text-sm text-text-secondary">Plain Text</label>
           <input
             type="text"
             value={hashPlain}
             onChange={e => setHashPlain(e.target.value)}
             placeholder="Enter password to hash"
-            className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
+            className="w-full bg-bg border border-border rounded px-3 py-2 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm text-slate-400">Salt Rounds</label>
+          <label className="block text-sm text-text-secondary">Salt Rounds</label>
           <select
             value={saltRounds}
             onChange={e => setSaltRounds(e.target.value)}
-            className="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-100 focus:outline-none focus:border-sky-500"
+            className="bg-bg border border-border rounded px-3 py-2 text-text-primary focus:outline-none focus:border-accent"
           >
             {[4, 6, 8, 10, 12, 14].map(r => (
               <option key={r} value={r}>{r}</option>
@@ -84,7 +93,7 @@ export default function BcryptHashVerifier() {
         <button
           onClick={handleHash}
           disabled={hashing}
-          className="px-4 py-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded font-medium"
+          className="px-4 py-2 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-black rounded font-medium"
         >
           {hashing ? 'Hashing…' : 'Hash Password'}
         </button>
@@ -92,48 +101,48 @@ export default function BcryptHashVerifier() {
         {hashResult && (
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <code className="flex-1 font-mono text-xs bg-slate-900 border border-slate-700 rounded px-3 py-2 text-emerald-400 break-all">
+              <code className="flex-1 font-mono text-xs bg-bg border border-border rounded px-3 py-2 text-status-success break-all">
                 {hashResult}
               </code>
               <CopyButton text={hashResult} className="py-2 text-sm whitespace-nowrap" />
             </div>
             {hashTime !== null && (
-              <p className="text-xs text-slate-500">Computed in {hashTime}ms</p>
+              <p className="text-xs text-text-muted">Computed in {hashTime}ms</p>
             )}
           </div>
         )}
       </div>
 
       {/* Verify panel */}
-      <div className="bg-slate-800 rounded-lg p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-slate-200">Verify</h2>
+      <div className="bg-surface-1 rounded-md p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-text-primary">Verify</h2>
 
         <div className="space-y-2">
-          <label className="block text-sm text-slate-400">Plain Text</label>
+          <label className="block text-sm text-text-secondary">Plain Text</label>
           <input
             type="text"
             value={verifyPlain}
             onChange={e => setVerifyPlain(e.target.value)}
             placeholder="Enter plain text password"
-            className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
+            className="w-full bg-bg border border-border rounded px-3 py-2 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm text-slate-400">Bcrypt Hash</label>
+          <label className="block text-sm text-text-secondary">Bcrypt Hash</label>
           <input
             type="text"
             value={verifyHash}
             onChange={e => setVerifyHash(e.target.value)}
             placeholder="$2b$10$..."
-            className="w-full font-mono bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
+            className="w-full font-mono bg-bg border border-border rounded px-3 py-2 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent"
           />
         </div>
 
         <button
           onClick={handleVerify}
           disabled={verifying}
-          className="px-4 py-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded font-medium"
+          className="px-4 py-2 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-black rounded font-medium"
         >
           {verifying ? 'Verifying…' : 'Verify Password'}
         </button>
@@ -142,8 +151,8 @@ export default function BcryptHashVerifier() {
           <div
             className={`px-4 py-3 rounded font-medium ${
               verifyResult.valid
-                ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-700'
-                : 'bg-red-900/50 text-red-300 border border-red-700'
+                ? 'bg-status-success/20 text-status-success border border-status-success/50'
+                : 'bg-status-error/20 text-status-error border border-status-error/50'
             }`}
           >
             {verifyResult.message}

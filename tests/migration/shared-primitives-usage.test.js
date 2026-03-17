@@ -3,6 +3,8 @@ import { resolve, join } from 'path';
 
 const TOOL_DIR = resolve(__dirname, '../../src/tools');
 const CLIPBOARD_EXCLUDED = ['FileHashCalculator.jsx'];
+// MermaidRenderer uses render-debounce (async SVG re-render), not input debounce — can't use useDebouncedValue
+const DEBOUNCE_EXCLUDED = ['MermaidRenderer.jsx'];
 
 function getToolFiles(dir) {
   const entries = readdirSync(dir, { withFileTypes: true });
@@ -30,9 +32,11 @@ describe('shared primitives adoption', () => {
     }
   });
 
-  test('no tool uses hand-rolled debounce pattern', () => {
+  test('no tool uses hand-rolled debounce pattern (except excluded)', () => {
     const pattern = /\.current\s*=\s*setTimeout\s*\(/;
     for (const file of toolFiles) {
+      const name = file.split(/[\\/]/).pop();
+      if (DEBOUNCE_EXCLUDED.includes(name)) continue;
       const content = readFileSync(file, 'utf-8');
       expect(content).not.toMatch(pattern);
     }

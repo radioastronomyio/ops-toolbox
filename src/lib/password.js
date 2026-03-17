@@ -1,3 +1,11 @@
+/**
+ * @file password.js
+ * @description Cryptographic password and passphrase generation using Web Crypto API with rejection sampling
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
 import { EFF_SHORT_WORDLIST } from './wordlist.js';
 
 /**
@@ -23,17 +31,19 @@ export function generatePassword(length, options) {
   }
 
   const poolSize = charset.length;
-  // Largest multiple of poolSize that fits in a Uint8 (0–255)
+  // Rejection sampling: discard random bytes >= maxValid to eliminate modulo bias.
+  // Without this, characters at the start of the charset would appear slightly more often.
   const maxValid = 256 - (256 % poolSize);
 
   let password = '';
   while (password.length < length) {
+    // Request 2x bytes to reduce the chance of needing another round
     const randomValues = window.crypto.getRandomValues(new Uint8Array(length * 2));
     for (let i = 0; i < randomValues.length && password.length < length; i++) {
       if (randomValues[i] < maxValid) {
         password += charset[randomValues[i] % poolSize];
       }
-      // else: reject this byte, try next
+      // Rejected bytes are discarded — this is the core of rejection sampling
     }
   }
 
@@ -51,10 +61,11 @@ export function calculateEntropy(length, poolSize) {
   return Math.floor(length * Math.log2(poolSize));
 }
 
+/** Generate a passphrase by picking random words from the EFF wordlist via rejection sampling */
 export function generatePassphrase(wordCount, separator = '-', capitalize = false) {
   const wordlist = EFF_SHORT_WORDLIST;
   const poolSize = wordlist.length;
-  // Largest multiple of poolSize that fits in a Uint32 (0–4294967295)
+  // Same rejection sampling as generatePassword, but over Uint32 range (4294967296 = 2^32)
   const maxValid = 4294967296 - (4294967296 % poolSize);
 
   const words = [];

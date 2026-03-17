@@ -1,6 +1,16 @@
 /**
+ * @file subnet.js
+ * @description IPv4 CIDR math and interactive binary tree model for subnet splitting/joining
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+/**
  * IPv4 subnet math — pure bitwise arithmetic on 32-bit integers.
- * Supports the visual split/join subnet tree model.
+ * Supports the visual split/join subnet tree model where each node can be
+ * split into two children (prefix+1) or joined back into a single block.
+ * The tree is binary: splitting a /24 yields two /25s, etc.
  */
 
 /** Convert dotted-quad string to uint32 */
@@ -13,7 +23,7 @@ export function ipToUint32(ip) {
     if (isNaN(octet) || octet < 0 || octet > 255) throw new Error('Invalid IP: octets must be 0-255');
     n = (n << 8) | octet;
   }
-  return n >>> 0;
+  return n >>> 0; // >>> 0 coerces to unsigned 32-bit
 }
 
 /** Convert uint32 to dotted-quad string */
@@ -28,10 +38,12 @@ export function uint32ToIp(num) {
 
 /** Calculate subnet details from network (uint32) and prefix length */
 export function getSubnetInfo(network, prefix) {
+  // Build mask by shifting all-ones left; >>> 0 keeps it unsigned
   const mask = prefix === 0 ? 0 : (~0 << (32 - prefix)) >>> 0;
   const networkAddr = (network & mask) >>> 0;
   const broadcast = (networkAddr | (~mask >>> 0)) >>> 0;
 
+  // /32 = single host, /31 = point-to-point link (RFC 3021), else subtract network+broadcast
   let hosts, firstHost, lastHost;
   if (prefix === 32) {
     hosts = 1;
@@ -75,7 +87,7 @@ export function parseCIDR(cidr) {
   }
 }
 
-/** Create initial root node from CIDR string */
+/** Create initial root node for the interactive subnet tree from a CIDR string */
 export function createRootNode(cidr) {
   const parsed = parseCIDR(cidr);
   if (!parsed) return null;

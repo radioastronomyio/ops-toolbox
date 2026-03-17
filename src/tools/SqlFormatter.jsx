@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { formatSql } from '../lib/sqlFormat';
+import CopyButton from '../components/CopyButton';
+import ErrorBanner from '../components/ErrorBanner';
 
 const DIALECTS = [
   { label: 'SQL (Standard)', value: 'sql' },
@@ -29,7 +31,6 @@ export default function SqlFormatter() {
   const [keywordCase, setKeywordCase] = useState('upper');
   const [indentIdx, setIndentIdx] = useState(0);
   const [error, setError] = useState('');
-  const [copied, setCopied] = useState(false);
   const inputRef = useRef(null);
 
   function handleFormat() {
@@ -48,14 +49,6 @@ export default function SqlFormatter() {
       e.preventDefault();
       handleFormat();
     }
-  }
-
-  function handleCopy() {
-    if (!output) return;
-    navigator.clipboard.writeText(output).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
   }
 
   const lineCount = output ? output.split('\n').length : 0;
@@ -125,22 +118,12 @@ export default function SqlFormatter() {
         Format
       </button>
 
-      {error && (
-        <div className="px-4 py-3 bg-red-900/40 border border-red-700 rounded text-red-300 text-sm">
-          {error}
-        </div>
-      )}
+      <ErrorBanner message={error} onDismiss={() => setError('')} />
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs text-slate-500">{lineCount > 0 ? `${lineCount} line${lineCount !== 1 ? 's' : ''}` : ''}</span>
-          <button
-            onClick={handleCopy}
-            disabled={!output}
-            className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-slate-200 rounded text-sm"
-          >
-            {copied ? 'Copied!' : 'Copy'}
-          </button>
+          <CopyButton text={output} className="py-1.5 text-sm" />
         </div>
         {output && (
           <pre className="bg-slate-900 border border-slate-700 rounded p-4 text-sm font-mono text-slate-300 overflow-auto max-h-96 whitespace-pre">

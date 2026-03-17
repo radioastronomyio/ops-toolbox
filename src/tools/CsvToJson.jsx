@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { parseCsvString, toJsonString, detectDelimiter } from '../lib/csvToJson';
+import { useClipboard } from '../hooks/useClipboard';
 
 export default function CsvToJson() {
   const [activeTab, setActiveTab] = useState('paste');
@@ -16,7 +17,7 @@ export default function CsvToJson() {
   const [jsonOutput, setJsonOutput] = useState('');
   const [stats, setStats] = useState(null);
   const [errors, setErrors] = useState([]);
-  const [copied, setCopied] = useState(false);
+  const { copy, copied } = useClipboard();
 
   const fileRef = useRef(null);
 
@@ -59,14 +60,6 @@ export default function CsvToJson() {
       rows: result.data.length,
       cols: result.meta?.fields?.length ?? (result.data[0] ? Object.keys(result.data[0]).length : 0),
       delimiter,
-    });
-  }
-
-  function handleCopy() {
-    if (!jsonOutput) return;
-    navigator.clipboard.writeText(jsonOutput).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     });
   }
 
@@ -206,7 +199,7 @@ export default function CsvToJson() {
 
           <div className="flex gap-2">
             <button
-              onClick={handleCopy}
+              onClick={() => copy(jsonOutput)}
               className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-sm"
             >
               {copied ? 'Copied!' : 'Copy JSON'}

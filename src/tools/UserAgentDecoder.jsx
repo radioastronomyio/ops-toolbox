@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { UAParser } from 'ua-parser-js';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
 
 function Field({ label, value }) {
   return (
@@ -24,29 +25,21 @@ function Section({ title, fields }) {
 }
 
 export default function UserAgentDecoder() {
-  const [input, setInput] = useState('');
-  const [result, setResult] = useState(null);
-  const debounceRef = useRef(null);
-
-  useEffect(() => {
+  const [input, setInput] = useState(() => navigator.userAgent);
+  const [result, setResult] = useState(() => {
     const ua = navigator.userAgent;
-    setInput(ua);
-    const parser = new UAParser(ua);
-    setResult(parser.getResult());
-  }, []);
+    return ua ? new UAParser(ua).getResult() : null;
+  });
+  const debouncedInput = useDebouncedValue(input, 300);
 
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      if (!input.trim()) {
-        setResult(null);
-        return;
-      }
-      const parser = new UAParser(input);
-      setResult(parser.getResult());
-    }, 300);
-    return () => clearTimeout(debounceRef.current);
-  }, [input]);
+    if (!debouncedInput.trim()) {
+      setResult(null);
+      return;
+    }
+    const parser = new UAParser(debouncedInput);
+    setResult(parser.getResult());
+  }, [debouncedInput]);
 
   function handleMyBrowser() {
     setInput(navigator.userAgent);

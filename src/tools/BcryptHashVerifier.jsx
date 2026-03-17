@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { hashPassword, verifyPassword, isBcryptHash } from '../lib/bcryptUtils';
+import CopyButton from '../components/CopyButton';
 
 export default function BcryptHashVerifier() {
   const [hashPlain, setHashPlain] = useState('');
@@ -12,8 +13,6 @@ export default function BcryptHashVerifier() {
   const [verifyHash, setVerifyHash] = useState('');
   const [verifyResult, setVerifyResult] = useState(null);
   const [verifying, setVerifying] = useState(false);
-
-  const [copied, setCopied] = useState(false);
 
   async function handleHash() {
     if (!hashPlain) return;
@@ -47,15 +46,6 @@ export default function BcryptHashVerifier() {
       });
     } finally {
       setVerifying(false);
-    }
-  }
-
-  function handleCopy() {
-    if (hashResult) {
-      navigator.clipboard.writeText(hashResult).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
     }
   }
 
@@ -105,12 +95,7 @@ export default function BcryptHashVerifier() {
               <code className="flex-1 font-mono text-xs bg-slate-900 border border-slate-700 rounded px-3 py-2 text-emerald-400 break-all">
                 {hashResult}
               </code>
-              <button
-                onClick={handleCopy}
-                className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-sm whitespace-nowrap"
-              >
-                {copied ? 'Copied!' : 'Copy'}
-              </button>
+              <CopyButton text={hashResult} className="py-2 text-sm whitespace-nowrap" />
             </div>
             {hashTime !== null && (
               <p className="text-xs text-slate-500">Computed in {hashTime}ms</p>

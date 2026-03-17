@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { generateBatch, formatUuid, isValidUuid } from '../lib/uuidUtils.js';
+import CopyButton from '../components/CopyButton';
 
 const FORMAT_OPTIONS = [
   { value: 'hyphenated', label: 'Hyphenated' },
@@ -25,18 +26,10 @@ export default function UuidGenerator() {
   const [count, setCount] = useState(1);
   const [format, setFormat] = useState('hyphenated');
   const [uuids, setUuids] = useState([]);
-  const [copied, setCopied] = useState(false);
 
   const handleGenerate = () => {
     const batch = generateBatch(version, count);
     setUuids(batch.map(u => formatUuid(u, format)));
-  };
-
-  const handleCopyAll = () => {
-    navigator.clipboard.writeText(uuids.join('\n')).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
   };
 
   const v7ts = version === 'v7' && count === 1 && uuids.length === 1
@@ -106,13 +99,11 @@ export default function UuidGenerator() {
       <div className="bg-slate-800 rounded-lg p-4 space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium text-slate-400">Generated UUIDs</h2>
-          <button
-            onClick={handleCopyAll}
-            disabled={uuids.length === 0}
-            className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-slate-200 text-sm rounded transition-colors"
-          >
-            {copied ? 'Copied!' : 'Copy All'}
-          </button>
+          <CopyButton
+            text={uuids.join('\n')}
+            label="Copy All"
+            className="py-1.5 text-sm"
+          />
         </div>
         <div className="bg-slate-900 rounded p-3 space-y-1 max-h-80 overflow-y-auto min-h-8">
           {uuids.length === 0 ? (

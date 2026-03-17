@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { encodeComponent, decodeComponent, parseUrl, buildUrl, parseQueryString } from '../lib/urlEncoder';
+import { useClipboard } from '../hooks/useClipboard';
 
 export default function UrlQueryEncoder() {
   const [activeTab, setActiveTab] = useState('encode');
@@ -9,7 +10,7 @@ export default function UrlQueryEncoder() {
   const [encodeMode, setEncodeMode] = useState('encode');
   const [encodeOutput, setEncodeOutput] = useState('');
   const [encodeError, setEncodeError] = useState('');
-  const [encodeCopied, setEncodeCopied] = useState(false);
+  const encodeCb = useClipboard();
 
   // URL Parser tab
   const [urlInput, setUrlInput] = useState('');
@@ -21,7 +22,7 @@ export default function UrlQueryEncoder() {
   const [rows, setRows] = useState([{ key: '', value: '' }]);
   const [builtUrl, setBuiltUrl] = useState('');
   const [buildError, setBuildError] = useState('');
-  const [buildCopied, setBuildCopied] = useState(false);
+  const buildCb = useClipboard();
 
   // Real-time encode/decode
   useEffect(() => {
@@ -79,22 +80,6 @@ export default function UrlQueryEncoder() {
 
   function updateRow(idx, field, val) {
     setRows(rows.map((r, i) => i === idx ? { ...r, [field]: val } : r));
-  }
-
-  function copyEncode() {
-    if (!encodeOutput) return;
-    navigator.clipboard.writeText(encodeOutput).then(() => {
-      setEncodeCopied(true);
-      setTimeout(() => setEncodeCopied(false), 2000);
-    });
-  }
-
-  function copyBuild() {
-    if (!builtUrl) return;
-    navigator.clipboard.writeText(builtUrl).then(() => {
-      setBuildCopied(true);
-      setTimeout(() => setBuildCopied(false), 2000);
-    });
   }
 
   const tabs = [
@@ -170,10 +155,10 @@ export default function UrlQueryEncoder() {
               <div className="flex items-center justify-between">
                 <label className="block text-sm text-slate-400">Output</label>
                 <button
-                  onClick={copyEncode}
+                  onClick={() => encodeCb.copy(encodeOutput)}
                   className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs"
                 >
-                  {encodeCopied ? 'Copied!' : 'Copy'}
+                  {encodeCb.copied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
               <div className="font-mono text-sm bg-slate-900 border border-slate-700 rounded px-3 py-2 text-emerald-400 break-all">
@@ -320,10 +305,10 @@ export default function UrlQueryEncoder() {
               <div className="flex items-center justify-between">
                 <label className="block text-sm text-slate-400">Result</label>
                 <button
-                  onClick={copyBuild}
+                  onClick={() => buildCb.copy(builtUrl)}
                   className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs"
                 >
-                  {buildCopied ? 'Copied!' : 'Copy'}
+                  {buildCb.copied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
               <div className="font-mono text-sm bg-slate-900 border border-slate-700 rounded px-3 py-2 text-emerald-400 break-all">

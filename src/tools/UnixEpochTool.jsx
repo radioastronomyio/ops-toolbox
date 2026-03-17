@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fromEpoch, toEpoch, formatInTimezone, parseHumanDate } from '../lib/epochUtils.js';
+import CopyButton from '../components/CopyButton';
 
 const TIMEZONES = ['UTC', 'Local', 'America/New_York', 'Europe/London', 'Asia/Tokyo'];
 
@@ -20,24 +21,6 @@ function getRelativeTime(date) {
   if (hours > 0) return `${hours} hour${hours !== 1 ? 's' : ''} ${suffix}`;
   if (mins > 0) return `${mins} minute${mins !== 1 ? 's' : ''} ${suffix}`;
   return `${secs} second${secs !== 1 ? 's' : ''} ${suffix}`;
-}
-
-function CopyButton({ text, label = 'Copy' }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(String(text)).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-  return (
-    <button
-      onClick={handleCopy}
-      className="px-2 py-0.5 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors"
-    >
-      {copied ? 'Copied!' : label}
-    </button>
-  );
 }
 
 export default function UnixEpochTool() {

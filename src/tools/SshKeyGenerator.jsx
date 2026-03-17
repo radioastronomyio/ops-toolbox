@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import forge from 'node-forge';
+import { useClipboard } from '../hooks/useClipboard';
 
 export default function SshKeyGenerator() {
   const [keySize, setKeySize] = useState('2048');
@@ -8,8 +9,8 @@ export default function SshKeyGenerator() {
   const [publicKey, setPublicKey] = useState('');
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState(null);
-  const [copiedPrivate, setCopiedPrivate] = useState(false);
-  const [copiedPublic, setCopiedPublic] = useState(false);
+  const privateCb = useClipboard();
+  const publicCb = useClipboard();
 
   function generate() {
     setGenerating(true);
@@ -35,13 +36,6 @@ export default function SshKeyGenerator() {
         setGenerating(false);
       });
     }, 0);
-  }
-
-  function copyToClipboard(text, setCopied) {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
   }
 
   return (
@@ -101,10 +95,10 @@ export default function SshKeyGenerator() {
           <div className="flex items-center justify-between">
             <label className="text-slate-300 text-sm font-medium">Private Key (PEM)</label>
             <button
-              onClick={() => copyToClipboard(privateKey, setCopiedPrivate)}
+              onClick={() => privateCb.copy(privateKey)}
               className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-white text-xs rounded transition-colors"
             >
-              {copiedPrivate ? 'Copied!' : 'Copy'}
+              {privateCb.copied ? 'Copied!' : 'Copy'}
             </button>
           </div>
           <div className="bg-yellow-900/20 border border-yellow-700/50 rounded px-3 py-2 text-yellow-400 text-xs">
@@ -125,10 +119,10 @@ export default function SshKeyGenerator() {
           <div className="flex items-center justify-between">
             <label className="text-slate-300 text-sm font-medium">Public Key (OpenSSH)</label>
             <button
-              onClick={() => copyToClipboard(publicKey, setCopiedPublic)}
+              onClick={() => publicCb.copy(publicKey)}
               className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-white text-xs rounded transition-colors"
             >
-              {copiedPublic ? 'Copied!' : 'Copy'}
+              {publicCb.copied ? 'Copied!' : 'Copy'}
             </button>
           </div>
           <textarea

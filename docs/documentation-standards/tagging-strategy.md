@@ -1,188 +1,141 @@
 <!--
 ---
-title: "Tagging Strategy Guide"
-description: "How to build a controlled vocabulary for document classification"
-author: "CrainBramp"
-date: "2025-01-20"
-version: "1.0"
+title: "Tagging Strategy"
+description: "Controlled vocabulary for document classification in ops-toolbox"
+author: "VintageDon (https://github.com/vintagedon/)"
+date: "2026-03-29"
+version: "2.0"
 tags:
   - type: guide
   - domain: documentation
 related_documents:
   - "[Interior README Template](interior-readme-template.md)"
   - "[General KB Template](general-kb-template.md)"
+  - "[Worklog README Template](worklog-readme-template.md)"
 ---
 -->
 
-# Tagging Strategy Guide
+# Tagging Strategy
 
 ## 1. Purpose
 
-This guide explains how to build a controlled tag vocabulary for a repository or documentation system. Consistent tagging enables human navigation and RAG system retrieval.
+Controlled tag vocabulary for the ops-toolbox repository. Consistent tagging enables human navigation and RAG system retrieval.
 
 ---
 
 ## 2. Why Controlled Vocabulary
 
-Uncontrolled tagging leads to:
-
-- Synonyms fragmenting search (`database` vs `db` vs `databases`)
-- Inconsistent granularity (`postgres` vs `relational-database`)
-- Tag proliferation that reduces signal
-
-A controlled vocabulary defines allowed values upfront, ensuring consistency across contributors and time.
+Uncontrolled tagging leads to synonyms fragmenting search, inconsistent granularity, and tag proliferation that reduces signal. A controlled vocabulary defines allowed values upfront, ensuring consistency across contributors and time.
 
 ---
 
-## 3. Tag Category Design
+## 3. Tag Categories
 
-Build your vocabulary around orthogonal dimensions. Each category answers a different question about the document.
-
-### Recommended Categories
-
-| Category | Question Answered | Example Values |
-|----------|-------------------|----------------|
-| `type` | What kind of document is this? | `guide`, `reference`, `specification`, `directory-readme` |
-| `domain` | What subject area? | Project-specific: define based on your content |
-| `status` | What's the lifecycle state? | `draft`, `active`, `deprecated`, `archived` |
-| `tech` | What technologies involved? | `python`, `docker`, `react`, `mermaid`, etc. |
-| `audience` | Who is this for? | `beginners`, `intermediate`, `advanced`, `all` |
-
-### Category Guidelines
-
-- **Keep categories orthogonal** — each should capture a distinct dimension
-- **Limit to 4-6 categories** — more becomes unwieldy
-- **Define allowed values** — enumerated lists, not free-form
-- **One value per category is typical** — multi-value only when genuinely needed
+| Category | Question Answered | Required |
+|----------|-------------------|----------|
+| `type` | What kind of document is this? | Yes |
+| `domain` | What subject area? | Yes |
+| `status` | What's the lifecycle state? | Recommended |
+| `tech` | What technologies involved? | When applicable |
 
 ---
 
-## 4. Building Domain Tags
+## 4. Domain Tags
 
-Domain tags are project-specific. To build yours:
-
-### Step 1: Inventory Content Types
-
-What kinds of content does this repository contain? Group by function, not format.
-
-### Step 2: Define Categories
-
-Create 5-15 domain values that cover your content without excessive overlap.
-
-### Step 3: Document Boundaries
-
-For each domain tag, write a one-sentence definition clarifying what belongs and what doesn't.
-
-### Example Domain Vocabulary (ops-toolbox)
-
-```yaml
-# For the ops-toolbox utility collection
-domain:
-  - utilities        # Individual tool applications
-  - documentation    # Templates, standards, guides
-  - infrastructure   # Deployment, CI/CD, hosting
-  - shared           # Common components, styles
-```
+| Tag | Use For | Boundary |
+|-----|---------|----------|
+| `networking` | Subnet calculator, CIDR expander, MAC vendor lookup | Network-related tools |
+| `security` | JWT decoder, password generator, SSH keygen, X.509, hashing, bcrypt | Security and cryptography tools |
+| `data` | JSON/YAML, Base64, JSON diff, CSV to JSON, SQL formatter | Data conversion and formatting tools |
+| `developer` | Mermaid, URL parser, UA decoder, chmod, cron, regex, UUID, epoch, markdown | Developer utility tools |
+| `architecture` | SPA structure, routing, code splitting, tool registry, design tokens | Application architecture and patterns |
+| `components` | Shared UI (CopyButton, ErrorBanner, ResultPanel, ToolLayout, SettingsFlyout) | Reusable React components |
+| `hooks` | useClipboard, useDebouncedValue, useTheme, useDensity, useFontFamily | Custom React hooks |
+| `design-system` | HSL tokens, semantic classes, dual-theme, density, typography | Visual design system and theming |
+| `testing` | Vitest suites, pattern absence tests, test utilities | Test infrastructure and coverage |
+| `documentation` | Templates, standards, meta-content about the repo itself | Docs about docs |
 
 ---
 
 ## 5. Type Tags
 
-Document types are usually universal across projects:
-
 | Tag | Use For |
 |-----|---------|
-| `directory-readme` | README for a directory (interior READMEs) |
 | `project-root` | Repository root README |
-| `guide` | Step-by-step procedures |
-| `reference` | Lookup information (data dictionary, schema, API) |
-| `specification` | Formal requirements or standards |
-| `worklog` | Work log milestone documentation |
-| `report` | Analysis, findings, summaries |
+| `directory-readme` | Interior README for any directory |
+| `worklog` | Work log entries and milestone documentation |
+| `tool-reference` | Individual tool documentation |
+| `guide` | Step-by-step procedures and how-to documents |
+| `reference` | Lookup information: architecture, API, design tokens |
+| `specification` | Feature specs (v2, v3, v3.1, v4) |
 
 ---
 
 ## 6. Status Tags
 
-Standard lifecycle states:
-
 | Tag | Description |
 |-----|-------------|
 | `draft` | In development, not yet complete |
 | `active` | Current, maintained |
+| `under-review` | Review in progress |
 | `deprecated` | Superseded, avoid for new work |
 | `archived` | Historical reference only |
 
 ---
 
-## 7. Implementation
+## 7. Tech Tags
 
-### In YAML Frontmatter
+| Tag | Technology |
+|-----|-----------|
+| `react` | React 18 components and hooks |
+| `vite` | Vite 5 build tooling |
+| `tailwind` | Tailwind CSS v3 styling |
+| `vitest` | Vitest test framework |
+| `javascript` | JavaScript source files |
+| `css` | CSS custom properties and design tokens |
+| `azure-swa` | Azure Static Web Apps deployment |
+| `bash` | Shell scripts |
+
+---
+
+## 8. Implementation
+
+### Standard Frontmatter
 
 ```yaml
 <!--
 ---
 title: "Document Title"
 description: "What this document covers"
+author: "VintageDon (https://github.com/vintagedon/)"
+date: "YYYY-MM-DD"
+version: "1.0"
+status: "Active"
 tags:
-  - type: guide
-  - domain: utilities
-  - tech: [react, mermaid]
-  - status: active
-  - audience: intermediate
+  - type: tool-reference
+  - domain: security
+  - tech: [react, javascript]
+related_documents:
+  - "[Related Doc](path/to/doc.md)"
 ---
 -->
 ```
 
 ### Conventions
 
-- Use lowercase, hyphenated values (`ci-cd` not `CI/CD` or `cicd`)
-- Tech tags use canonical names (`postgres` not `postgresql`)
+- Use lowercase, hyphenated values
+- Tech tags use canonical names
 - One value per line for readability, or array syntax for multi-value
+- `related_documents` links use relative paths within the repo
 
 ---
 
-## 8. Maintaining the Vocabulary
+## 9. Maintaining the Vocabulary
 
-### Adding New Tags
-
-1. Check if existing tag covers the concept
-2. If not, propose new tag with definition
-3. Update vocabulary document
-4. Backfill existing documents if needed
-
-### Governance
-
-- Keep vocabulary in version control
-- Review additions for overlap with existing tags
+- This document is the authoritative source for allowed tag values
 - Prefer broader tags over proliferating specific ones
-
----
-
-## 9. Template
-
-Use this structure to document your project's tagging vocabulary:
-
-```markdown
-# [Project] Tagging Vocabulary
-
-## Domain Tags
-| Tag | Description |
-|-----|-------------|
-| `value` | What it means, what belongs here |
-
-## Type Tags
-[Use standard types or customize]
-
-## Tech Tags
-[List technologies relevant to your project]
-
-## Status Tags
-[Use standard statuses]
-
-## Audience Tags
-[If applicable]
-```
+- Check for existing coverage before adding new tags
+- Backfill existing documents when adding new tags
 
 ---
 
@@ -190,5 +143,6 @@ Use this structure to document your project's tagging vocabulary:
 
 | Resource | Description |
 |----------|-------------|
-| [Interior README Template](interior-readme-template.md) | Shows tag usage in frontmatter |
+| [Interior README Template](interior-readme-template.md) | Shows tag usage in directory READMEs |
 | [General KB Template](general-kb-template.md) | Shows tag usage for standalone docs |
+| [Worklog README Template](worklog-readme-template.md) | Shows tag usage for work log entries |

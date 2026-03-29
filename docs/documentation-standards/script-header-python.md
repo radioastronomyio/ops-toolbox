@@ -1,8 +1,8 @@
 # Python Script Header Template
 
-> Template Version: 1.0  
-> Applies To: All `.py` files  
-> Last Updated: 2025-01-20
+> Template Version: 2.0
+> Applies To: All `.py` files
+> Last Updated: 2026-03-29
 
 ---
 
@@ -14,7 +14,7 @@
 Script Name  : script_name.py
 Description  : [One-line description of what the script does]
 Repository   : ops-toolbox
-Author       : [Author Name] (https://github.com/[username])
+Author       : VintageDon (https://github.com/vintagedon/)
 Created      : YYYY-MM-DD
 Link         : https://github.com/radioastronomyio/ops-toolbox
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
 |-------|----------|-------------|
 | Script Name | Yes | Filename for reference (snake_case) |
 | Description | Yes | Single line, verb-led description |
-| Repository | Yes | Repository name (`ops-toolbox`) |
+| Repository | Yes | Repository name |
 | Author | Yes | Name with GitHub profile link |
 | Created | Yes | Creation date (YYYY-MM-DD) |
 | Link | Yes | Full repository URL |
@@ -103,40 +103,6 @@ Standard sections (in order):
 
 ---
 
-## Docstring Style
-
-Use NumPy-style docstrings for functions:
-
-```python
-def validate_file(
-    file_path: Path,
-    strict: bool = False
-) -> dict:
-    """
-    Validate a configuration file.
-
-    Parameters
-    ----------
-    file_path : Path
-        Path to the file.
-    strict : bool, optional
-        Enable strict validation mode. Default is False.
-
-    Returns
-    -------
-    dict
-        Validation result with keys: 'valid', 'errors', 'warnings'.
-
-    Raises
-    ------
-    FileNotFoundError
-        If file does not exist.
-    """
-    pass
-```
-
----
-
 ## Notes
 
 - Use `#!/usr/bin/env python3` for portability
@@ -146,3 +112,4 @@ def validate_file(
 - Use `pathlib.Path` instead of string paths
 - Use type hints for all function parameters and return values
 - Follow PEP 8 style guide
+- See [code-commenting-dual-audience.md](code-commenting-dual-audience.md) for AI NOTE conventions

@@ -1,8 +1,8 @@
 # PowerShell Script Header Template
 
-> Template Version: 1.0  
-> Applies To: All `.ps1` files  
-> Last Updated: 2025-01-20
+> Template Version: 2.0
+> Applies To: All `.ps1` files
+> Last Updated: 2026-03-29
 
 ---
 
@@ -19,7 +19,7 @@
 
 .NOTES
     Repository  : ops-toolbox
-    Author      : [Author Name] (https://github.com/[username])
+    Author      : VintageDon (https://github.com/vintagedon/)
     Created     : YYYY-MM-DD
 
 .EXAMPLE
@@ -88,51 +88,9 @@ Standard sections (in order):
 
 ---
 
-## Example: Minimal Script
-
-```powershell
-<#
-.SYNOPSIS
-    Validates configuration files across all subdirectories.
-
-.DESCRIPTION
-    Scans all subdirectories and validates that each config file
-    is syntactically correct. Outputs a summary of validation results.
-
-.NOTES
-    Repository  : ops-toolbox
-    Author      : [Author Name] (https://github.com/[username])
-    Created     : YYYY-MM-DD
-
-.EXAMPLE
-    .\validate-configs.ps1
-
-    Validates all configuration files in the repository.
-
-.LINK
-    https://github.com/radioastronomyio/ops-toolbox
-#>
-
-# =============================================================================
-# Configuration
-# =============================================================================
-
-$RepoRoot = Split-Path -Parent $PSScriptRoot
-
-# =============================================================================
-# Execution
-# =============================================================================
-
-Get-ChildItem -Path $RepoRoot -Recurse -Filter "*.config" | ForEach-Object {
-    Write-Host "Validating: $($_.FullName)"
-    # Validation logic here
-}
-```
-
----
-
 ## Notes
 
 - PowerShell comment-based help (`.SYNOPSIS`, `.DESCRIPTION`, etc.) enables `Get-Help script-name.ps1`
 - Keep `.SYNOPSIS` under 80 characters
 - Use present tense, active voice ("Validates..." not "This script validates...")
+- See [code-commenting-dual-audience.md](code-commenting-dual-audience.md) for AI NOTE conventions

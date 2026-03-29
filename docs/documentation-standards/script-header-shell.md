@@ -1,8 +1,8 @@
 # Shell Script Header Template
 
-> Template Version: 1.0  
-> Applies To: All `.sh` files  
-> Last Updated: 2025-01-20
+> Template Version: 2.0
+> Applies To: All `.sh` files
+> Last Updated: 2026-03-29
 
 ---
 
@@ -14,7 +14,7 @@
 # Script Name  : script-name.sh
 # Description  : [One-line description of what the script does]
 # Repository   : ops-toolbox
-# Author       : [Author Name] (https://github.com/[username])
+# Author       : VintageDon (https://github.com/vintagedon/)
 # Created      : YYYY-MM-DD
 # Link         : https://github.com/radioastronomyio/ops-toolbox
 # =============================================================================
@@ -68,7 +68,7 @@ main "$@"
 |-------|----------|-------------|
 | Script Name | Yes | Filename for reference |
 | Description | Yes | Single line, verb-led description |
-| Repository | Yes | Repository name (`ops-toolbox`) |
+| Repository | Yes | Repository name |
 | Author | Yes | Name with GitHub profile link |
 | Created | Yes | Creation date (YYYY-MM-DD) |
 | Link | Yes | Full repository URL |
@@ -96,33 +96,11 @@ Standard sections (in order):
 
 ---
 
-## Best Practices
-
-```bash
-# Always use strict mode
-set -euo pipefail
-
-# Use main() function pattern for cleaner structure
-main() {
-    # Script logic here
-}
-
-main "$@"
-
-# Quote variables to prevent word splitting
-echo "${variable}"
-
-# Use lowercase for local variables, UPPERCASE for exports/constants
-local data_path="/var/lib/data"
-export DATA_ROOT="/var/lib/data"
-```
-
----
-
 ## Notes
 
 - Always use `#!/usr/bin/env bash` for portability
 - `set -euo pipefail` catches common errors early
-- Use `main()` function pattern even for simple scripts — it's easier to extend
+- Use `main()` function pattern even for simple scripts
 - Keep Description line under 80 characters
 - Use present tense, active voice ("Initializes..." not "This script initializes...")
+- See [code-commenting-dual-audience.md](code-commenting-dual-audience.md) for AI NOTE conventions

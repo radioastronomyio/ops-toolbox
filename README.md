@@ -2,8 +2,8 @@
 ---
 title: "Ops Toolbox"
 description: "Self-hosted, client-side utility web tools for IT operations and platform engineering"
-author: "vintagedon"
-date: "2026-03-16"
+author: "VintageDon"
+date: "2026-03-29"
 version: "3.1"
 status: "Active"
 tags:
@@ -22,9 +22,9 @@ tags:
 [![Azure Static Web Apps](https://img.shields.io/badge/Azure-Static_Web_Apps-0078D4?logo=microsoft-azure)](https://azure.microsoft.com/en-us/products/app-service/static)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-> Self-hosted utility web tools for IT operations — because sensitive data shouldn't leave your network.
+> Self-hosted utility web tools for IT operations: sensitive data shouldn't leave your network.
 
-A single-page application with 25 client-side utility tools for network engineers, security analysts, and platform engineers. All processing happens in the browser — zero backends, zero data transmission, zero analytics. Paste your data, get your output, keep your privacy.
+A single-page application with 25 client-side utility tools for network engineers, security analysts, and platform engineers. All processing happens in the browser; zero backends, zero data transmission, zero analytics. Paste your data, get your output, keep your privacy.
 
 **Live:** [opstoolbox.donfather.dev](https://opstoolbox.donfather.dev/)
 
@@ -36,9 +36,9 @@ IT professionals routinely use web-based utilities for quick tasks: subnet calcu
 
 Ops Toolbox solves this by providing self-hosted alternatives that:
 
-- **Run 100% client-side** — zero data leaves the browser (verify via DevTools Network tab)
-- **Deploy to your infrastructure** — Azure Static Web Apps, any static host, or localhost
-- **Do one thing well** — focused utilities, not bloated platforms
+- **Run 100% client-side:** zero data leaves the browser (verify via DevTools Network tab)
+- **Deploy to your infrastructure:** Azure Static Web Apps, any static host, or localhost
+- **Do one thing well:** focused utilities, not bloated platforms
 
 If you're already familiar with the project, skip to [Quick Start](#-quick-start).
 
@@ -50,7 +50,7 @@ If you're already familiar with the project, skip to [Quick Start](#-quick-start
 
 | Tool | Description | Mode |
 |------|-------------|------|
-| Subnet Calculator | IPv4 CIDR arithmetic — network, broadcast, host range, mask, interactive tree splitting | Local |
+| Subnet Calculator | IPv4 CIDR arithmetic: network, broadcast, host range, mask, interactive tree splitting | Local |
 | CIDR Expander | Expand a CIDR block into its full IP range with enumeration | Local |
 | MAC Vendor Lookup | Look up manufacturer for a MAC address via OUI prefix | Online |
 
@@ -80,7 +80,7 @@ If you're already familiar with the project, skip to [Quick Start](#-quick-start
 | Tool | Description | Mode |
 |------|-------------|------|
 | Mermaid Renderer | Render mermaid diagrams with ELK layout engine for superior network topologies | Local |
-| URL Parser | Inspect URL components — protocol, host, path, query params, hash | Local |
+| URL Parser | Inspect URL components: protocol, host, path, query params, hash | Local |
 | User-Agent Decoder | Parse UA strings into browser, OS, device, and engine components | Local |
 | Chmod Calculator | Bidirectional Unix permission converter: octal ↔ symbolic ↔ checkboxes | Local |
 | URL Encoder | Encode/decode URL components, parse URLs, build query strings | Local |
@@ -136,38 +136,45 @@ Ops Toolbox is a React 18 SPA with code-split tool routes. Pure computation live
 
 | Decision | Implementation | Rationale |
 |----------|---------------|-----------|
-| Tool Registry | `src/lib/toolRegistry.js` — data-only module, no React imports | Single source of truth for routing, directory, badges, and search |
+| Tool Registry | `src/lib/toolRegistry.js`, data-only module, no React imports | Single source of truth for routing, directory, badges, and search |
 | Code Splitting | `React.lazy()` + `Suspense` per tool route | Only load the tool the user navigates to |
 | Logic Extraction | Pure functions in `src/lib/`, components in `src/tools/` | Testable without rendering; lib tests are fast |
 | Shared Primitives | `useClipboard`, `useDebouncedValue`, `CopyButton`, `ErrorBanner` | Eliminate hand-rolled clipboard/debounce across 25 tools |
 | Rejection Sampling | `src/lib/password.js` | Eliminate modulo bias in cryptographic random generation |
-| Dark Mode First | Tailwind `bg-slate-900` base | Matches the terminal-centric audience |
+| Semantic Design Tokens | HSL CSS custom properties, raw Tailwind palette disabled | Consistent theming across light/dark/system modes |
 
 ---
 
-## Repository Structure
+## 📁 Repository Structure
 
 ```
 ops-toolbox/
-├── src/
-│   ├── App.jsx                 # Router with lazy-loaded tool routes
-│   ├── main.jsx                # React entry point
-│   ├── index.css               # Tailwind directives + CodeMirror overrides
-│   ├── tools/                  # 25 tool components (one per tool)
-│   ├── components/             # Shared UI: CopyButton, ErrorBanner, ResultPanel, etc.
-│   ├── hooks/                  # Custom hooks: useClipboard, useDebouncedValue
-│   └── lib/                    # Pure utility functions (no React)
-├── tests/                      # Vitest test suites (mirrors src/ structure)
-├── docs/                       # Documentation and templates
-│   ├── apps/                   # Tool reference docs
-│   └── documentation-standards/# Template library for docs and script headers
-├── specs/                      # Feature specification files
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-├── AGENTS.md                   # AI agent instructions
-├── CONTRIBUTING.md
-└── README.md                   # This file
+├── 📂 .github/workflows/          # Azure Static Web Apps CI/CD
+├── 📂 assets/                     # Repository images
+├── 📂 docs/
+│   ├── 📂 apps/                   # Tool reference documentation
+│   └── 📂 documentation-standards/# Templates, tagging strategy
+├── 📂 internal-files/             # Working documents
+├── 📂 shared/                     # Cross-project utilities
+├── 📂 spec/                       # Feature specifications (by version)
+├── 📂 src/
+│   ├── 📂 components/             # Shared UI: CopyButton, ErrorBanner, ResultPanel
+│   ├── 📂 hooks/                  # Custom hooks: useClipboard, useDebouncedValue, useTheme
+│   ├── 📂 lib/                    # Pure utility functions (no React)
+│   ├── 📂 styles/                 # Design tokens CSS
+│   └── 📂 tools/                  # 25 tool components (one per tool)
+├── 📂 staging/                    # Staged work
+├── 📂 tests/                      # Vitest test suites (mirrors src/ structure)
+├── 📂 work-logs/                  # Development history
+├── 📄 AGENTS.md                   # Agent context
+├── 📄 CLAUDE.md                   # Pointer to AGENTS.md
+├── 📄 index.html                  # SPA entry point
+├── 📄 package.json
+├── 📄 vite.config.js
+├── 📄 tailwind.config.js
+├── 📄 staticwebapp.config.json    # Azure SWA routing
+├── 📄 LICENSE                     # MIT
+└── 📄 README.md                   # This file
 ```
 
 ---
@@ -186,7 +193,7 @@ ops-toolbox/
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Local Development
 
@@ -213,7 +220,7 @@ npm run preview      # Preview the production build
 
 ### Deployment
 
-Push to `main` triggers GitHub Actions → Azure Static Web Apps deployment.
+Push to `main` triggers GitHub Actions to Azure Static Web Apps deployment.
 
 For manual deployment, upload the `dist/` directory to any static hosting provider (Netlify, Vercel, GitHub Pages, etc.) or serve locally for air-gapped environments.
 
@@ -229,7 +236,7 @@ For manual deployment, upload the `dist/` directory to any static hosting provid
 
 ---
 
-## Target Audience
+## 🎯 Target Audience
 
 | Audience | Use Case |
 |----------|----------|
@@ -240,21 +247,21 @@ For manual deployment, upload the `dist/` directory to any static hosting provid
 
 ---
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-## Acknowledgments
-
-- [Mermaid.js](https://mermaid.js.org/) + [ELK.js](https://github.com/kieler/elkjs) — Diagram rendering with superior layout
-- [PapaParse](https://www.papaparse.com/) — CSV parsing
-- [DOMPurify](https://github.com/cure53/DOMPurify) + [marked](https://marked.js.org/) — Safe Markdown rendering
-- [node-forge](https://github.com/digitalbazaar/forge) — SSH key generation
-- [pkijs](https://github.com/nicktomlin/pkijs) + [asn1js](https://github.com/nicktomlin/asn1js) — X.509 certificate parsing
-- Open source community — All the libraries that make this possible
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
-Last Updated: 2026-03-16 | v3.1: Shared Primitives Migration Complete
+## 🙏 Acknowledgments
+
+- [Mermaid.js](https://mermaid.js.org/) + [ELK.js](https://github.com/kieler/elkjs) for diagram rendering with superior layout
+- [PapaParse](https://www.papaparse.com/) for CSV parsing
+- [DOMPurify](https://github.com/cure53/DOMPurify) + [marked](https://marked.js.org/) for safe Markdown rendering
+- [node-forge](https://github.com/digitalbazaar/forge) for SSH key generation
+- [pkijs](https://github.com/nicktomlin/pkijs) + [asn1js](https://github.com/nicktomlin/asn1js) for X.509 certificate parsing
+- Open source community for all the libraries that make this possible
+
+---
+
+Last Updated: 2026-03-29 | v3.1: Shared Primitives Migration Complete

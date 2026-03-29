@@ -1,11 +1,14 @@
-# Agent Instructions
+# AGENTS.md
+
+Entry point for AI coding agents working on this repository.
 
 ## Project Identity
 
-**Ops Toolbox** is a collection of 25 client-side utility web tools for IT operations and platform engineering. All processing happens in the browser — no backends, no data transmission. Hosted on Azure Static Web Apps.
+**Domain:** IT Operations / Web Utilities
+**Repository:** https://github.com/radioastronomyio/ops-toolbox
+**Live:** https://opstoolbox.donfather.dev/
+**Purpose:** A collection of 25 client-side utility web tools for IT operations and platform engineering. All processing happens in the browser; no backends, no data transmission. Hosted on Azure Static Web Apps.
 
-**Repository:** `radioastronomyio/ops-toolbox`
-**Live:** `https://opstoolbox.donfather.dev/`
 **Stack:** React 18, Vite 5, React Router v6, Tailwind CSS v3, Vitest, dual-theme (light/dark/system)
 
 ## Architecture
@@ -31,8 +34,8 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 ## Testing Strategy
 
 - **Framework:** Vitest + @testing-library/react + jsdom
-- **Pure logic** in `src/lib/` → tested in `tests/lib/` (fast, no DOM)
-- **React components** → tested in `tests/tools/`, `tests/components/`, `tests/hooks/`
+- **Pure logic** in `src/lib/` tested in `tests/lib/` (fast, no DOM)
+- **React components** tested in `tests/tools/`, `tests/components/`, `tests/hooks/`
 - **Pattern absence tests** in `tests/migration/` ensure banned patterns (hand-rolled clipboard, manual debounce) don't recur
 - **Run:** `npm run test` (single run, 464 tests) or `npm run test:watch`
 
@@ -50,7 +53,7 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 - **Lazy loading.** Each tool route uses `React.lazy()` + `Suspense`.
 - **Dual-theme.** Dark mode is the default but theme is togglable (light/dark/system) via `useTheme` hook. Theme preference persists to `localStorage` key `ops-theme-preference`.
 - **Testable architecture:** Extract computation into `src/lib/` pure functions.
-- **Shared primitives:** Use `useClipboard`/`useDebouncedValue`/`CopyButton`/`ErrorBanner` — never hand-roll clipboard or debounce.
+- **Shared primitives:** Use `useClipboard`/`useDebouncedValue`/`CopyButton`/`ErrorBanner`; never hand-roll clipboard or debounce.
 - **Rejection sampling:** `src/lib/password.js` uses rejection sampling for unbiased crypto RNG.
 - **Semantic tokens only.** All colors use CSS custom property tokens via Tailwind semantic classes (`bg-surface-1`, `text-accent`, `text-status-error`, etc.). The default Tailwind color palette is intentionally disabled.
 
@@ -62,16 +65,73 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 - Do not hand-roll debounce (`debounceRef.current = setTimeout(...)`) — use `useDebouncedValue`
 - Do not use Tailwind v4 (use v3 with PostCSS)
 - Do not modify `.github/workflows/` without explicit approval
-- Do not use raw Tailwind palette colors (`slate-*`, `sky-*`, `blue-*`, `red-*`, `green-*`, etc.) — use semantic tokens exclusively (`bg-surface-1`, `text-accent`, `text-status-error`, etc.)
+- Do not use raw Tailwind palette colors (`slate-*`, `sky-*`, `blue-*`, `red-*`, `green-*`, etc.) — use semantic tokens exclusively
 - Do not hand-roll theme switching — use `useTheme` hook
 - Do not add `transition-all` to `<body>` or `<html>` for theme switching — theme toggle must be instant
 - Do not use `backdrop-filter` / `backdrop-blur` anywhere except the sticky header
 
 ## Specs
 
-Feature specifications live in `specs/`. These are reference documents for completed work:
+Feature specifications live in `spec/`. These are reference documents for completed work:
 
-- `specs/v2/` — Original tool implementations (20 tools)
-- `specs/v3-architecture-fixes/` — RNG bias fix, tool registry, 404 route, shared hooks/components, badges
-- `specs/v3.1-primitives-migration/` — Migration of all tools to shared clipboard/debounce primitives
-- `specs/v4-design-system/` — HSL token design system, dual-theme, density/font settings, full tool migration to semantic tokens
+- `spec/v2/` — Original tool implementations (20 tools)
+- `spec/v3-architecture-fixes/` — RNG bias fix, tool registry, 404 route, shared hooks/components, badges
+- `spec/v3.1-primitives-migration/` — Migration of all tools to shared clipboard/debounce primitives
+- `spec/v4-design-system/` — HSL token design system, dual-theme, density/font settings, full tool migration to semantic tokens
+
+## Execution Environment
+
+**Primary execution:** ML01 (`/opt/repos/ops-toolbox/`)
+**Agent runtime:** OpenCode (global config at `~/.config/opencode/opencode.json`)
+**Session management:** aoe (Agent of Empires)
+**Strategic work:** Claude.ai Projects
+**Agentic coding:** Claude Code, OpenCode
+
+## Repository Structure
+
+```
+ops-toolbox/
+├── .github/
+│   └── workflows/                  # Azure Static Web Apps CI/CD
+├── assets/                         # Repository images
+├── docs/
+│   ├── apps/                       # Tool reference documentation
+│   └── documentation-standards/    # Templates, tagging strategy
+├── internal-files/                 # Working documents
+├── plans/                          # Development planning
+├── shared/                         # Cross-project utilities
+├── spec/                           # Feature specifications (by version)
+├── src/
+│   ├── components/                 # Shared UI components
+│   ├── hooks/                      # Custom React hooks
+│   ├── lib/                        # Pure utility functions (no React)
+│   ├── styles/                     # Design tokens CSS
+│   └── tools/                      # 25 tool components
+├── staging/                        # Staged work (gitignored)
+├── tests/                          # Vitest test suites
+├── work-logs/                      # Development history
+├── AGENTS.md                       # This file
+├── CLAUDE.md                       # Pointer to AGENTS.md
+├── index.html                      # SPA entry point
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+├── staticwebapp.config.json        # Azure SWA routing config
+├── LICENSE                         # MIT
+└── README.md
+```
+
+## Conventions
+
+- **Documentation:** Use templates from `docs/documentation-standards/`
+- **Commits:** Conventional commits (`feat:`, `fix:`, `docs:`, `test:`)
+- **JSDoc:** All source files have `@file` headers
+- **Frontmatter:** YAML frontmatter with tags from `docs/documentation-standards/tagging-strategy.md`
+- **Interior READMEs:** Every directory has one
+
+## Related Repositories
+
+| Repository | Relationship |
+|-----------|-------------|
+| `proxmox-astronomy-lab` | Infrastructure context |
+| `project-template-repository` | Base scaffolding patterns |

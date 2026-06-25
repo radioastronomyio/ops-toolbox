@@ -6,10 +6,10 @@ Entry point for AI coding agents working on this repository.
 
 **Domain:** IT Operations / Web Utilities
 **Repository:** https://github.com/radioastronomyio/ops-toolbox
-**Live:** https://opstoolbox.donfather.dev/
-**Purpose:** A collection of 25 client-side utility web tools for IT operations and platform engineering. All processing happens in the browser; no backends, no data transmission. Hosted on Azure Static Web Apps.
+**Live:** https://opstoolbox.dev/
+**Purpose:** A collection of 24 client-side utility web tools for IT operations and platform engineering. All processing happens in the browser; no backends, no data transmission. Hosted on Azure Static Web Apps.
 
-**Stack:** React 18, Vite 5, React Router v6, Tailwind CSS v3, Vitest, dual-theme (light/dark/system)
+**Stack:** React 18, Vite 5, React Router v6, Tailwind CSS v3, Vitest, theming via `data-theme` (Light, Dark, High-Contrast Slate, System)
 
 ## Architecture
 
@@ -42,7 +42,7 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 ## Documentation
 
 - **`docs/architecture.md`** — SPA architecture overview
-- **`docs/apps/tool-reference.md`** — Complete reference for all 25 tools
+- **`docs/apps/tool-reference.md`** — Complete reference for all 24 tools
 - **`docs/design/contrast-standard.md`** — WCAG AA contrast rule every palette is audited against
 - **`docs/design/typography-roles.md`** — UI/mono type roles, the type scale, and the micro-label convention
 - **`docs/documentation-standards/`** — Template library for READMEs, KB articles, script headers
@@ -50,7 +50,7 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 
 ## Key Constraints
 
-- **100% client-side.** No API calls except MAC Vendor Lookup (clearly labeled "Online").
+- **100% client-side.** No API calls. No backends; no data transmission.
 - **Privacy-first.** Data never leaves the browser.
 - **Lazy loading.** Each tool route uses `React.lazy()` + `Suspense`.
 - **Theme via `data-theme`.** Themes are driven by a `data-theme` attribute on `<html>` (not the `.dark` class), supporting the declared list: Light, Dark, and High-Contrast Slate (the accessibility guarantee), plus System. Selectable via the `useTheme` hook; the SettingsFlyout theme control is a menu driven by that declared list. Preference persists to `localStorage` key `ops-theme-preference`. Every palette must satisfy `docs/design/contrast-standard.md` (WCAG AA by construction).
@@ -76,16 +76,15 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 
 ## Specs
 
-Feature specifications live in `spec/`. These are reference documents for completed work:
+Feature specifications live at the agents root (`/opt/agents/repos/spec/`), archived by month after execution (`spec/2026-MM/`). These are reference documents for completed work:
 
-- `spec/v2/` — Original tool implementations (20 tools)
-- `spec/v3-architecture-fixes/` — RNG bias fix, tool registry, 404 route, shared hooks/components, badges
-- `spec/v3.1-primitives-migration/` — Migration of all tools to shared clipboard/debounce primitives
-- `spec/v4-design-system/` — HSL token design system, dual-theme, density/font settings, full tool migration to semantic tokens
+- `2026-06/2026-06-21-opstoolbox-spec-01-sentinel-pattern-maturation.md` — `data-theme` mechanism, High-Contrast Slate, accessibility baseline, StatusBadge, typography discipline
+- `2026-06-24-opstoolbox-spec-01-launch-ux.md` — MAC removal, scannable directory, social cards, `/about`, scaffolding
+- Earlier work (original tool implementations, v3 architecture fixes, primitives migration, v4 design system) predates the agents-root spec archive.
 
 ## Execution Environment
 
-**Primary execution:** ML01 (`/opt/repos/ops-toolbox/`)
+**Primary execution:** ML01 (`/opt/agents/repos/ops-toolbox/`)
 **Agent runtime:** OpenCode (global config at `~/.config/opencode/opencode.json`)
 **Session management:** aoe (Agent of Empires)
 **Strategic work:** Claude.ai Projects
@@ -97,26 +96,29 @@ Feature specifications live in `spec/`. These are reference documents for comple
 ops-toolbox/
 ├── .github/
 │   └── workflows/                  # Azure Static Web Apps CI/CD
-├── assets/                         # Repository images
+├── assets/                         # Repository images (logo source copy)
 ├── docs/
 │   ├── apps/                       # Tool reference documentation
+│   ├── design/                     # Contrast standard, typography roles
 │   └── documentation-standards/    # Templates, tagging strategy
-├── internal-files/                 # Working documents
+├── internal-files/                 # Working documents (contents gitignored)
 ├── plans/                          # Development planning
+├── public/                         # Build-served static assets (logo/favicon)
+├── scripts/                        # Build scripts (per-route prerender)
 ├── shared/                         # Cross-project utilities
-├── spec/                           # Feature specifications (by version)
 ├── src/
 │   ├── components/                 # Shared UI components
 │   ├── hooks/                      # Custom React hooks
 │   ├── lib/                        # Pure utility functions (no React)
-│   ├── styles/                     # Design tokens CSS
-│   └── tools/                      # 25 tool components
-├── staging/                        # Staged work (gitignored)
+│   ├── pages/                      # Non-tool pages (About)
+│   ├── styles/                     # Design tokens + accessibility baseline CSS
+│   └── tools/                      # One React component per tool (24 tools)
+├── staging/                        # Staged work (contents gitignored)
 ├── tests/                          # Vitest test suites
-├── work-logs/                      # Development history
+├── work-logs/                      # Repo-local development history
 ├── AGENTS.md                       # This file
 ├── CLAUDE.md                       # Pointer to AGENTS.md
-├── index.html                      # SPA entry point
+├── index.html                      # SPA entry point + per-route social-card meta
 ├── package.json
 ├── vite.config.js
 ├── tailwind.config.js

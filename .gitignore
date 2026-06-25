@@ -18,9 +18,11 @@ config.local.*
 # VAULT / AGENT WORKFLOW
 # ----------------------------------------------------------------------------
 *-pending.md
-staging/
+staging/*
+!staging/README.md
 spec/
-internal-files/
+internal-files/*
+!internal-files/README.md
 plans/
 
 # ----------------------------------------------------------------------------

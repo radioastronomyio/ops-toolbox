@@ -26,7 +26,7 @@ tags:
 
 A single-page application with 25 client-side utility tools for network engineers, security analysts, and platform engineers. All processing happens in the browser; zero backends, zero data transmission, zero analytics. Paste your data, get your output, keep your privacy.
 
-**Live:** [opstoolbox.donfather.dev](https://opstoolbox.donfather.dev/)
+**Live:** [opstoolbox.dev](https://opstoolbox.dev/)
 
 ---
 

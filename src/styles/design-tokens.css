@@ -96,4 +96,52 @@
     --ease-enter:      ease-out;
     --ease-exit:       ease-in;
   }
+
+  /* ─── High-Contrast Slate Theme ───
+     The accessibility-guarantee theme. Values are authored to satisfy WCAG
+     AA by construction under the USWDS luminance-grade standard (grade delta
+     >=50 for body text, >=40 for large text/UI boundaries). See
+     docs/design/contrast-standard.md. */
+  [data-theme="slate"] {
+    /* Background & Surfaces */
+    --color-bg-base:        222 47% 11%;
+    --color-surface-1:      222 44% 14%;
+    --color-surface-2:      220 38% 18%;
+    --color-surface-3:      220 32% 23%;
+
+    /* Borders */
+    --color-border-subtle:  220 28% 30%;
+    --color-border-default: 215 22% 45%;
+    --color-border-strong:  210 25% 68%;
+
+    /* Text */
+    --color-text-primary:   0 0% 100%;
+    --color-text-secondary: 213 30% 86%;
+    --color-text-muted:     210 22% 74%;
+
+    /* Accent — Bright Cyan (high contrast on slate) */
+    --color-accent-base:    192 85% 56%;
+    --color-accent-hover:   190 90% 66%;
+    --color-accent-muted:   190 50% 20%;
+    --color-accent-text:    195 90% 74%;
+
+    /* Semantic */
+    --color-success:        142 70% 55%;
+    --color-error:          0 75% 65%;
+    --color-warning:        43 90% 60%;
+    --color-info:           200 80% 60%;
+
+    /* Typography (theme-independent, duplicated for clarity) */
+    --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --base-font-size: 14px;
+
+    /* Motion */
+    --duration-micro:  150ms;
+    --duration-enter:  250ms;
+    --duration-exit:   200ms;
+    --ease-micro:      cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-enter:      ease-out;
+    --ease-exit:       ease-in;
+  }
 }

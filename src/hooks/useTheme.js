@@ -20,6 +20,7 @@ export const THEMES = [
   { value: 'system', label: 'System' },
   { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' },
+  { value: 'slate', label: 'High-Contrast Slate' },
 ];
 
 /**

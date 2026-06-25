@@ -43,11 +43,11 @@ describe('useTheme', () => {
     vi.restoreAllMocks();
   });
 
-  it('exposes a declared theme list including system', () => {
+  it('exposes a declared theme list including system and slate', () => {
     const { result } = renderHook(() => useTheme());
     expect(result.current.themes).toBe(THEMES);
-    expect(THEMES.map((t) => t.value)).toEqual(['system', 'light', 'dark']);
-    expect(CONCRETE_THEMES).toEqual(['light', 'dark']);
+    expect(THEMES.map((t) => t.value)).toEqual(['system', 'light', 'dark', 'slate']);
+    expect(CONCRETE_THEMES).toEqual(['light', 'dark', 'slate']);
   });
 
   it('defaults to system preference when nothing is stored', () => {

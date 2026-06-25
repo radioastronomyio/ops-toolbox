@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import SettingsFlyout from '../../src/components/SettingsFlyout';
+import { THEMES } from '../../src/hooks/useTheme';
 
 const THEMES = [
   { value: 'system', label: 'System' },
@@ -76,5 +77,14 @@ describe('SettingsFlyout', () => {
     openFlyout(makeProps());
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('renders every declared theme from the real list, including High-Contrast Slate', () => {
+    openFlyout(makeProps({ theme: { preference: 'slate', themes: THEMES } }));
+    const group = screen.getByRole('radiogroup', { name: 'Theme selection' });
+    THEMES.forEach((t) => {
+      expect(group).toHaveTextContent(t.label);
+    });
+    expect(screen.getByRole('radio', { name: 'High-Contrast Slate' })).toHaveAttribute('aria-checked', 'true');
   });
 });

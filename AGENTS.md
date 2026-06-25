@@ -43,6 +43,7 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 
 - **`docs/architecture.md`** — SPA architecture overview
 - **`docs/apps/tool-reference.md`** — Complete reference for all 25 tools
+- **`docs/design/contrast-standard.md`** — WCAG AA contrast rule every palette is audited against
 - **`docs/documentation-standards/`** — Template library for READMEs, KB articles, script headers
 - All source files have JSDoc `@file` headers per `docs/documentation-standards/script-header-javascript.md`
 
@@ -51,7 +52,8 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 - **100% client-side.** No API calls except MAC Vendor Lookup (clearly labeled "Online").
 - **Privacy-first.** Data never leaves the browser.
 - **Lazy loading.** Each tool route uses `React.lazy()` + `Suspense`.
-- **Dual-theme.** Dark mode is the default but theme is togglable (light/dark/system) via `useTheme` hook. Theme preference persists to `localStorage` key `ops-theme-preference`.
+- **Theme via `data-theme`.** Themes are driven by a `data-theme` attribute on `<html>` (not the `.dark` class), supporting the declared list: Light, Dark, and High-Contrast Slate (the accessibility guarantee), plus System. Selectable via the `useTheme` hook; the SettingsFlyout theme control is a menu driven by that declared list. Preference persists to `localStorage` key `ops-theme-preference`. Every palette must satisfy `docs/design/contrast-standard.md` (WCAG AA by construction).
+- **Accessibility floor.** `src/styles/accessibility.css` is the named global baseline: visible `:focus-visible` rings, `prefers-reduced-motion` suppression routed through the motion tokens, `overflow-wrap` for long tokens, and `safe-area-inset` padding.
 - **Testable architecture:** Extract computation into `src/lib/` pure functions.
 - **Shared primitives:** Use `useClipboard`/`useDebouncedValue`/`CopyButton`/`ErrorBanner`; never hand-roll clipboard or debounce.
 - **Rejection sampling:** `src/lib/password.js` uses rejection sampling for unbiased crypto RNG.
@@ -67,6 +69,7 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 - Do not modify `.github/workflows/` without explicit approval
 - Do not use raw Tailwind palette colors (`slate-*`, `sky-*`, `blue-*`, `red-*`, `green-*`, etc.) — use semantic tokens exclusively
 - Do not hand-roll theme switching — use `useTheme` hook
+- Do not reintroduce the `.dark` class — themes are driven by the `data-theme` attribute on `<html>`
 - Do not add `transition-all` to `<body>` or `<html>` for theme switching — theme toggle must be instant
 - Do not use `backdrop-filter` / `backdrop-blur` anywhere except the sticky header
 

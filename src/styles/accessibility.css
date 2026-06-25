@@ -1,0 +1,60 @@
+/**
+ * @file accessibility.css
+ * @description Named accessibility baseline layer — the floor every theme meets. Visible focus rings, reduced-motion suppression routed through the motion tokens, long-token wrapping, and safe-area padding. Adopted (in part) from the Sentinel framework, translated to ops-toolbox's HSL-triplet idiom.
+ * @author vintagedon
+ * @license MIT
+ * @see https://github.com/radioastronomyio/ops-toolbox
+ */
+
+/*
+ * This is the named accessibility layer. It is applied globally and is the
+ * floor, not a per-theme choice. See docs/design/contrast-standard.md for the
+ * contrast standard and docs/design/typography-roles.md for type roles.
+ */
+
+@layer base {
+  /* Visible focus on every interactive element (WCAG 2.4.7 / 1.4.11). */
+  :focus-visible {
+    outline: 2px solid hsl(var(--color-accent-base));
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Long tokens (hashes, certs, UUIDs) wrap instead of overflowing (WCAG 1.4.10). */
+  *,
+  *::before,
+  *::after {
+    overflow-wrap: break-word;
+  }
+
+  /* Honor notch / display-cutout insets on mobile. */
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/*
+ * Reduced motion (WCAG 2.3.3). Suppression is routed through the motion tokens
+ * so the .transition-micro/enter/exit utilities collapse to instant, with a
+ * blanket net catching any transition/animation that bypasses the tokens.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-theme="light"],
+  [data-theme="dark"],
+  [data-theme="slate"] {
+    --duration-micro: 0.01ms;
+    --duration-enter: 0.01ms;
+    --duration-exit: 0.01ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

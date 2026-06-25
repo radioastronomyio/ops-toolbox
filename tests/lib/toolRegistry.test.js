@@ -8,6 +8,7 @@ import {
   getRemoteTools,
   getToolsByStatus,
 } from '../../src/lib/toolRegistry.js';
+import * as lucide from 'lucide-react';
 
 describe('toolRegistry', () => {
   it('exports an array of 24 tools', () => {
@@ -29,6 +30,14 @@ describe('toolRegistry', () => {
       expect(typeof tool.path).toBe('string');
       expect(typeof tool.category).toBe('string');
       expect(typeof tool.componentPath).toBe('string');
+    }
+  });
+
+  it('every tool has a non-empty icon that resolves to a real lucide export', () => {
+    for (const tool of toolRegistry) {
+      expect(typeof tool.icon).toBe('string');
+      expect(tool.icon.length).toBeGreaterThan(0);
+      expect(lucide[tool.icon], `icon "${tool.icon}" for ${tool.id}`).toBeDefined();
     }
   });
 

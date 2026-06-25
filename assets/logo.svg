@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ops Toolbox">
+  <!-- Flat toolbox app-icon: accent tile, no text. Accent = site teal (180 40% 40%). -->
+  <rect width="64" height="64" rx="14" fill="#3d8f8f"/>
+  <!-- Carrying handle -->
+  <rect x="23" y="17" width="18" height="9" rx="3" fill="#ffffff"/>
+  <!-- Body -->
+  <rect x="12" y="26" width="40" height="23" rx="4" fill="#ffffff"/>
+  <!-- Tray seam -->
+  <rect x="12" y="35" width="40" height="3.5" fill="#3d8f8f"/>
+  <!-- Center latch -->
+  <rect x="29.5" y="33.5" width="5" height="6.5" rx="1.5" fill="#3d8f8f"/>
+</svg>

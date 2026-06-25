@@ -1,6 +1,6 @@
 /**
  * @file DirectoryGrid.jsx
- * @description Home page with micro-hero, live filtering, category pills, and fluid tool grid
+ * @description Home page with micro-hero, live filtering, a colored category bar, and a fluid tool grid where each card carries a category-tinted icon and accent border
  * @author vintagedon
  * @license MIT
  * @see https://github.com/radioastronomyio/ops-toolbox
@@ -9,29 +9,55 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { toolRegistry, getCategories } from '../lib/toolRegistry';
+import {
+  Network, ListTree, KeyRound, Lock, Terminal, FileLock, Hash, ShieldCheck,
+  Braces, Binary, GitCompare, Table, Database, Workflow, Link as LinkIcon,
+  MonitorSmartphone, LockKeyhole, Link2, CalendarClock, Regex, Type,
+  Fingerprint, Clock, FileText, Cpu, EyeOff, Github,
+} from 'lucide-react';
+
+/** Registry icon name -> lucide component. */
+const ICONS = {
+  Network, ListTree, KeyRound, Lock, Terminal, FileLock, Hash, ShieldCheck,
+  Braces, Binary, GitCompare, Table, Database, Workflow, Link: LinkIcon,
+  MonitorSmartphone, LockKeyhole, Link2, CalendarClock, Regex, Type,
+  Fingerprint, Clock, FileText,
+};
+
+/**
+ * Per-category accent classes. Literal strings so Tailwind generates them.
+ * Categories not listed fall back to the accent token (neutral-ish).
+ */
+const CATEGORY_STYLES = {
+  Networking: { text: 'text-category-networking', dot: 'bg-category-networking', chipOn: 'bg-category-networking/15 border-category-networking/50 text-category-networking', borderOn: 'border-l-category-networking' },
+  Security: { text: 'text-category-security', dot: 'bg-category-security', chipOn: 'bg-category-security/15 border-category-security/50 text-category-security', borderOn: 'border-l-category-security' },
+  Data: { text: 'text-category-data', dot: 'bg-category-data', chipOn: 'bg-category-data/15 border-category-data/50 text-category-data', borderOn: 'border-l-category-data' },
+  Developer: { text: 'text-category-developer', dot: 'bg-category-developer', chipOn: 'bg-category-developer/15 border-category-developer/50 text-category-developer', borderOn: 'border-l-category-developer' },
+};
+
+const NEUTRAL_CHIP = 'bg-surface-1 text-text-primary border-border-subtle';
+
+function catStyle(category) {
+  return CATEGORY_STYLES[category] || CATEGORY_STYLES.Developer;
+}
 
 function ToolCard({ tool }) {
-  const showBadges = tool.processingMode !== 'local' || tool.status !== 'stable';
+  const showBadges = tool.status !== 'stable';
+  const Icon = ICONS[tool.icon] || Network;
+  const accent = catStyle(tool.category);
   return (
     <Link
       to={tool.path}
-      className="flex flex-col p-4 bg-surface-1 border border-border rounded-md transition-micro cursor-pointer group hover:bg-surface-2 hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+      className={`flex flex-col p-4 bg-surface-1 border border-border border-l-[3px] ${accent.borderOn} rounded-md transition-micro cursor-pointer group hover:bg-surface-2 hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg`}
     >
-      <h3 className="text-base font-medium text-text-primary group-hover:text-accent transition-micro mb-1">
-        {tool.name}
-      </h3>
+      <div className="flex items-start gap-3 mb-1.5">
+        <Icon size={20} strokeWidth={2} className={`shrink-0 mt-0.5 ${accent.text}`} aria-hidden="true" />
+        <h3 className="text-base font-medium text-text-primary group-hover:text-accent transition-micro">
+          {tool.name}
+        </h3>
+      </div>
       {showBadges && (
-        <div className="flex gap-1.5 mb-1.5">
-          {tool.processingMode === 'remote' && (
-            <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded-sm bg-status-warning/10 text-status-warning border border-status-warning/30">
-              Online
-            </span>
-          )}
-          {tool.processingMode === 'hybrid' && (
-            <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded-sm bg-status-info/10 text-status-info border border-status-info/30">
-              Online Optional
-            </span>
-          )}
+        <div className="flex gap-1.5 mb-1.5 pl-[32px]">
           {tool.status === 'beta' && (
             <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded-sm bg-accent-muted text-accent-text border border-accent/30">
               Beta
@@ -44,7 +70,7 @@ function ToolCard({ tool }) {
           )}
         </div>
       )}
-      <p className="text-sm text-text-secondary leading-relaxed">{tool.description}</p>
+      <p className="text-sm text-text-secondary leading-relaxed pl-[32px]">{tool.description}</p>
     </Link>
   );
 }
@@ -84,21 +110,18 @@ export default function DirectoryGrid() {
         </p>
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-surface-2 border border-border text-xs text-text-secondary rounded">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            100% Local Processing
+            <Cpu size={12} aria-hidden="true" /> 100% Local Processing
           </span>
           <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-surface-2 border border-border text-xs text-text-secondary rounded">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="4.5" y1="4.5" x2="19.5" y2="19.5"/></svg>
-            No Server Logs
+            <EyeOff size={12} aria-hidden="true" /> No Server Logs
           </span>
           <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-surface-2 border border-border text-xs text-text-secondary rounded">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            Open Source
+            <Github size={12} aria-hidden="true" /> Open Source
           </span>
         </div>
       </div>
 
-      {/* Search + Category Filters */}
+      {/* Search + Colored Category Bar */}
       <div className="mb-6 space-y-3">
         <input
           type="text"
@@ -107,30 +130,37 @@ export default function DirectoryGrid() {
           placeholder="Filter tools…"
           className="w-full max-w-md px-3 py-2 text-sm bg-surface-1 text-text-primary border border-border rounded shadow-sm placeholder:text-text-muted transition-micro hover:border-border-strong focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
         />
-        <div className="flex flex-wrap gap-1.5">
+        <div
+          className="inline-flex flex-wrap gap-1 p-1 bg-surface-2 border border-border rounded-md"
+          role="group"
+          aria-label="Filter by category"
+        >
           <button
             onClick={() => setActiveCategory(null)}
-            className={`px-3 py-1.5 text-xs font-medium rounded transition-micro ${
-              !activeCategory
-                ? 'bg-surface-1 text-text-primary shadow-sm ring-1 ring-border-subtle'
-                : 'text-text-secondary hover:text-text-primary'
+            aria-pressed={!activeCategory}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-[4px] border transition-micro ${
+              !activeCategory ? `${NEUTRAL_CHIP} shadow-sm` : 'border-transparent text-text-secondary hover:text-text-primary'
             }`}
           >
             All
           </button>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
-              className={`px-3 py-1.5 text-xs font-medium rounded transition-micro ${
-                activeCategory === cat
-                  ? 'bg-surface-1 text-text-primary shadow-sm ring-1 ring-border-subtle'
-                  : 'text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const accent = catStyle(cat);
+            const active = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(active ? null : cat)}
+                aria-pressed={active}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-[4px] border transition-micro ${
+                  active ? `${accent.chipOn} shadow-sm` : 'border-transparent text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                <span className={`inline-block w-2 h-2 rounded-full ${accent.dot}`} aria-hidden="true" />
+                {cat}
+              </button>
+            );
+          })}
         </div>
       </div>
 

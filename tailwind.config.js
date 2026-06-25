@@ -45,6 +45,12 @@ export default {
         info: 'hsl(var(--color-info) / <alpha-value>)',
         neutral: 'hsl(var(--color-neutral) / <alpha-value>)',
       },
+      category: {
+        networking: 'hsl(var(--color-cat-networking) / <alpha-value>)',
+        security: 'hsl(var(--color-cat-security) / <alpha-value>)',
+        data: 'hsl(var(--color-cat-data) / <alpha-value>)',
+        developer: 'hsl(var(--color-cat-developer) / <alpha-value>)',
+      },
     },
     borderRadius: {
       none: '0px',

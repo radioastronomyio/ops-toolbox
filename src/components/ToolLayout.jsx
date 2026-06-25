@@ -23,8 +23,9 @@ export default function ToolLayout() {
     <div className="min-h-screen flex flex-col bg-bg text-text-secondary font-sans">
       <header className="sticky top-0 z-50 bg-bg/85 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
-          <Link to="/" className="text-lg font-bold text-text-primary hover:text-accent transition-micro">
-            Ops <span className="text-accent">Toolbox</span>
+          <Link to="/" className="flex items-center gap-2 text-lg font-bold text-text-primary hover:text-accent transition-micro">
+            <img src="/logo.svg" alt="" width="22" height="22" className="rounded-[5px]" aria-hidden="true" />
+            <span>Ops <span className="text-accent">Toolbox</span></span>
           </Link>
           <div className="flex items-center gap-2">
             {!isHome && (

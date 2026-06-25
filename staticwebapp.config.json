@@ -1,6 +1,113 @@
 {
+  "routes": [
+    {
+      "route": "/subnet-calculator",
+      "rewrite": "/subnet-calculator/index.html"
+    },
+    {
+      "route": "/cidr-expander",
+      "rewrite": "/cidr-expander/index.html"
+    },
+    {
+      "route": "/jwt-decoder",
+      "rewrite": "/jwt-decoder/index.html"
+    },
+    {
+      "route": "/password-generator",
+      "rewrite": "/password-generator/index.html"
+    },
+    {
+      "route": "/ssh-keygen",
+      "rewrite": "/ssh-keygen/index.html"
+    },
+    {
+      "route": "/x509-parser",
+      "rewrite": "/x509-parser/index.html"
+    },
+    {
+      "route": "/file-hash-calculator",
+      "rewrite": "/file-hash-calculator/index.html"
+    },
+    {
+      "route": "/bcrypt-hash-verifier",
+      "rewrite": "/bcrypt-hash-verifier/index.html"
+    },
+    {
+      "route": "/json-yaml",
+      "rewrite": "/json-yaml/index.html"
+    },
+    {
+      "route": "/base64",
+      "rewrite": "/base64/index.html"
+    },
+    {
+      "route": "/json-diff",
+      "rewrite": "/json-diff/index.html"
+    },
+    {
+      "route": "/csv-to-json",
+      "rewrite": "/csv-to-json/index.html"
+    },
+    {
+      "route": "/sql-formatter",
+      "rewrite": "/sql-formatter/index.html"
+    },
+    {
+      "route": "/mermaid-renderer",
+      "rewrite": "/mermaid-renderer/index.html"
+    },
+    {
+      "route": "/url-parser",
+      "rewrite": "/url-parser/index.html"
+    },
+    {
+      "route": "/useragent-decoder",
+      "rewrite": "/useragent-decoder/index.html"
+    },
+    {
+      "route": "/chmod-calculator",
+      "rewrite": "/chmod-calculator/index.html"
+    },
+    {
+      "route": "/url-encoder",
+      "rewrite": "/url-encoder/index.html"
+    },
+    {
+      "route": "/cron-parser",
+      "rewrite": "/cron-parser/index.html"
+    },
+    {
+      "route": "/regex-tester",
+      "rewrite": "/regex-tester/index.html"
+    },
+    {
+      "route": "/ascii-banner",
+      "rewrite": "/ascii-banner/index.html"
+    },
+    {
+      "route": "/uuid-generator",
+      "rewrite": "/uuid-generator/index.html"
+    },
+    {
+      "route": "/epoch-time",
+      "rewrite": "/epoch-time/index.html"
+    },
+    {
+      "route": "/markdown-previewer",
+      "rewrite": "/markdown-previewer/index.html"
+    },
+    {
+      "route": "/about",
+      "rewrite": "/about/index.html"
+    }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/assets/*"]
+    "exclude": [
+      "/assets/*",
+      "/logo.svg",
+      "/*.svg",
+      "/*.ico"
+    ]
   }
 }

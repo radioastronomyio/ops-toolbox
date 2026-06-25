@@ -22,8 +22,10 @@ Repository-owned images and visual assets for ops-toolbox. This is the canonical
 
 ```
 assets/
-├── logo.svg          # Flat toolbox app-icon (no text); source copy of public/logo.svg
-└── README.md         # This file
+├── logo.svg              # Flat toolbox app-icon (no text); source copy of public/logo.svg
+├── directory-hero.png    # README hero — the colored home directory (dark theme, 2880x1800 @2x)
+├── og-banner.png         # Repository copy of the served social card (source: scripts/generate_og_card.py)
+└── README.md             # This file
 ```
 
 ---
@@ -33,6 +35,8 @@ assets/
 | File | Description | Status |
 |------|-------------|--------|
 | [logo.svg](logo.svg) | Flat toolbox logo, accent teal, no text. Used as favicon and header mark. | ✅ Active |
+| [directory-hero.png](directory-hero.png) | README hero screenshot of the home directory (dark theme). Captured via Playwright from the dev server. | ✅ Active |
+| [og-banner.png](og-banner.png) | Repository copy of the 1200x630 social card; the served copy is `public/og.png`. Composed by `scripts/generate_og_card.py`. | ✅ Active |
 
 ---
 
@@ -41,4 +45,6 @@ assets/
 | Document | Relationship |
 |----------|--------------|
 | [Parent](../README.md) | Repository root |
-| [`public/logo.svg`](../public/logo.svg) | The build-served copy of the logo |
+| [`public/logo.svg`](../public/logo.svg) | Build-served copy of the logo |
+| [`public/og.png`](../public/og.png) | Build-served copy of the social card |
+| [`scripts/generate_og_card.py`](../scripts/generate_og_card.py) | Reproducible generator for the OG banner |

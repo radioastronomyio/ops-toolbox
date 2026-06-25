@@ -6,6 +6,8 @@
  * @see https://github.com/radioastronomyio/ops-toolbox
  */
 
+import StatusBadge from './StatusBadge';
+
 /**
  * An inline error banner.
  * @param {{ message: string|null, onDismiss?: () => void }} props
@@ -14,12 +16,13 @@ export default function ErrorBanner({ message, onDismiss }) {
   if (!message) return null;
 
   return (
-    <div className="flex items-center justify-between px-4 py-2 bg-status-error/10 border border-status-error/50 rounded-md text-status-error text-sm">
-      <span>{message}</span>
+    <div className="flex items-center justify-between gap-3 px-4 py-2 bg-status-error/10 border border-status-error/50 rounded-md text-status-error text-sm">
+      <StatusBadge status="error" label={message} />
       {onDismiss && (
         <button
           onClick={onDismiss}
-          className="ml-4 text-status-error hover:text-text-primary transition-micro"
+          className="shrink-0 text-status-error hover:text-text-primary transition-micro"
+          aria-label="Dismiss error"
         >
           ✕
         </button>

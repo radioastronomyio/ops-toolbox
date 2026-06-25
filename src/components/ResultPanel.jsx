@@ -7,6 +7,7 @@
  */
 
 import CopyButton from './CopyButton';
+import StatusBadge from './StatusBadge';
 
 /**
  * A read-only output panel with optional copy button.
@@ -36,7 +37,10 @@ export default function ResultPanel({
         }`}
       >
         {error ? (
-          <div className="whitespace-pre-wrap">{error}</div>
+          <>
+            <StatusBadge status="error" label="Error" className="block mb-1" />
+            <div className="whitespace-pre-wrap">{error}</div>
+          </>
         ) : value ? (
           <pre className="whitespace-pre-wrap">{value}</pre>
         ) : (

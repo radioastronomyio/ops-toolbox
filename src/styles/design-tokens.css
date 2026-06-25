@@ -38,6 +38,7 @@
     --color-error:          0 70% 45%;
     --color-warning:        40 90% 50%;
     --color-info:           210 70% 50%;
+    --color-neutral:        220 10% 40%;
 
     /* Typography */
     --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -82,6 +83,7 @@
     --color-error:          0 60% 60%;
     --color-warning:        40 80% 60%;
     --color-info:           210 60% 60%;
+    --color-neutral:        215 14% 65%;
 
     /* Typography (theme-independent, duplicated for clarity) */
     --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -130,6 +132,7 @@
     --color-error:          0 75% 65%;
     --color-warning:        43 90% 60%;
     --color-info:           200 80% 60%;
+    --color-neutral:        215 20% 72%;
 
     /* Typography (theme-independent, duplicated for clarity) */
     --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;

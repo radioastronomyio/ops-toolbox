@@ -43,6 +43,7 @@ export default {
         error: 'hsl(var(--color-error) / <alpha-value>)',
         warning: 'hsl(var(--color-warning) / <alpha-value>)',
         info: 'hsl(var(--color-info) / <alpha-value>)',
+        neutral: 'hsl(var(--color-neutral) / <alpha-value>)',
       },
     },
     borderRadius: {

@@ -3,8 +3,8 @@
 title: "Architecture Overview"
 description: "Technical architecture of the Ops Toolbox SPA"
 author: "vintagedon"
-date: "2026-03-16"
-version: "1.0"
+date: "2026-06-25"
+version: "1.1"
 status: "Active"
 tags:
   - type: reference
@@ -193,21 +193,34 @@ npm run test:watch    # Watch mode
 
 ## 9. Build and Deploy
 
-### Vite Configuration
+### Build Pipeline
 
-- React plugin with automatic JSX runtime
-- Production build outputs to `dist/`
-- Tailwind CSS via PostCSS pipeline
+The `npm run build` script is a three-stage chain:
+
+```
+vite build  →  scripts/prerender.mjs  →  scripts/generate-meta.mjs
+```
+
+1. **`vite build`** — React plugin with automatic JSX runtime; bundles the SPA and the variable UI fonts (Inter + JetBrains Mono via `@fontsource-variable`) into hashed assets under `dist/assets/`. Emits the SPA shell `dist/index.html` and copies `public/` (logo, favicon, `og.png`, `robots.txt`) to the dist root.
+2. **`scripts/prerender.mjs`** — walks `toolRegistry` and writes one prerendered `index.html` per route (home, every tool, `/about`) with route-specific `<title>`, Open Graph, Twitter, and canonical meta canonical to `opstoolbox.dev`. No server, no runtime network call.
+3. **`scripts/generate-meta.mjs`** — walks the same registry and writes `dist/sitemap.xml` (one `<url>` per route, no `lastmod`/`changefreq`/`priority`) and `dist/llms.txt` (llmstxt.org format: registry-derived per-tool bullets + an About link + a GitHub repo link).
+
+### Fonts
+
+Inter and JetBrains Mono are bundled, not fetched. They are imported in `src/main.jsx` and register as `'Inter Variable'` / `'JetBrains Mono Variable'`, which lead the `--font-family-sans` / `--font-family-mono` token stack. The build emits the woff2 files directly, so the unconditional client-side / air-gap claim survives a DevTools Network-tab check.
 
 ### Deployment
 
 - **Primary:** Azure Static Web Apps via GitHub Actions (push to `main`)
-- **Manual:** Upload `dist/` to any static host
-- **Air-gapped:** Serve `dist/` from local HTTP server
+- **Self-host:** Multi-stage Docker image that builds the SPA and serves the prerendered site from nginx (`docker compose up --build`)
+- **Manual:** Upload `dist/` to any static host, or serve it from a local HTTP server for air-gapped use
 
-### SPA Routing
+### SPA Routing and Static-Asset Serving
 
-`staticwebapp.config.json` configures Azure to return `index.html` for all routes, enabling client-side routing.
+Both serving tiers are configured so discoverability files and the social card are served as themselves rather than the SPA shell:
+
+- **Azure:** `staticwebapp.config.json` lists per-route rewrites to the prerendered HTML, and `navigationFallback.exclude` carries `/*.txt`, `/*.xml`, `/*.png` (plus `*.svg`/`*.ico`) so the shell fallback never swallows `robots.txt`, `sitemap.xml`, or `og.png`.
+- **nginx:** `docker/nginx.conf` serves prerendered route HTML first and falls back to the SPA shell for unknown paths; a static-file location matches `png|ico|svg|webmanifest|txt|webp|xml` and serves those directly with `try_files $uri =404`.
 
 ---
 
@@ -229,5 +242,5 @@ npm run test:watch    # Watch mode
 |---|---|
 | Author | vintagedon |
 | Created | 2026-03-16 |
-| Updated | 2026-03-16 |
-| Version | 1.0 |
+| Updated | 2026-06-25 |
+| Version | 1.1 |

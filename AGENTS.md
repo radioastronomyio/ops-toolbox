@@ -37,7 +37,7 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 - **Pure logic** in `src/lib/` tested in `tests/lib/` (fast, no DOM)
 - **React components** tested in `tests/tools/`, `tests/components/`, `tests/hooks/`
 - **Pattern absence tests** in `tests/migration/` ensure banned patterns (hand-rolled clipboard, manual debounce) don't recur
-- **Run:** `npm run test` (single run, 464 tests) or `npm run test:watch`
+- **Run:** `npm run test` (single run, 474 tests across 56 files) or `npm run test:watch`
 
 ## Documentation
 
@@ -58,6 +58,7 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 - **Testable architecture:** Extract computation into `src/lib/` pure functions.
 - **Shared primitives:** Use `useClipboard`/`useDebouncedValue`/`CopyButton`/`ErrorBanner`; never hand-roll clipboard or debounce.
 - **Rejection sampling:** `src/lib/password.js` uses rejection sampling for unbiased crypto RNG.
+- **No external font CDN.** Inter and JetBrains Mono are bundled via `@fontsource-variable` (imported in `src/main.jsx`); the variable families register as `'Inter Variable'` / `'JetBrains Mono Variable'` and lead the font tokens in `design-tokens.css`. The air-gap claim covers typography.
 - **Semantic tokens only.** All colors use CSS custom property tokens via Tailwind semantic classes (`bg-surface-1`, `text-accent`, `text-status-error`, etc.). The default Tailwind color palette is intentionally disabled.
 
 ## What NOT To Do
@@ -73,13 +74,16 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 - Do not reintroduce the `.dark` class — themes are driven by the `data-theme` attribute on `<html>`
 - Do not add `transition-all` to `<body>` or `<html>` for theme switching — theme toggle must be instant
 - Do not use `backdrop-filter` / `backdrop-blur` anywhere except the sticky header
+- Do not load fonts from an external CDN (Google Fonts) — fonts are bundled via `@fontsource-variable`; the air-gap claim must survive a DevTools Network-tab check
 
 ## Specs
 
 Feature specifications live at the agents root (`/opt/agents/repos/spec/`), archived by month after execution (`spec/2026-MM/`). These are reference documents for completed work:
 
 - `2026-06/2026-06-21-opstoolbox-spec-01-sentinel-pattern-maturation.md` — `data-theme` mechanism, High-Contrast Slate, accessibility baseline, StatusBadge, typography discipline
-- `2026-06-24-opstoolbox-spec-01-launch-ux.md` — MAC removal, scannable directory, social cards, `/about`, scaffolding
+- `2026-06/2026-06-24-opstoolbox-spec-01-launch-ux.md` — MAC removal, scannable directory, social cards, `/about`, scaffolding
+- `2026-06/2026-06-24-opstoolbox-spec-02-oss-readiness.md` — markdownify README, self-host Docker image with SPA-aware nginx, OG social card
+- `2026-06/2026-06-25-opstoolbox-spec-05-fonts-and-discoverability.md` — bundled `@fontsource-variable` fonts, build-time `sitemap.xml`/`llms.txt`/`robots.txt`, docs sweep
 - Earlier work (original tool implementations, v3 architecture fixes, primitives migration, v4 design system) predates the agents-root spec archive.
 
 ## Execution Environment
@@ -103,8 +107,8 @@ ops-toolbox/
 │   └── documentation-standards/    # Templates, tagging strategy
 ├── internal-files/                 # Working documents (contents gitignored)
 ├── plans/                          # Development planning
-├── public/                         # Build-served static assets (logo/favicon)
-├── scripts/                        # Build scripts (per-route prerender)
+├── public/                         # Build-served static assets (logo, favicon, og card, robots.txt)
+├── scripts/                        # Build scripts (per-route prerender, OG card, sitemap/llms meta generator)
 ├── shared/                         # Cross-project utilities
 ├── src/
 │   ├── components/                 # Shared UI components

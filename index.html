@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,20 +12,16 @@
       try {
         var t = localStorage.getItem('ops-theme-preference');
         var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (t === 'dark' || (!t && d)) {
-          document.documentElement.classList.add('dark');
-          document.documentElement.style.backgroundColor = '#0E1013';
-        } else if (t === 'light') {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.style.backgroundColor = '#F8F9FA';
+        var resolved;
+        if (t === 'light') {
+          resolved = 'light';
+        } else if (t === 'dark') {
+          resolved = 'dark';
         } else {
-          if (d) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.style.backgroundColor = '#0E1013';
-          } else {
-            document.documentElement.style.backgroundColor = '#F8F9FA';
-          }
+          resolved = d ? 'dark' : 'light';
         }
+        document.documentElement.setAttribute('data-theme', resolved);
+        document.documentElement.style.backgroundColor = resolved === 'dark' ? '#0E1013' : '#F8F9FA';
       } catch (e) {}
     </script>
   </head>

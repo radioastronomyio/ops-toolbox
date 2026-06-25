@@ -9,7 +9,8 @@
 @layer base {
 
   /* ─── Light Theme (default) ─── */
-  :root {
+  :root,
+  [data-theme="light"] {
     /* Background & Surfaces */
     --color-bg-base:        220 20% 98%;
     --color-surface-1:      0 0% 100%;
@@ -53,7 +54,7 @@
   }
 
   /* ─── Dark Theme ─── */
-  .dark {
+  [data-theme="dark"] {
     /* Background & Surfaces */
     --color-bg-base:        220 10% 6%;
     --color-surface-1:      220 10% 10%;

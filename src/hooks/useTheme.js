@@ -1,6 +1,6 @@
 /**
  * @file useTheme.js
- * @description Theme management hook — light/dark/system with localStorage persistence
+ * @description Theme management hook — data-theme attribute with declared theme list, system resolution, localStorage persistence
  * @author vintagedon
  * @license MIT
  * @see https://github.com/radioastronomyio/ops-toolbox
@@ -10,16 +10,29 @@ import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = 'ops-theme-preference';
 
+/**
+ * Declared theme list. Drives the SettingsFlyout menu and bounds every
+ * preference value. Concrete themes resolve to a data-theme attribute;
+ * "system" resolves against prefers-color-scheme. Add a theme here and
+ * define its tokens under [data-theme="<id>"] to make it selectable.
+ */
+export const THEMES = [
+  { value: 'system', label: 'System' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+];
+
+/**
+ * Concrete themes a preference can resolve to (excludes "system").
+ */
+export const CONCRETE_THEMES = THEMES.filter((t) => t.value !== 'system').map((t) => t.value);
+
 function getSystemPreference() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 function applyTheme(resolved) {
-  if (resolved === 'dark') {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
+  document.documentElement.setAttribute('data-theme', resolved);
   // Clear the inline backgroundColor set by the FOUC script
   document.documentElement.style.backgroundColor = '';
 }
@@ -60,5 +73,5 @@ export function useTheme() {
     return () => mql.removeEventListener('change', handler);
   }, [preference]);
 
-  return { preference, resolved, setTheme };
+  return { preference, resolved, setTheme, themes: THEMES };
 }

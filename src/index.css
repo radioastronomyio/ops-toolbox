@@ -43,9 +43,9 @@
 ::-webkit-scrollbar-thumb { background: hsl(220 15% 80%); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: hsl(220 15% 60%); }
 
-.dark ::-webkit-scrollbar-track { background: hsl(220 10% 6%); }
-.dark ::-webkit-scrollbar-thumb { background: hsl(220 10% 20%); border-radius: 4px; }
-.dark ::-webkit-scrollbar-thumb:hover { background: hsl(220 10% 45%); }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: hsl(220 10% 6%); }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: hsl(220 10% 20%); border-radius: 4px; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: hsl(220 10% 45%); }
 
 /* CodeMirror overrides — cannot be expressed as Tailwind utilities */
 .cm-editor {
@@ -80,15 +80,15 @@
 }
 
 /* Dark overrides */
-.dark .cm-gutters {
+[data-theme="dark"] .cm-gutters {
   border-right: 1px solid hsl(220 10% 20%);
   color: hsl(220 10% 45%);
 }
 
-.dark .cm-error-line {
+[data-theme="dark"] .cm-error-line {
   background-color: hsl(0 60% 60% / 0.15) !important;
 }
 
-.dark .cm-error-line::after {
+[data-theme="dark"] .cm-error-line::after {
   background-color: hsl(0 60% 60%);
 }

@@ -1,6 +1,6 @@
 /**
  * @file SettingsFlyout.jsx
- * @description Non-modal settings flyout for theme, density, and font family preferences
+ * @description Non-modal settings flyout for theme, density, and font family preferences. Theme is a menu driven by the declared theme list; density and font remain segmented.
  * @author vintagedon
  * @license MIT
  * @see https://github.com/radioastronomyio/ops-toolbox
@@ -27,6 +27,44 @@ function SegmentedControl({ options, value, onChange }) {
           {opt.label}
         </button>
       ))}
+    </div>
+  );
+}
+
+/**
+ * Theme menu driven by a declared theme list. Renders one selectable
+ * option per theme so the control scales to four or more themes. Behaves
+ * as a radiogroup; the active option matches the current preference.
+ */
+function ThemeMenu({ themes, value, onChange }) {
+  return (
+    <div
+      className="flex flex-col gap-0.5 bg-surface-2 border border-border rounded-md p-1"
+      role="radiogroup"
+      aria-label="Theme selection"
+    >
+      {themes.map((opt) => {
+        const active = value === opt.value;
+        return (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            role="radio"
+            aria-checked={active}
+            className={`flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium text-left rounded transition-micro ${
+              active
+                ? 'bg-surface-1 text-text-primary shadow-sm ring-1 ring-border-subtle'
+                : 'text-text-secondary hover:text-text-primary hover:bg-surface-3/60'
+            }`}
+          >
+            <span
+              aria-hidden="true"
+              className={`inline-block w-1.5 h-1.5 rounded-full ${active ? 'bg-accent' : 'bg-transparent'}`}
+            />
+            {opt.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -81,15 +119,11 @@ export default function SettingsFlyout({ theme, density, fontFamily }) {
           role="dialog"
           aria-label="Display settings"
         >
-          {/* Theme */}
+          {/* Theme — menu driven by the declared theme list */}
           <div className="space-y-1.5">
             <label className="block text-xs font-medium text-text-secondary uppercase tracking-wide">Theme</label>
-            <SegmentedControl
-              options={[
-                { value: 'light', label: 'Light' },
-                { value: 'dark', label: 'Dark' },
-                { value: 'system', label: 'System' },
-              ]}
+            <ThemeMenu
+              themes={theme.themes}
               value={theme.preference}
               onChange={theme.setTheme}
             />

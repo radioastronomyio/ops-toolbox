@@ -1,0 +1,20 @@
+# Ops Toolbox — self-host.
+#
+# `docker compose up` builds the multi-stage image and serves the air-gapped SPA
+# on http://localhost:8080. The runtime container makes no external network calls.
+#
+#   docker compose up --build      # build + run
+#   docker compose up -d           # detached
+#   docker compose down            # stop
+#
+# Override the host port (8080 below) to suit your environment.
+
+services:
+  ops-toolbox:
+    build: .
+    image: ops-toolbox:latest
+    container_name: ops-toolbox
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    # read_only would require a writable tmp for nginx; left default on purpose.

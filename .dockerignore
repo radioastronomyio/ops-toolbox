@@ -1,0 +1,31 @@
+# Keep the build context lean. Only what the build needs reaches the node stage.
+# node_modules is always rebuilt inside the image via `npm ci`.
+
+node_modules
+dist
+coverage
+.nyc_output
+
+.git
+.github
+.gitignore
+
+# Repo-local documentation and workflow dirs are not part of the build artifact.
+docs
+work-logs
+staging
+internal-files
+plans
+spec
+
+# Editor / OS noise.
+.vscode
+.idea
+.DS_Store
+*.log
+
+# Local secrets never enter the image.
+.env
+.env.*
+*.pem
+*.key

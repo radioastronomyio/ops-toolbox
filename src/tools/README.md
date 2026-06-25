@@ -26,7 +26,6 @@ Tools are lazy-loaded via `React.lazy()` in `App.jsx` — only the visited tool'
 |-----------|------|----------|
 | `SubnetCalculator.jsx` | Subnet Calculator | Networking |
 | `CidrExpander.jsx` | CIDR Expander | Networking |
-| `MacVendorLookup.jsx` | MAC Vendor Lookup | Networking |
 | `JwtDecoder.jsx` | JWT Decoder | Security |
 | `PasswordGenerator.jsx` | Password Generator | Security |
 | `SshKeyGenerator.jsx` | SSH Keypair Generator | Security |

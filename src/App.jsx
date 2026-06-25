@@ -22,7 +22,6 @@ const toolComponents = {
   'base64': lazy(() => import('./tools/Base64Codec')),
   'mermaid-renderer': lazy(() => import('./tools/mermaid-renderer/MermaidRenderer')),
   'cidr-expander': lazy(() => import('./tools/CidrExpander')),
-  'mac-lookup': lazy(() => import('./tools/MacVendorLookup')),
   'url-parser': lazy(() => import('./tools/UrlParser')),
   'useragent-decoder': lazy(() => import('./tools/UserAgentDecoder')),
   'chmod-calculator': lazy(() => import('./tools/ChmodCalculator')),

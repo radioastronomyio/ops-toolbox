@@ -10,9 +10,9 @@ import {
 } from '../../src/lib/toolRegistry.js';
 
 describe('toolRegistry', () => {
-  it('exports an array of 25 tools', () => {
+  it('exports an array of 24 tools', () => {
     expect(Array.isArray(toolRegistry)).toBe(true);
-    expect(toolRegistry).toHaveLength(25);
+    expect(toolRegistry).toHaveLength(24);
   });
 
   it('every tool has required fields: id, name, description, path, category, componentPath', () => {
@@ -98,8 +98,8 @@ describe('getToolByPath', () => {
 });
 
 describe('getToolCount', () => {
-  it('returns 25', () => {
-    expect(getToolCount()).toBe(25);
+  it('returns 24', () => {
+    expect(getToolCount()).toBe(24);
   });
 });
 
@@ -125,43 +125,21 @@ describe('toolRegistry — metadata fields', () => {
     }
   });
 
-  it('mac-lookup has processingMode remote and offlineCapable false', () => {
-    const tool = toolRegistry.find(t => t.id === 'mac-lookup');
-    expect(tool.processingMode).toBe('remote');
-    expect(tool.offlineCapable).toBe(false);
-  });
-
   it('ssh-keygen has status beta', () => {
     const tool = toolRegistry.find(t => t.id === 'ssh-keygen');
     expect(tool.status).toBe('beta');
   });
 
-  it('all other tools have processingMode local', () => {
-    const exceptions = new Set(['mac-lookup']);
+  it('all tools have processingMode local', () => {
     for (const tool of toolRegistry) {
-      if (!exceptions.has(tool.id)) {
-        expect(tool.processingMode).toBe('local');
-      }
+      expect(tool.processingMode).toBe('local');
     }
   });
 });
 
 describe('getRemoteTools', () => {
-  it('returns only tools with remote or hybrid processingMode', () => {
-    const remoteTools = getRemoteTools();
-    for (const tool of remoteTools) {
-      expect(['remote', 'hybrid']).toContain(tool.processingMode);
-    }
-  });
-
-  it('includes mac-lookup', () => {
-    const remoteTools = getRemoteTools();
-    expect(remoteTools.some(t => t.id === 'mac-lookup')).toBe(true);
-  });
-
-  it('does not include subnet-calculator', () => {
-    const remoteTools = getRemoteTools();
-    expect(remoteTools.some(t => t.id === 'subnet-calculator')).toBe(false);
+  it('returns an empty array (no remote or hybrid tools)', () => {
+    expect(getRemoteTools()).toEqual([]);
   });
 });
 

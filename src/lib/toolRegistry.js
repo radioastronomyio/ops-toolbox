@@ -39,17 +39,6 @@ export const toolRegistry = [
     status: 'stable',
   },
   {
-    id: 'mac-lookup',
-    name: 'MAC Vendor Lookup',
-    description: 'Look up the manufacturer for a MAC address via OUI prefix.',
-    path: 'mac-lookup',
-    category: 'Networking',
-    componentPath: './tools/MacVendorLookup',
-    processingMode: 'remote',
-    offlineCapable: false,
-    status: 'stable',
-  },
-  {
     id: 'jwt-decoder',
     name: 'JWT Decoder',
     description: 'Inspect JSON Web Token headers and payload claims without exposing secrets.',

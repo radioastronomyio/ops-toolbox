@@ -1,7 +1,7 @@
 <!--
 ---
 title: "Tool Reference"
-description: "Complete reference for all 25 Ops Toolbox utilities"
+description: "Complete reference for all 24 Ops Toolbox utilities"
 author: "vintagedon"
 date: "2026-03-16"
 version: "1.0"
@@ -32,7 +32,7 @@ Quick lookup for what each tool does, how it works, and what libraries power it.
 
 ## 2. Scope
 
-Covers all 25 tools across 4 categories: Networking, Security, Data, and Developer. For each tool: what it does, processing mode, key library dependencies, and notable implementation details.
+Covers all 24 tools across 4 categories: Networking, Security, Data, and Developer. For each tool: what it does, processing mode, key library dependencies, and notable implementation details.
 
 ---
 
@@ -61,15 +61,6 @@ Users, contributors, and AI coding assistants working in this repository.
 | **Source** | `src/tools/CidrExpander.jsx` + `src/lib/subnet.js` |
 | **Mode** | Local |
 | **Description** | Expand a CIDR block into its full IP range. Shows summary (network, broadcast, first/last host, total IPs) and enumerates individual addresses for blocks up to /22 (1024 IPs). Larger blocks show summary only. |
-
-### MAC Vendor Lookup
-
-| | |
-|---|---|
-| **Route** | `/mac-lookup` |
-| **Source** | `src/tools/MacVendorLookup.jsx` + `src/lib/mac.js` |
-| **Mode** | Online (requires API) |
-| **Description** | Look up the manufacturer for a MAC address by OUI prefix. Normalizes input, extracts the 3-byte OUI, and queries `api.donfather.dev/api/mac-lookup`. The only tool that makes network requests — clearly labeled with an "Online" badge. |
 
 ---
 

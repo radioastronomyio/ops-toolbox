@@ -12,10 +12,10 @@ function renderGrid() {
 }
 
 describe('DirectoryGrid — badges', () => {
-  it('renders "Online" badge for MAC Vendor Lookup card', () => {
+  it('renders no "Online" or "Online Optional" badges (privacy claim is unconditional)', () => {
     renderGrid();
-    const card = screen.getByText('MAC Vendor Lookup').closest('a');
-    expect(within(card).getByText('Online')).toBeInTheDocument();
+    expect(screen.queryByText('Online')).not.toBeInTheDocument();
+    expect(screen.queryByText('Online Optional')).not.toBeInTheDocument();
   });
 
   it('renders "Beta" badge for SSH Keypair Generator card', () => {

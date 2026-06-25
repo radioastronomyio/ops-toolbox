@@ -45,7 +45,7 @@ export default function ToolLayout() {
       </main>
 
       <footer className="border-t border-border-subtle py-6 text-center">
-        <p className="text-xs text-text-muted uppercase tracking-wide mb-1">100% Client-Side Processing</p>
+        <p className="text-xs text-text-muted micro-label mb-1">100% Client-Side Processing</p>
         <p className="text-sm text-text-secondary">Data never leaves your browser.</p>
       </footer>
     </div>

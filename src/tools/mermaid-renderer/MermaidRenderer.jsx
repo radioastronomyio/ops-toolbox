@@ -305,7 +305,7 @@ function MermaidRenderer() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4" style={{ minHeight: '500px' }}>
         {/* Editor pane */}
         <div className="flex flex-col border border-border rounded-md overflow-hidden">
-          <div className="flex items-center justify-between px-3 py-2 bg-surface-1 border-b border-border text-xs text-text-secondary uppercase tracking-wide">
+          <div className="flex items-center justify-between px-3 py-2 bg-surface-1 border-b border-border text-xs text-text-secondary micro-label">
             <span>Editor</span>
             <div className="flex items-center gap-3">
               {!autoUpdate && (

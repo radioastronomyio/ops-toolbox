@@ -44,6 +44,7 @@ Single-page application with React Router v6. Tools are lazy-loaded via `React.l
 - **`docs/architecture.md`** — SPA architecture overview
 - **`docs/apps/tool-reference.md`** — Complete reference for all 25 tools
 - **`docs/design/contrast-standard.md`** — WCAG AA contrast rule every palette is audited against
+- **`docs/design/typography-roles.md`** — UI/mono type roles, the type scale, and the micro-label convention
 - **`docs/documentation-standards/`** — Template library for READMEs, KB articles, script headers
 - All source files have JSDoc `@file` headers per `docs/documentation-standards/script-header-javascript.md`
 

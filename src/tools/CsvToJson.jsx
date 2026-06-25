@@ -128,7 +128,7 @@ export default function CsvToJson() {
 
       {/* Options */}
       <div className="bg-surface-1 rounded-md p-4 space-y-3">
-        <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wide">Options</h2>
+        <h2 className="text-sm font-semibold text-text-secondary micro-label">Options</h2>
         <div className="flex flex-wrap gap-6">
           <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
             <input

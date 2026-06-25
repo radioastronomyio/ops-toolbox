@@ -24,7 +24,7 @@ function Field({ label, value }) {
 function Section({ title, fields }) {
   return (
     <div className="bg-surface-1 border border-border rounded-md p-4">
-      <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wide mb-3">{title}</h3>
+      <h3 className="text-sm font-semibold text-text-secondary micro-label mb-3">{title}</h3>
       {fields.map(([label, value]) => (
         <Field key={label} label={label} value={value} />
       ))}

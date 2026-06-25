@@ -17,6 +17,11 @@
   html {
     font-size: var(--base-font-size);
   }
+  /* Mono is a data role: tabular figures keep columns of identifiers, hashes,
+     and addresses aligned (see docs/design/typography-roles.md). */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 /* Standardized transition utilities */
@@ -35,6 +40,12 @@
     transition-property: transform, opacity;
     transition-duration: var(--duration-exit);
     transition-timing-function: var(--ease-exit);
+  }
+  /* Micro label: small uppercase section labels (letter-spacing 0.05em per the
+     type-role discipline). Pair with a text-size and color utility. */
+  .micro-label {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 }
 

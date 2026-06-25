@@ -121,7 +121,7 @@ export default function SettingsFlyout({ theme, density, fontFamily }) {
         >
           {/* Theme — menu driven by the declared theme list */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-text-secondary uppercase tracking-wide">Theme</label>
+            <label className="block text-xs font-medium text-text-secondary micro-label">Theme</label>
             <ThemeMenu
               themes={theme.themes}
               value={theme.preference}
@@ -131,7 +131,7 @@ export default function SettingsFlyout({ theme, density, fontFamily }) {
 
           {/* Density */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-text-secondary uppercase tracking-wide">Density</label>
+            <label className="block text-xs font-medium text-text-secondary micro-label">Density</label>
             <SegmentedControl
               options={[
                 { value: 'compact', label: 'Compact' },
@@ -145,7 +145,7 @@ export default function SettingsFlyout({ theme, density, fontFamily }) {
 
           {/* Font */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-text-secondary uppercase tracking-wide">Font</label>
+            <label className="block text-xs font-medium text-text-secondary micro-label">Font</label>
             <SegmentedControl
               options={[
                 { value: 'system', label: 'System' },

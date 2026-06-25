@@ -79,7 +79,7 @@ export default function SqlFormatter() {
       {/* Options */}
       <div className="bg-surface-1 rounded-md p-4 flex flex-wrap gap-6 items-end">
         <div className="space-y-1">
-          <label className="block text-xs text-text-secondary uppercase tracking-wide">Dialect</label>
+          <label className="block text-xs text-text-secondary micro-label">Dialect</label>
           <select
             value={dialect}
             onChange={e => setDialect(e.target.value)}
@@ -92,7 +92,7 @@ export default function SqlFormatter() {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-xs text-text-secondary uppercase tracking-wide">Keyword Case</label>
+          <label className="block text-xs text-text-secondary micro-label">Keyword Case</label>
           <select
             value={keywordCase}
             onChange={e => setKeywordCase(e.target.value)}
@@ -105,7 +105,7 @@ export default function SqlFormatter() {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-xs text-text-secondary uppercase tracking-wide">Indent</label>
+          <label className="block text-xs text-text-secondary micro-label">Indent</label>
           <select
             value={indentIdx}
             onChange={e => setIndentIdx(Number(e.target.value))}

@@ -45,9 +45,21 @@ export default function ToolLayout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-border-subtle py-6 text-center">
-        <p className="text-xs text-text-muted micro-label mb-1">100% Client-Side Processing</p>
+      <footer className="border-t border-border-subtle py-6 text-center space-y-1">
+        <p className="text-xs text-text-muted micro-label">100% Client-Side Processing</p>
         <p className="text-sm text-text-secondary">Data never leaves your browser.</p>
+        <p className="text-xs text-text-muted">
+          Built by{' '}
+          <a href="https://donaldfountain.ai" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+            Donald Fountain
+          </a>
+          {' · '}
+          <Link to="/about" className="text-text-secondary hover:text-text-primary hover:underline">About</Link>
+          {' · '}
+          <a href="https://github.com/radioastronomyio/ops-toolbox" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-text-primary hover:underline">
+            GitHub
+          </a>
+        </p>
       </footer>
     </div>
   );

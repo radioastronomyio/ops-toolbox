@@ -13,6 +13,8 @@ import ToolLayout from './components/ToolLayout';
 import DirectoryGrid from './components/DirectoryGrid';
 import NotFound from './components/NotFound';
 
+const About = lazy(() => import('./pages/About'));
+
 // Map each tool registry id to its lazy-loaded component for code-splitting
 const toolComponents = {
   'subnet-calculator': lazy(() => import('./tools/SubnetCalculator')),
@@ -55,6 +57,15 @@ export default function App() {
       <Routes>
         <Route path="/" element={<ToolLayout />}>
           <Route index element={<DirectoryGrid />} />
+          {/* Non-tool routes */}
+          <Route
+            path="about"
+            element={
+              <Suspense fallback={<Loading />}>
+                <About />
+              </Suspense>
+            }
+          />
           {/* Dynamically generate routes from the central tool registry */}
           {toolRegistry.map((tool) => {
             const Component = toolComponents[tool.id];

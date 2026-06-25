@@ -15,12 +15,12 @@ const FONT_MAP = {
     mono: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
   },
   inter: {
-    sans: '"Inter", system-ui, -apple-system, sans-serif',
-    mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
+    sans: '"Inter Variable", "Inter", system-ui, -apple-system, sans-serif',
+    mono: '"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
   },
   mono: {
-    sans: '"JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
-    mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
+    sans: '"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
+    mono: '"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
   },
 };
 

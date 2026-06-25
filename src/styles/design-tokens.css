@@ -47,8 +47,8 @@
     --color-cat-developer:  265 50% 50%;
 
     /* Typography */
-    --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --font-family-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-family-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
     --base-font-size: 14px;
 
     /* Motion */
@@ -98,8 +98,8 @@
     --color-cat-developer:  265 55% 70%;
 
     /* Typography (theme-independent, duplicated for clarity) */
-    --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --font-family-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-family-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
     --base-font-size: 14px;
 
     /* Motion */
@@ -153,8 +153,8 @@
     --color-cat-developer:  270 60% 74%;
 
     /* Typography (theme-independent, duplicated for clarity) */
-    --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --font-family-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-family-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
     --base-font-size: 14px;
 
     /* Motion */

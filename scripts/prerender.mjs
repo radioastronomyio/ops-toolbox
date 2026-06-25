@@ -14,7 +14,7 @@ import { toolRegistry } from '../src/lib/toolRegistry.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DIST = join(__dirname, '..', 'dist');
 const ORIGIN = 'https://opstoolbox.dev';
-const OG_IMAGE = `${ORIGIN}/logo.svg`;
+const OG_IMAGE = `${ORIGIN}/og.png`;
 
 const SITE = {
   title: 'Ops Toolbox — Client-Side Developer Utilities',
@@ -37,7 +37,7 @@ function socialBlock({ title, description, url }) {
     `<meta property="og:description" content="${description}" />`,
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:image" content="${OG_IMAGE}" />`,
-    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${title}" />`,
     `<meta name="twitter:description" content="${description}" />`,
     `<meta name="twitter:image" content="${OG_IMAGE}" />`,

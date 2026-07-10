@@ -35,6 +35,8 @@ Two roles apply. A prose (serif) role is deliberately not adopted; there is no l
 
 The mono role carries `tabular-nums` globally via the `.font-mono` utility (see `src/index.css`). Any element using `font-mono` gets tabular figures automatically; never apply mono to running text.
 
+Both families are bundled, not fetched from a CDN: Inter and JetBrains Mono ship as `@fontsource-variable` packages imported in `src/main.jsx`. They register as `'Inter Variable'` and `'JetBrains Mono Variable'`, which lead the `--font-family-sans` / `--font-family-mono` token stack in `design-tokens.css` (and the `useFontFamily` hook's font map), so the glyphs render as themselves in every theme with no external font request.
+
 ## 3. Micro-Label Convention
 
 Small uppercase section labels (flyout sections, footer, table headers, output groupings) use the `.micro-label` utility: `text-transform: uppercase` with `letter-spacing: 0.05em`. Pair it with a size utility (typically `text-xs`) and a color token. Do not hand-roll `uppercase tracking-*` for these; use `.micro-label`.

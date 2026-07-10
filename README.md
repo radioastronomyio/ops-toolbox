@@ -148,11 +148,11 @@ npm run test:watch   # Watch mode
 ### Production build
 
 ```bash
-npm run build        # Vite build + per-route prerender → dist/
+npm run build        # Vite build + per-route prerender + sitemap/llms → dist/
 npm run preview      # Preview the production build
 ```
 
-The build emits `dist/` with one prerendered `index.html` per route (home, every tool, and `/about`), each carrying route-specific `<title>`, Open Graph, Twitter, and canonical meta canonical to `opstoolbox.dev`.
+The build emits `dist/` with one prerendered `index.html` per route (home, every tool, and `/about`), each carrying route-specific `<title>`, Open Graph, Twitter, and canonical meta canonical to `opstoolbox.dev`. It also writes `dist/sitemap.xml` (one `<url>` per route) and `dist/llms.txt` (an LLM-agent index derived from the tool registry), and serves `robots.txt` with the sitemap pointer — all keyed to `https://opstoolbox.dev`.
 
 ---
 
@@ -171,7 +171,7 @@ docker build -t ops-toolbox .
 docker run -p 8080:80 ops-toolbox
 ```
 
-To change the host port, edit `ports:` in [`docker-compose.yml`](docker-compose.yml). The nginx config (`docker/nginx.conf`) serves each route's prerendered HTML when present and falls back to the SPA shell for unknown paths, mirroring `staticwebapp.config.json` — so deep links like `/subnet-calculator` unfurl with their own meta and client-side routing still works.
+To change the host port, edit `ports:` in [`docker-compose.yml`](docker-compose.yml). The nginx config (`docker/nginx.conf`) serves each route's prerendered HTML when present and falls back to the SPA shell for unknown paths, mirroring `staticwebapp.config.json` — so deep links like `/subnet-calculator` unfurl with their own meta and client-side routing still works. `sitemap.xml`, `llms.txt`, and `robots.txt` are served as themselves (not the SPA shell) on both Azure and the self-host image.
 
 You can also deploy the `dist/` directory to any static host (Azure Static Web Apps, Netlify, Vercel, GitHub Pages, an S3 bucket) or serve it from any web server.
 
@@ -230,7 +230,7 @@ Ops Toolbox is a React 18 SPA with code-split tool routes. Pure computation live
 
 ## 🔒 Security Model
 
-**Data handling:** All processing happens in your browser. There are no outbound requests during operation — open the DevTools Network tab and confirm it for yourself. The privacy claim is **unconditional**: every tool runs locally, there is no network-dependent code path, and the toolkit behaves identically with no network connection at all.
+**Data handling:** All processing happens in your browser. There are no outbound requests during operation — open the DevTools Network tab and confirm it for yourself. The privacy claim is **unconditional**: every tool runs locally, there is no network-dependent code path, and the toolkit behaves identically with no network connection at all. Typography is covered too — Inter and JetBrains Mono are bundled via `@fontsource-variable`, so there is no external font CDN to leak the visit.
 
 **Trust model:** You control the hosting. No analytics, no telemetry, no third-party scripts. The Docker image makes no external calls at runtime, so it runs in a fully air-gapped environment. Read the source, audit it, and run it behind your own perimeter.
 

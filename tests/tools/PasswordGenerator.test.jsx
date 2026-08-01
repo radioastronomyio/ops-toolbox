@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PasswordGenerator from '../../src/tools/PasswordGenerator.jsx';
 
 describe('PasswordGenerator', () => {
@@ -52,11 +52,25 @@ describe('PasswordGenerator', () => {
     expect(screen.queryByText('Uppercase')).not.toBeInTheDocument();
   });
 
-  it('passphrase mode generates output with word separators', () => {
+  it('passphrase mode generates output with word separators', async () => {
     render(<PasswordGenerator />);
     fireEvent.click(screen.getByText('Passphrase'));
-    const pre = document.querySelector('.font-mono');
+    const pre = await waitFor(() => document.querySelector('pre.font-mono'));
     expect(pre).toBeInTheDocument();
     expect(pre.textContent).toMatch(/-/);
+  });
+
+  it('offers all published wordlists and updates entropy for a larger list', async () => {
+    render(<PasswordGenerator />);
+    fireEvent.click(screen.getByText('Passphrase'));
+
+    const selector = screen.getByLabelText('Wordlist');
+    expect(screen.getByRole('option', { name: 'EFF Short 2.0 (1,296 words)' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'EFF Long (7,776 words)' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Original Diceware (7,776 entries)' })).toBeInTheDocument();
+    await screen.findByText('62 bits');
+
+    fireEvent.change(selector, { target: { value: 'eff-long' } });
+    await screen.findByText('77 bits');
   });
 });

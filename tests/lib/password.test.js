@@ -175,6 +175,17 @@ describe('generatePassphrase', () => {
     expect(result.split('.')).toHaveLength(3);
   });
 
+  it('uses the supplied wordlist', () => {
+    const wordlist = ['alpha', 'bravo'];
+    const result = generatePassphrase(4, '-', false, wordlist);
+    expect(result.split('-')).toHaveLength(4);
+    result.split('-').forEach((word) => expect(wordlist).toContain(word));
+  });
+
+  it('rejects an empty supplied wordlist', () => {
+    expect(() => generatePassphrase(4, '-', false, [])).toThrow('A non-empty wordlist is required');
+  });
+
   it('two consecutive calls produce different results', () => {
     const a = generatePassphrase(6);
     const b = generatePassphrase(6);
@@ -189,6 +200,11 @@ describe('calculatePassphraseEntropy', () => {
 
   it('wordCount=8, wordlistSize=1296 → 82', () => {
     expect(calculatePassphraseEntropy(8, 1296)).toBe(82);
+  });
+
+  it('uses the selected wordlist size', () => {
+    expect(calculatePassphraseEntropy(6, 7776)).toBe(77);
+    expect(calculatePassphraseEntropy(6, 7776)).toBeGreaterThan(calculatePassphraseEntropy(6, 1296));
   });
 
   it('wordCount=0 → 0', () => {

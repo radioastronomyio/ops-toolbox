@@ -61,9 +61,20 @@ export function calculateEntropy(length, poolSize) {
   return Math.floor(length * Math.log2(poolSize));
 }
 
-/** Generate a passphrase by picking random words from the EFF wordlist via rejection sampling */
-export function generatePassphrase(wordCount, separator = '-', capitalize = false) {
-  const wordlist = EFF_SHORT_WORDLIST;
+/**
+ * Generate a passphrase by picking random words via rejection sampling.
+ *
+ * @param {number} wordCount - Number of words to generate
+ * @param {string} separator - Text placed between words
+ * @param {boolean} capitalize - Whether to capitalize each selected word
+ * @param {string[]} wordlist - Source list; defaults to EFF Short 2.0
+ * @returns {string} Generated passphrase
+ */
+export function generatePassphrase(wordCount, separator = '-', capitalize = false, wordlist = EFF_SHORT_WORDLIST) {
+  if (!Array.isArray(wordlist) || wordlist.length === 0) {
+    throw new Error('A non-empty wordlist is required');
+  }
+
   const poolSize = wordlist.length;
   // Same rejection sampling as generatePassword, but over Uint32 range (4294967296 = 2^32)
   const maxValid = 4294967296 - (4294967296 % poolSize);

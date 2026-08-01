@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { generatePassword, calculateEntropy, buildCharset, generatePassphrase, calculatePassphraseEntropy } from '../../src/lib/password.js';
+import { generatePassword, calculateEntropy, buildCharset, generatePassphrase, calculatePassphraseEntropy, generateBatch } from '../../src/lib/password.js';
 import { EFF_SHORT_WORDLIST } from '../../src/lib/wordlist.js';
 
 describe('Password Generator', () => {
@@ -232,6 +232,37 @@ describe('calculatePassphraseEntropy', () => {
 
   it('wordCount=0 → 0', () => {
     expect(calculatePassphraseEntropy(0, 1296)).toBe(0);
+  });
+});
+
+describe('generateBatch', () => {
+  it('returns the requested number of distinct values with per-row entropy', () => {
+    const candidates = ['alpha', 'alpha', 'bravo', 'charlie'];
+    const results = generateBatch(3, () => candidates.shift(), (value) => value.length);
+
+    expect(results).toEqual([
+      { value: 'alpha', entropy: 5 },
+      { value: 'bravo', entropy: 5 },
+      { value: 'charlie', entropy: 7 },
+    ]);
+  });
+
+  it('accepts a fixed entropy value', () => {
+    let index = 0;
+    expect(generateBatch(2, () => `value-${index++}`, 72)).toEqual([
+      { value: 'value-0', entropy: 72 },
+      { value: 'value-1', entropy: 72 },
+    ]);
+  });
+
+  it('validates count and generator inputs', () => {
+    expect(() => generateBatch(0, () => 'value', 1)).toThrow('Batch count must be a positive integer');
+    expect(() => generateBatch(1.5, () => 'value', 1)).toThrow('Batch count must be a positive integer');
+    expect(() => generateBatch(1, null, 1)).toThrow('Batch generation requires a value generator');
+  });
+
+  it('fails safely when a generator cannot produce enough distinct values', () => {
+    expect(() => generateBatch(2, () => 'same', 1)).toThrow('Unable to generate the requested number of distinct values');
   });
 });
 

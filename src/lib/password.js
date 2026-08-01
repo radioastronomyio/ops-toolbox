@@ -125,6 +125,46 @@ export function calculatePassphraseEntropy(wordCount, wordlistSize, paddingDigit
 }
 
 /**
+ * Generates a batch while rejecting duplicate values.
+ *
+ * @param {number} count - Number of distinct results requested
+ * @param {() => string} generateValue - Cryptographic value generator
+ * @param {number|((value: string) => number)} entropyForValue - Entropy value or calculator
+ * @returns {{value: string, entropy: number}[]} Generated rows
+ */
+export function generateBatch(count, generateValue, entropyForValue) {
+  if (!Number.isInteger(count) || count < 1) {
+    throw new Error('Batch count must be a positive integer');
+  }
+  if (typeof generateValue !== 'function') {
+    throw new Error('Batch generation requires a value generator');
+  }
+
+  const results = [];
+  const seen = new Set();
+  const maxAttempts = Math.max(100, count * 100);
+  let attempts = 0;
+
+  while (results.length < count && attempts < maxAttempts) {
+    const value = generateValue();
+    attempts += 1;
+    if (seen.has(value)) continue;
+
+    seen.add(value);
+    results.push({
+      value,
+      entropy: typeof entropyForValue === 'function' ? entropyForValue(value) : entropyForValue,
+    });
+  }
+
+  if (results.length !== count) {
+    throw new Error('Unable to generate the requested number of distinct values');
+  }
+
+  return results;
+}
+
+/**
  * Builds a character set from options
  * @param {object} options - { uppercase, lowercase, numeric, special } booleans
  * @returns {string} Concatenated character set string, or null if all disabled

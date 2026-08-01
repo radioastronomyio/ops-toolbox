@@ -7,9 +7,11 @@
  */
 
 import { useState, useEffect } from 'react';
-import { generatePassword, calculateEntropy, buildCharset, generatePassphrase, calculatePassphraseEntropy } from '../lib/password.js';
+import { generatePassword, calculateEntropy, buildCharset, generatePassphrase, calculatePassphraseEntropy, generateBatch } from '../lib/password.js';
+import { serializeSecretBatchCsv } from '../lib/secretBatch.js';
 import { DEFAULT_WORDLIST_ID, WORDLIST_OPTIONS, loadWordlist } from '../lib/wordlists.js';
 import { useClipboard } from '../hooks/useClipboard';
+import CopyButton from '../components/CopyButton';
 import ErrorBanner from '../components/ErrorBanner';
 
 const SEPARATOR_OPTIONS = [
@@ -38,11 +40,13 @@ export default function PasswordGenerator() {
   const [numericPaddingEnabled, setNumericPaddingEnabled] = useState(false);
   const [paddingDigits, setPaddingDigits] = useState(1);
 
-  const [output, setOutput] = useState('');
-  const [entropy, setEntropy] = useState(0);
+  const [count, setCount] = useState(1);
+  const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [isLoadingWordlist, setIsLoadingWordlist] = useState(false);
   const { copy, copied } = useClipboard();
+  const output = results[0]?.value ?? '';
+  const entropy = results[0]?.entropy ?? 0;
 
   // Auto-generate on any option change; entropy = log2(charset^length)
   useEffect(() => {
@@ -54,19 +58,19 @@ export default function PasswordGenerator() {
         const charset = buildCharset(options);
         if (length && charset) {
           try {
-            const pw = generatePassword(length, options);
-            setOutput(pw);
-            setEntropy(calculateEntropy(pw.length, charset.length));
+            setResults(generateBatch(
+              count,
+              () => generatePassword(length, options),
+              (value) => calculateEntropy(value.length, charset.length),
+            ));
             setError(null);
           } catch (err) {
             setError(err.message);
-            setOutput('');
-            setEntropy(0);
+            setResults([]);
           }
         } else {
           setError('Enable at least one character set');
-          setOutput('');
-          setEntropy(0);
+          setResults([]);
         }
         setIsLoadingWordlist(false);
         return;
@@ -78,14 +82,15 @@ export default function PasswordGenerator() {
         const wordlist = await loadWordlist(wordlistId);
         if (!active) return;
         const appliedPaddingDigits = numericPaddingEnabled ? paddingDigits : 0;
-        const phrase = generatePassphrase(wordCount, separator, capitalize, wordlist, appliedPaddingDigits);
-        setOutput(phrase);
-        setEntropy(calculatePassphraseEntropy(wordCount, wordlist.length, appliedPaddingDigits));
+        setResults(generateBatch(
+          count,
+          () => generatePassphrase(wordCount, separator, capitalize, wordlist, appliedPaddingDigits),
+          calculatePassphraseEntropy(wordCount, wordlist.length, appliedPaddingDigits),
+        ));
       } catch (err) {
         if (!active) return;
         setError(err.message);
-        setOutput('');
-        setEntropy(0);
+        setResults([]);
       } finally {
         if (active) setIsLoadingWordlist(false);
       }
@@ -95,33 +100,54 @@ export default function PasswordGenerator() {
     return () => {
       active = false;
     };
-  }, [mode, length, uppercase, lowercase, numeric, special, wordCount, wordlistId, separator, capitalize, numericPaddingEnabled, paddingDigits]);
+  }, [mode, length, uppercase, lowercase, numeric, special, wordCount, wordlistId, separator, capitalize, numericPaddingEnabled, paddingDigits, count]);
 
   const handleRegenerate = async () => {
     if (mode === 'password') {
       const options = { uppercase, lowercase, numeric, special };
       const charset = buildCharset(options);
       if (charset) {
-        const pw = generatePassword(length, options);
-        setOutput(pw);
-        setEntropy(calculateEntropy(pw.length, charset.length));
-        setError(null);
+        try {
+          setResults(generateBatch(
+            count,
+            () => generatePassword(length, options),
+            (value) => calculateEntropy(value.length, charset.length),
+          ));
+          setError(null);
+        } catch (err) {
+          setError(err.message);
+          setResults([]);
+        }
       }
     } else {
       setIsLoadingWordlist(true);
       try {
         const wordlist = await loadWordlist(wordlistId);
         const appliedPaddingDigits = numericPaddingEnabled ? paddingDigits : 0;
-        const phrase = generatePassphrase(wordCount, separator, capitalize, wordlist, appliedPaddingDigits);
-        setOutput(phrase);
-        setEntropy(calculatePassphraseEntropy(wordCount, wordlist.length, appliedPaddingDigits));
+        setResults(generateBatch(
+          count,
+          () => generatePassphrase(wordCount, separator, capitalize, wordlist, appliedPaddingDigits),
+          calculatePassphraseEntropy(wordCount, wordlist.length, appliedPaddingDigits),
+        ));
         setError(null);
       } catch (err) {
         setError(err.message);
+        setResults([]);
       } finally {
         setIsLoadingWordlist(false);
       }
     }
+  };
+
+  const handleDownloadCsv = () => {
+    const csv = serializeSecretBatchCsv(results);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `generated-${mode}s.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -301,23 +327,68 @@ export default function PasswordGenerator() {
             </>
           )}
 
+          {/* Generation count */}
+          <div>
+            <label htmlFor="generation-count" className="block text-sm font-medium text-text-secondary mb-2">
+              Generation Count
+            </label>
+            <input
+              id="generation-count"
+              type="number"
+              min="1"
+              max="50"
+              value={count}
+              onChange={(e) => {
+                const nextCount = Number.parseInt(e.target.value, 10) || 1;
+                setCount(Math.min(50, Math.max(1, nextCount)));
+              }}
+              className="w-24 bg-surface-2 text-text-primary rounded-md px-3 py-2 border border-border-subtle"
+            />
+            <p className="mt-2 text-sm text-text-secondary">Generate one value or a distinct batch of up to 50.</p>
+          </div>
+
           {/* Action buttons */}
-          <div className="flex gap-4">
-            <button
-              onClick={() => copy(output)}
-              disabled={!output || copied}
-              className="px-6 py-3 bg-accent hover:bg-accent-hover border-accent text-black rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {copied ? 'Copied!' : 'Copy to Clipboard'}
-            </button>
+          <div className="flex flex-wrap gap-4">
+            {count === 1 ? (
+              <button
+                onClick={() => copy(output)}
+                disabled={!output || copied}
+                className="px-6 py-3 bg-accent hover:bg-accent-hover border-accent text-black rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {copied ? 'Copied!' : 'Copy to Clipboard'}
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => copy(results.map(({ value }) => value).join('\n'))}
+                  disabled={results.length === 0 || copied}
+                  className="px-6 py-3 bg-accent hover:bg-accent-hover border-accent text-black rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {copied ? 'Copied!' : 'Copy All'}
+                </button>
+                <button
+                  onClick={handleDownloadCsv}
+                  disabled={results.length === 0}
+                  className="px-6 py-3 bg-surface-2 hover:bg-surface-3 border border-border-subtle text-text-primary rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Download CSV
+                </button>
+              </>
+            )}
             <button
               onClick={handleRegenerate}
               disabled={isLoadingWordlist}
-              className="px-6 py-3 bg-status-success hover:opacity-90 border-status-success text-black rounded-md font-medium"
+              className="px-6 py-3 bg-status-success hover:opacity-90 border-status-success text-black rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoadingWordlist ? 'Loading wordlist…' : 'Regenerate'}
             </button>
           </div>
+
+          {count > 1 && (
+            <p role="note" className="text-sm text-status-warning">
+              Caution: a downloaded CSV contains unencrypted secrets on disk. Store or delete it carefully.
+            </p>
+          )}
         </div>
 
         {/* Right panel: Output */}
@@ -336,7 +407,7 @@ export default function PasswordGenerator() {
             </div>
           )}
 
-          {output && (
+          {output && count === 1 && (
             <>
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-text-primary mb-4">Generated {mode === 'passphrase' ? 'Passphrase' : 'Password'}</h2>
@@ -361,6 +432,45 @@ export default function PasswordGenerator() {
                     <span className="text-status-error">Weak password</span>
                   )}
                 </p>
+              </div>
+            </>
+          )}
+
+          {results.length > 1 && (
+            <>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-text-primary mb-2">
+                  Generated {mode === 'passphrase' ? 'Passphrase' : 'Password'} Batch
+                </h2>
+                <p className="text-text-secondary text-sm">Each row is generated independently and includes its entropy estimate.</p>
+              </div>
+
+              <div className="overflow-x-auto border border-border-subtle rounded-md">
+                <table className="w-full text-left">
+                  <caption className="sr-only">Generated {mode} batch</caption>
+                  <thead className="bg-surface-2 text-text-secondary">
+                    <tr>
+                      <th scope="col" className="px-3 py-2 text-sm font-medium">#</th>
+                      <th scope="col" className="px-3 py-2 text-sm font-medium">Value</th>
+                      <th scope="col" className="px-3 py-2 text-sm font-medium whitespace-nowrap">Entropy (bits)</th>
+                      <th scope="col" className="px-3 py-2 text-sm font-medium">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border-subtle bg-surface-1">
+                    {results.map((result, index) => (
+                      <tr key={result.value}>
+                        <td className="px-3 py-3 text-sm text-text-secondary">{index + 1}</td>
+                        <td className="px-3 py-3">
+                          <code className="font-mono text-sm text-text-primary break-all">{result.value}</code>
+                        </td>
+                        <td className="px-3 py-3 text-sm text-status-success whitespace-nowrap">{result.entropy} bits</td>
+                        <td className="px-3 py-3">
+                          <CopyButton text={result.value} label={`Copy row ${index + 1}`} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </>
           )}

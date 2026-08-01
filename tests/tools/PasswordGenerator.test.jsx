@@ -73,4 +73,18 @@ describe('PasswordGenerator', () => {
     fireEvent.change(selector, { target: { value: 'eff-long' } });
     await screen.findByText('77 bits');
   });
+
+  it('adds numeric padding with honest entropy guidance', async () => {
+    render(<PasswordGenerator />);
+    fireEvent.click(screen.getByText('Passphrase'));
+    await screen.findByText('62 bits');
+
+    expect(screen.getByText(/padding helps satisfy password rules/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText('Append numeric padding'));
+    fireEvent.change(screen.getByLabelText('Padding digits'), { target: { value: '3' } });
+
+    await screen.findByText('72 bits');
+    const output = document.querySelector('pre.font-mono');
+    expect(output.textContent).toMatch(/\d{3}$/);
+  });
 });

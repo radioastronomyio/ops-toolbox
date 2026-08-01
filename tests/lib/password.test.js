@@ -186,6 +186,22 @@ describe('generatePassphrase', () => {
     expect(() => generatePassphrase(4, '-', false, [])).toThrow('A non-empty wordlist is required');
   });
 
+  it('appends the requested number of numeric padding digits', () => {
+    const result = generatePassphrase(3, '-', false, ['alpha'], 4);
+    expect(result).toMatch(/^alpha-alpha-alpha\d{4}$/);
+  });
+
+  it('draws numeric padding from Web Crypto', () => {
+    const getRandomValues = vi.spyOn(window.crypto, 'getRandomValues');
+    generatePassphrase(3, '-', false, ['alpha'], 2);
+    expect(getRandomValues).toHaveBeenCalledWith(expect.any(Uint8Array));
+  });
+
+  it('rejects invalid numeric padding counts', () => {
+    expect(() => generatePassphrase(3, '-', false, ['alpha'], -1)).toThrow('Padding digit count must be a non-negative integer');
+    expect(() => generatePassphrase(3, '-', false, ['alpha'], 1.5)).toThrow('Padding digit count must be a non-negative integer');
+  });
+
   it('two consecutive calls produce different results', () => {
     const a = generatePassphrase(6);
     const b = generatePassphrase(6);
@@ -205,6 +221,13 @@ describe('calculatePassphraseEntropy', () => {
   it('uses the selected wordlist size', () => {
     expect(calculatePassphraseEntropy(6, 7776)).toBe(77);
     expect(calculatePassphraseEntropy(6, 7776)).toBeGreaterThan(calculatePassphraseEntropy(6, 1296));
+  });
+
+  it('adds digit entropy as digitCount × log2(10) before rounding', () => {
+    const paddedEntropy = calculatePassphraseEntropy(6, 1296, 3);
+    const expectedEntropy = Math.floor((6 * Math.log2(1296)) + (3 * Math.log2(10)));
+    expect(paddedEntropy).toBe(expectedEntropy);
+    expect(paddedEntropy).toBe(72);
   });
 
   it('wordCount=0 → 0', () => {

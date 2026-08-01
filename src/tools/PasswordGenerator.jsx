@@ -35,6 +35,8 @@ export default function PasswordGenerator() {
   const [wordlistId, setWordlistId] = useState(DEFAULT_WORDLIST_ID);
   const [separator, setSeparator] = useState('-');
   const [capitalize, setCapitalize] = useState(false);
+  const [numericPaddingEnabled, setNumericPaddingEnabled] = useState(false);
+  const [paddingDigits, setPaddingDigits] = useState(1);
 
   const [output, setOutput] = useState('');
   const [entropy, setEntropy] = useState(0);
@@ -75,9 +77,10 @@ export default function PasswordGenerator() {
       try {
         const wordlist = await loadWordlist(wordlistId);
         if (!active) return;
-        const phrase = generatePassphrase(wordCount, separator, capitalize, wordlist);
+        const appliedPaddingDigits = numericPaddingEnabled ? paddingDigits : 0;
+        const phrase = generatePassphrase(wordCount, separator, capitalize, wordlist, appliedPaddingDigits);
         setOutput(phrase);
-        setEntropy(calculatePassphraseEntropy(wordCount, wordlist.length));
+        setEntropy(calculatePassphraseEntropy(wordCount, wordlist.length, appliedPaddingDigits));
       } catch (err) {
         if (!active) return;
         setError(err.message);
@@ -92,7 +95,7 @@ export default function PasswordGenerator() {
     return () => {
       active = false;
     };
-  }, [mode, length, uppercase, lowercase, numeric, special, wordCount, wordlistId, separator, capitalize]);
+  }, [mode, length, uppercase, lowercase, numeric, special, wordCount, wordlistId, separator, capitalize, numericPaddingEnabled, paddingDigits]);
 
   const handleRegenerate = async () => {
     if (mode === 'password') {
@@ -108,9 +111,10 @@ export default function PasswordGenerator() {
       setIsLoadingWordlist(true);
       try {
         const wordlist = await loadWordlist(wordlistId);
-        const phrase = generatePassphrase(wordCount, separator, capitalize, wordlist);
+        const appliedPaddingDigits = numericPaddingEnabled ? paddingDigits : 0;
+        const phrase = generatePassphrase(wordCount, separator, capitalize, wordlist, appliedPaddingDigits);
         setOutput(phrase);
-        setEntropy(calculatePassphraseEntropy(wordCount, wordlist.length));
+        setEntropy(calculatePassphraseEntropy(wordCount, wordlist.length, appliedPaddingDigits));
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -259,6 +263,40 @@ export default function PasswordGenerator() {
                   Capitalize
                 </button>
                 <span className="text-sm text-text-secondary">Capitalize first letter of each word</span>
+              </div>
+
+              {/* Numeric padding */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <input
+                    id="numeric-padding"
+                    type="checkbox"
+                    checked={numericPaddingEnabled}
+                    onChange={(e) => setNumericPaddingEnabled(e.target.checked)}
+                    className="h-4 w-4 accent-accent"
+                  />
+                  <label htmlFor="numeric-padding" className="text-sm font-medium text-text-secondary">
+                    Append numeric padding
+                  </label>
+                </div>
+                <div>
+                  <label htmlFor="padding-digits" className="block text-sm font-medium text-text-secondary mb-2">
+                    Padding digits
+                  </label>
+                  <input
+                    id="padding-digits"
+                    type="number"
+                    min="1"
+                    max="12"
+                    value={paddingDigits}
+                    disabled={!numericPaddingEnabled}
+                    onChange={(e) => setPaddingDigits(Number.parseInt(e.target.value, 10) || 1)}
+                    className="w-24 bg-surface-2 text-text-primary rounded-md px-3 py-2 border border-border-subtle disabled:opacity-50"
+                  />
+                </div>
+                <p className="text-sm text-text-secondary">
+                  Numeric padding helps satisfy password rules, but it adds far less strength than adding another word.
+                </p>
               </div>
             </>
           )}
